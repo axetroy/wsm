@@ -85,10 +85,10 @@ func init() {
 		// 用户类
 		{
 			userRouter := v1.Group("/user")
-			userRouter.Use(userAuthMiddleware)                        // 用户登出
-			userRouter.GET("/profile", user.Core.GetProfileRouter)    // 获取用户详细信息
-			userRouter.PUT("/profile", user.Core.UpdateProfileRouter) // 更新用户资料
-			//userRouter.PUT("/password", rbac.Require(*accession.PasswordUpdate), user.UpdatePasswordRouter) // 更新登陆密码
+			userRouter.Use(userAuthMiddleware)                          // 用户登出
+			userRouter.GET("/profile", user.Core.GetProfileRouter)      // 获取用户详细信息
+			userRouter.PUT("/profile", user.Core.UpdateProfileRouter)   // 更新用户资料
+			userRouter.PUT("/password", user.Core.UpdatePasswordRouter) // 更新登陆密码
 		}
 
 		// 通用类

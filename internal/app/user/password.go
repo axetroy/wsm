@@ -1,4 +1,3 @@
-// Copyright 2019 Axetroy. All rights reserved. MIT license.
 package user
 
 import (
@@ -7,6 +6,7 @@ import (
 
 	"github.com/axetroy/terminal/core/controller"
 	"github.com/axetroy/terminal/internal/app/exception"
+	"github.com/axetroy/terminal/internal/app/middleware"
 	"github.com/axetroy/terminal/internal/app/model"
 	"github.com/axetroy/terminal/internal/app/schema"
 	"github.com/axetroy/terminal/internal/library/database"
@@ -22,7 +22,32 @@ type UpdatePasswordParams struct {
 	NewPassword string `json:"new_password" valid:"required~请输入新密码"`
 }
 
-func UpdatePassword(c controller.Context, input UpdatePasswordParams) (res schema.Response) {
+func (u *Service) UpdatePasswordRouter(c *gin.Context) {
+	var (
+		err   error
+		res   = schema.Response{}
+		input UpdatePasswordParams
+	)
+
+	defer func() {
+		if err != nil {
+			res.Data = nil
+			res.Message = err.Error()
+		}
+		c.JSON(http.StatusOK, res)
+	}()
+
+	if err = c.ShouldBindJSON(&input); err != nil {
+		err = exception.InvalidParams
+		return
+	}
+
+	res = u.UpdatePassword(controller.Context{
+		Uid: c.GetString(middleware.ContextUidField),
+	}, input)
+}
+
+func (u *Service) UpdatePassword(c controller.Context, input UpdatePasswordParams) (res schema.Response) {
 	var (
 		err error
 		tx  *gorm.DB
@@ -85,27 +110,4 @@ func UpdatePassword(c controller.Context, input UpdatePasswordParams) (res schem
 	}
 
 	return
-}
-
-func UpdatePasswordRouter(c *gin.Context) {
-	var (
-		err   error
-		res   = schema.Response{}
-		input UpdatePasswordParams
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = UpdatePassword(controller.NewContext(c), input)
 }
