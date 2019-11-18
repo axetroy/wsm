@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"fmt"
+
 	"github.com/axetroy/terminal/internal/library/dotenv"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/facebook"
