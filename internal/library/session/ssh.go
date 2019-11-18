@@ -3,6 +3,7 @@ package session
 import (
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,6 +19,13 @@ type Terminal struct {
 	stdout  io.Reader
 	stdin   io.Writer
 	stderr  io.Reader
+}
+
+type Config struct {
+	Username string
+	Host     string
+	Port     string
+	Password string
 }
 
 func (t *Terminal) updateTerminalSize() {
@@ -153,17 +161,17 @@ func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) 
 	return nil
 }
 
-func New() (*Terminal, error) {
+func New(config Config) (*Terminal, error) {
 	sshConfig := &ssh.ClientConfig{
-		User: "root",
+		User: config.Username,
 		Auth: []ssh.AuthMethod{
-			ssh.Password("qiuyuewu8q"),
+			ssh.Password(config.Password),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		BannerCallback:  ssh.BannerDisplayStderr(),
 	}
 
-	client, err := ssh.Dial("tcp", "111.230.30.41:2222", sshConfig)
+	client, err := ssh.Dial("tcp", net.JoinHostPort(config.Host, config.Port), sshConfig)
 
 	if err != nil {
 		return nil, err
