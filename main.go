@@ -1,4 +1,4 @@
-package go_server
+package terminal
 
 const (
 	Author      = "axetroy"
