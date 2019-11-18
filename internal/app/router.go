@@ -6,18 +6,13 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/axetroy/terminal/core/controller/downloader"
-	"github.com/axetroy/terminal/core/controller/oauth2"
-	"github.com/axetroy/terminal/core/controller/resource"
-	"github.com/axetroy/terminal/core/controller/shell"
-	"github.com/axetroy/terminal/core/controller/uploader"
 	"github.com/axetroy/terminal/internal/app/config"
 	"github.com/axetroy/terminal/internal/app/middleware"
+	"github.com/axetroy/terminal/internal/app/oauth2"
 	"github.com/axetroy/terminal/internal/app/schema"
+	"github.com/axetroy/terminal/internal/app/shell"
 	"github.com/axetroy/terminal/internal/app/user"
 	"github.com/axetroy/terminal/internal/library/dotenv"
-	//"github.com/axetroy/terminal/internal/library/rbac"
-	//"github.com/axetroy/terminal/internal/library/rbac/accession"
 	"github.com/gin-gonic/gin"
 )
 
@@ -71,15 +66,15 @@ func init() {
 
 		{
 			shellRouter := v1.Group("/shell")
-			shellRouter.GET("/demo", shell.DemoRouter)
-			shellRouter.GET("", shell.StartRouter)
+			shellRouter.GET("/demo", shell.Core.ExampleRouter)
+			shellRouter.GET("", shell.Core.StartTerminalRouter)
 		}
 
 		// oAuth2 认证
 		{
 			oAuthRouter := v1.Group("/oauth2")
-			oAuthRouter.GET("/:provider", oauth2.AuthRouter)                  // 前去进行 oAuth 认证
-			oAuthRouter.GET("/:provider/callback", oauth2.AuthCallbackRouter) // 认证成功后，跳转回来的回调地址
+			oAuthRouter.GET("/:provider", oauth2.Core.AuthRouter)              // 前去进行 oAuth 认证
+			oAuthRouter.GET("/:provider/callback", oauth2.Core.CallbackRouter) // 认证成功后，跳转回来的回调地址
 		}
 
 		// 用户类
@@ -90,25 +85,6 @@ func init() {
 			userRouter.PUT("/profile", user.Core.UpdateProfileRouter)   // 更新用户资料
 			userRouter.PUT("/password", user.Core.UpdatePasswordRouter) // 更新登陆密码
 		}
-
-		// 通用类
-		{
-			// 文件上传
-			v1.POST("/upload/file", uploader.File)      // 上传文件
-			v1.POST("/upload/image", uploader.Image)    // 上传图片
-			v1.GET("/upload/example", uploader.Example) // 上传文件的 example
-			// 单纯获取资源文本
-			v1.GET("/resource/file/:filename", resource.File)           // 获取文件纯文本
-			v1.GET("/resource/image/:filename", resource.Image)         // 获取图片纯文本
-			v1.GET("/resource/thumbnail/:filename", resource.Thumbnail) // 获取缩略图纯文本
-			// 下载资源
-			v1.GET("/download/file/:filename", downloader.File)           // 下载文件
-			v1.GET("/download/image/:filename", downloader.Image)         // 下载图片
-			v1.GET("/download/thumbnail/:filename", downloader.Thumbnail) // 下载缩略图
-			// 公共资源目录
-			//v1.GET("/avatar/:filename", user.GetAvatarRouter) // 获取用户头像
-		}
-
 	}
 
 	UserRouter = router

@@ -3,10 +3,10 @@ package tester
 import (
 	"errors"
 
-	"github.com/axetroy/terminal/core/controller"
-	"github.com/axetroy/terminal/core/controller/admin"
-	"github.com/axetroy/terminal/core/controller/auth"
 	"github.com/axetroy/terminal/internal/app/schema"
+	"github.com/axetroy/terminal/internal/library/controller"
+	"github.com/axetroy/terminal/internal/library/controller/admin"
+	"github.com/axetroy/terminal/internal/library/controller/auth"
 	"github.com/axetroy/terminal/internal/library/util"
 )
 

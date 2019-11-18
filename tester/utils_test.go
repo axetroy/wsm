@@ -3,8 +3,8 @@ package tester_test
 import (
 	"testing"
 
-	"github.com/axetroy/terminal/core/controller/admin"
-	"github.com/axetroy/terminal/core/controller/auth"
+	"github.com/axetroy/terminal/internal/library/controller/admin"
+	"github.com/axetroy/terminal/internal/library/controller/auth"
 	"github.com/axetroy/terminal/tester"
 	"github.com/stretchr/testify/assert"
 )

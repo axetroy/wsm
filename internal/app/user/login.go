@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/axetroy/terminal/core/controller"
 	"github.com/axetroy/terminal/internal/app/exception"
 	"github.com/axetroy/terminal/internal/app/model"
 	"github.com/axetroy/terminal/internal/app/schema"
+	"github.com/axetroy/terminal/internal/library/controller"
 	"github.com/axetroy/terminal/internal/library/database"
 	"github.com/axetroy/terminal/internal/library/helper"
 	"github.com/axetroy/terminal/internal/library/token"
@@ -18,6 +18,11 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
+
+type SignInParams struct {
+	Account  string `json:"account" valid:"required~请输入登陆账号"`
+	Password string `json:"password" valid:"required~请输入密码"`
+}
 
 func (u *Service) LoginWithUsernameRouter(c *gin.Context) {
 	var (
