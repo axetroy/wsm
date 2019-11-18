@@ -3,6 +3,7 @@ package controller
 
 import (
 	"github.com/axetroy/terminal/internal/app/middleware"
+	"github.com/axetroy/terminal/internal/library/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,6 +13,13 @@ type Context struct {
 	Uid       string `json:"uid"`        // 操作人的用户 ID
 	UserAgent string `json:"user_agent"` // 用户代理
 	Ip        string `json:"ip"`         // IP地址
+}
+
+func (c *Context) Validator(input interface{}) error {
+	if err := validator.ValidateStruct(input); err != nil {
+		return err
+	}
+	return nil
 }
 
 func NewContextFromGinContext(c *gin.Context) Context {

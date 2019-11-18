@@ -15,17 +15,18 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-type CreateHostParams struct {
-	Host     string  `json:"host" valid:"required~请输入地址"`
-	Port     uint    `json:"port" valid:"required~请输入端口"`
-	Username string  `json:"username" valid:"required~请输入用户名"`
-	Password string  `json:"password" valid:"required~请输入密码"`
+type UpdateHostParams struct {
+	Id       string  `json:"id"`
+	Host     *string `json:"host"`
+	Port     *uint   `json:"port"`
+	Username *string `json:"username"`
+	Password *string `json:"password"`
 	Remark   *string `json:"remark"`
 }
 
-func (s *Service) CreateHostRouter(c *gin.Context) {
+func (s *Service) UpdateHostRouter(c *gin.Context) {
 	var (
-		input CreateHostParams
+		input UpdateHostParams
 		err   error
 		res   = schema.Response{}
 	)
@@ -37,14 +38,15 @@ func (s *Service) CreateHostRouter(c *gin.Context) {
 		return
 	}
 
-	res = s.CreateHost(controller.NewContextFromGinContext(c), input)
+	res = s.UpdateHost(controller.NewContextFromGinContext(c), input)
 }
 
-func (s *Service) CreateHost(c controller.Context, input CreateHostParams) (res schema.Response) {
+func (s *Service) UpdateHost(c controller.Context, input UpdateHostParams) (res schema.Response) {
 	var (
-		err  error
-		data schema.Host
-		tx   *gorm.DB
+		err          error
+		data         schema.Host
+		tx           *gorm.DB
+		shouldUpdate bool
 	)
 
 	defer func() {
@@ -60,7 +62,7 @@ func (s *Service) CreateHost(c controller.Context, input CreateHostParams) (res 
 		}
 
 		if tx != nil {
-			if err != nil {
+			if err != nil || !shouldUpdate {
 				_ = tx.Rollback().Error
 			} else {
 				err = tx.Commit().Error
@@ -76,17 +78,42 @@ func (s *Service) CreateHost(c controller.Context, input CreateHostParams) (res 
 
 	tx = database.Db.Begin()
 
-	hostInfo := model.Host{
-		OwnerID:  c.Uid,
-		Host:     input.Host,
-		Port:     input.Port,
-		Username: input.Username,
-		Password: input.Password,
-		Remark:   input.Remark,
+	hostInfo := model.Host{Id: input.Id, OwnerID: c.Uid}
+
+	updateModel := model.Host{}
+
+	if input.Host != nil {
+		updateModel.Host = *input.Host
+		shouldUpdate = true
 	}
 
-	if err = tx.Create(&hostInfo).Error; err != nil {
-		return
+	if input.Port != nil {
+		updateModel.Port = *input.Port
+		shouldUpdate = true
+	}
+
+	if input.Username != nil {
+		updateModel.Username = *input.Username
+		shouldUpdate = true
+	}
+
+	if input.Password != nil {
+		updateModel.Password = *input.Password
+		shouldUpdate = true
+	}
+
+	if input.Remark != nil {
+		updateModel.Remark = input.Remark
+		shouldUpdate = true
+	}
+
+	if shouldUpdate {
+		if err = tx.Model(&hostInfo).Updates(&updateModel).First(&hostInfo).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				err = exception.NoData
+			}
+			return
+		}
 	}
 
 	if err = mapstructure.Decode(hostInfo, &data.HostPure); err != nil {

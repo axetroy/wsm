@@ -69,6 +69,7 @@ func init() {
 		{
 			hostRouter := v1.Group("/host")
 			hostRouter.POST("", middleware.Authenticate(false), host.Core.CreateHostRouter) // 创建服务器
+			hostRouter.PUT("", middleware.Authenticate(false), host.Core.UpdateHostRouter)  // 更新服务器
 		}
 
 		// shell 类
