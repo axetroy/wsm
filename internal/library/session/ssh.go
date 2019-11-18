@@ -15,6 +15,7 @@ import (
 
 type Terminal struct {
 	Session *ssh.Session
+	config  Config
 	exitMsg string
 	stdout  io.Reader
 	stdin   io.Writer
@@ -26,6 +27,8 @@ type Config struct {
 	Host     string
 	Port     string
 	Password string
+	Width    int // pty width
+	Height   int // pty height
 }
 
 func (t *Terminal) updateTerminalSize() {
@@ -94,19 +97,13 @@ func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) 
 
 	defer terminal.Restore(fd, state)
 
-	termWidth, termHeight, err := terminal.GetSize(fd)
-
-	if err != nil {
-		return err
-	}
-
 	termType := os.Getenv("TERM")
 
 	if termType == "" {
 		termType = "xterm-256color"
 	}
 
-	if err = t.Session.RequestPty(termType, termHeight, termWidth, ssh.TerminalModes{}); err != nil {
+	if err = t.Session.RequestPty(termType, t.config.Height, t.config.Width, ssh.TerminalModes{}); err != nil {
 		return err
 	}
 
@@ -116,16 +113,8 @@ func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) 
 		return err
 	}
 
-	if t.stdout, err = t.Session.StdoutPipe(); err != nil {
-		return err
-	}
-
-	if t.stderr, err = t.Session.StderrPipe(); err != nil {
-		return err
-	}
-
-	go io.Copy(stderr, t.stderr)
-	go io.Copy(stdout, t.stdout)
+	t.Session.Stdout = stdout
+	t.Session.Stderr = stderr
 
 	go func() {
 		buf := make([]byte, 128)
@@ -184,6 +173,7 @@ func New(config Config) (*Terminal, error) {
 	}
 
 	s := Terminal{
+		config:  config,
 		Session: session,
 	}
 
