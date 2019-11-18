@@ -2,13 +2,13 @@
 package main
 
 import (
+	app2 "github.com/axetroy/terminal/internal/app"
 	"log"
 	"os"
 
 	App "github.com/axetroy/terminal"
-	"github.com/axetroy/terminal/core/helper/daemon"
-	"github.com/axetroy/terminal/core/server/user_server"
-	"github.com/axetroy/terminal/core/util"
+	"github.com/axetroy/terminal/internal/library/daemon"
+	"github.com/axetroy/terminal/internal/library/util"
 	"github.com/urfave/cli"
 )
 
@@ -32,7 +32,7 @@ func main() {
 			},
 			Action: func(c *cli.Context) error {
 				// 判断当其是否是子进程，当父进程return之后，子进程会被系统1号进程接管
-				return daemon.Start(user_server.Serve, c.Bool("daemon"))
+				return daemon.Start(app2.Serve, c.Bool("daemon"))
 			},
 		},
 		{

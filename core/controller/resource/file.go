@@ -3,7 +3,7 @@ package resource
 
 import (
 	"github.com/axetroy/go-fs"
-	"github.com/axetroy/terminal/core/config"
+	"github.com/axetroy/terminal/internal/app/config"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"path"

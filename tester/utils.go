@@ -6,8 +6,8 @@ import (
 	"github.com/axetroy/terminal/core/controller"
 	"github.com/axetroy/terminal/core/controller/admin"
 	"github.com/axetroy/terminal/core/controller/auth"
-	"github.com/axetroy/terminal/core/schema"
-	"github.com/axetroy/terminal/core/util"
+	"github.com/axetroy/terminal/internal/app/schema"
+	"github.com/axetroy/terminal/internal/library/util"
 )
 
 // 创建一个测试用户

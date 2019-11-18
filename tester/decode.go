@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/axetroy/terminal/core/util"
+	"github.com/axetroy/terminal/internal/library/util"
 )
 
 func Decode(source interface{}, dest interface{}) (err error) {

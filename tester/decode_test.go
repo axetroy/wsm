@@ -1,8 +1,8 @@
 package tester_test
 
 import (
-	"github.com/axetroy/terminal/core/model"
-	"github.com/axetroy/terminal/core/schema"
+	"github.com/axetroy/terminal/internal/app/model"
+	"github.com/axetroy/terminal/internal/app/schema"
 	"github.com/axetroy/terminal/tester"
 	"github.com/stretchr/testify/assert"
 	"testing"

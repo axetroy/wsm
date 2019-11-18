@@ -3,17 +3,17 @@ package oauth2
 
 import (
 	"errors"
-	"github.com/axetroy/terminal/core/controller/auth"
 	"net/http"
 	"net/url"
 	"time"
 
-	"github.com/axetroy/terminal/core/exception"
-	"github.com/axetroy/terminal/core/model"
-	"github.com/axetroy/terminal/core/service/database"
-	"github.com/axetroy/terminal/core/service/dotenv"
-	"github.com/axetroy/terminal/core/service/redis"
-	"github.com/axetroy/terminal/core/util"
+	"github.com/axetroy/terminal/internal/app/exception"
+	"github.com/axetroy/terminal/internal/app/model"
+	userService "github.com/axetroy/terminal/internal/app/user"
+	"github.com/axetroy/terminal/internal/library/database"
+	"github.com/axetroy/terminal/internal/library/dotenv"
+	"github.com/axetroy/terminal/internal/library/redis"
+	"github.com/axetroy/terminal/internal/library/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -98,7 +98,7 @@ func redirectToClient(c *gin.Context, user *goth.User) {
 			}
 
 			// 创建一个用户
-			if err = auth.CreateUserTx(tx, &userInfo); err != nil {
+			if err = userService.Core.CreateUserTx(tx, &userInfo); err != nil {
 				return
 			}
 
@@ -157,7 +157,7 @@ func redirectToClient(c *gin.Context, user *goth.User) {
 		}
 
 		// 创建一个用户
-		if err = auth.CreateUserTx(tx, &userInfo); err != nil {
+		if err = userService.Core.CreateUserTx(tx, &userInfo); err != nil {
 			return
 		}
 	}

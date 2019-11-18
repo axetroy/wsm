@@ -3,10 +3,10 @@ package role
 
 import (
 	"errors"
-	"github.com/axetroy/terminal/core/exception"
-	"github.com/axetroy/terminal/core/helper"
-	"github.com/axetroy/terminal/core/rbac/accession"
-	"github.com/axetroy/terminal/core/schema"
+	"github.com/axetroy/terminal/internal/app/exception"
+	"github.com/axetroy/terminal/internal/app/schema"
+	"github.com/axetroy/terminal/internal/library/helper"
+	"github.com/axetroy/terminal/internal/library/rbac/accession"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

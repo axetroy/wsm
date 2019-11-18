@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"github.com/axetroy/terminal/core/controller"
-	"github.com/axetroy/terminal/core/exception"
-	"github.com/axetroy/terminal/core/helper"
-	"github.com/axetroy/terminal/core/middleware"
-	"github.com/axetroy/terminal/core/model"
-	"github.com/axetroy/terminal/core/schema"
-	"github.com/axetroy/terminal/core/service/database"
+	"github.com/axetroy/terminal/internal/app/exception"
+	"github.com/axetroy/terminal/internal/app/middleware"
+	"github.com/axetroy/terminal/internal/app/model"
+	"github.com/axetroy/terminal/internal/app/schema"
+	"github.com/axetroy/terminal/internal/library/database"
+	"github.com/axetroy/terminal/internal/library/helper"
 	"github.com/gin-gonic/gin"
 	"github.com/mitchellh/mapstructure"
 )

@@ -2,7 +2,7 @@
 package user
 
 import (
-	"github.com/axetroy/terminal/core/schema"
+	"github.com/axetroy/terminal/internal/app/schema"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

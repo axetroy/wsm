@@ -2,7 +2,7 @@
 package controller
 
 import (
-	"github.com/axetroy/terminal/core/middleware"
+	"github.com/axetroy/terminal/internal/app/middleware"
 	"github.com/gin-gonic/gin"
 )
 

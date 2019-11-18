@@ -2,9 +2,9 @@ package tester
 
 import (
 	"github.com/axetroy/mocker"
-	"github.com/axetroy/terminal/core/server/user_server"
+	"github.com/axetroy/terminal/internal/app"
 )
 
 var (
-	HttpUser = mocker.New(user_server.UserRouter)
+	HttpUser = mocker.New(app.UserRouter)
 )
