@@ -23,7 +23,10 @@
   Terminal.applyAddon(webLinks);
   Terminal.applyAddon(search);
   // The terminal
-  const term = new Terminal();
+  const term = new Terminal({
+    // 每列 9 个像素宽
+    cols: 100
+  });
   term.open(container);
   // Open the websocket connection to the backend
   const protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';

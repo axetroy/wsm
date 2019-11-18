@@ -51,8 +51,8 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		Port:     "2222",
 		Username: "root",
 		Password: "qiuyuewu8q",
-		Width:    10000,
-		Height:   10000,
+		Width:    200,
+		Height:   50,
 	})
 
 	if err != nil {

@@ -2,15 +2,13 @@ package session
 
 import (
 	"fmt"
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 	"io"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
-
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 type Terminal struct {
@@ -82,7 +80,7 @@ func (t *Terminal) Close() error {
 func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) error {
 	defer func() {
 		if t.exitMsg == "" {
-			_, _ = fmt.Fprintln(stdout, "the connection was closed on the remote side on ", time.Now().Format(time.RFC822))
+			//_, _ = fmt.Fprintln(stdout, "the connection was closed on the remote side on ", time.Now().Format(time.RFC822))
 		} else {
 			_, _ = fmt.Fprintln(stdout, t.exitMsg)
 		}
@@ -113,8 +111,16 @@ func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) 
 		return err
 	}
 
-	t.Session.Stdout = stdout
-	t.Session.Stderr = stderr
+	if t.stdout, err = t.Session.StdoutPipe(); err != nil {
+		return err
+	}
+
+	if t.stderr, err = t.Session.StderrPipe(); err != nil {
+		return err
+	}
+
+	go io.Copy(stderr, t.stderr)
+	go io.Copy(stdout, t.stdout)
 
 	go func() {
 		buf := make([]byte, 128)
