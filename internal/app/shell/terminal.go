@@ -1,7 +1,7 @@
 package shell
 
 import (
-	"github.com/axetroy/terminal/session"
+	"github.com/axetroy/terminal/internal/library/session"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
