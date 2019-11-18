@@ -21,13 +21,12 @@ require (
 	github.com/markbates/goth v1.59.0
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mitchellh/mapstructure v1.1.2
-	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
 	github.com/sec51/convert v0.0.0-20190309075348-ebe586d87951 // indirect
 	github.com/sec51/cryptoengine v0.0.0-20180911112225-2306d105a49e // indirect
 	github.com/sec51/gf256 v0.0.0-20160126143050-2454accbeb9e // indirect
 	github.com/sec51/qrcode v0.0.0-20160126144534-b7779abbcaf1 // indirect
 	github.com/sec51/twofactor v1.0.0 // indirect
-	github.com/sirupsen/logrus v1.2.0
 	github.com/stretchr/testify v1.3.0
 	github.com/urfave/cli v1.22.1
 	golang.org/x/crypto v0.0.0-20191117063200-497ca9f6d64f
