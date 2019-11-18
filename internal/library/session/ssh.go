@@ -150,7 +150,7 @@ func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) 
 	return nil
 }
 
-func New(config Config) (*Terminal, error) {
+func NewTerminal(config Config) (*Terminal, error) {
 	sshConfig := &ssh.ClientConfig{
 		User: config.Username,
 		Auth: []ssh.AuthMethod{

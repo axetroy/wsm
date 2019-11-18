@@ -46,7 +46,7 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		return
 	}
 
-	terminal, err := session.New(session.Config{
+	terminal, err := session.NewTerminal(session.Config{
 		Host:     "111.230.30.41",
 		Port:     "2222",
 		Username: "root",
