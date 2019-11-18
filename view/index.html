@@ -28,7 +28,7 @@
   // Open the websocket connection to the backend
   const protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
   const port = location.port ? `:${location.port}` : '';
-  const socketUrl = `${protocol}${location.hostname}${port}/socket`;
+  const socketUrl = `${protocol}${location.hostname}${port}/v1/shell`;
   const socket = new WebSocket(socketUrl);
   // Attach the socket to the terminal
   socket.onopen = (ev) => { term.attach(socket); };
