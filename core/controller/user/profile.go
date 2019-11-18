@@ -120,17 +120,6 @@ func GetProfileByAdmin(c controller.Context, userId string) (res schema.Response
 
 	tx = database.Db.Begin()
 
-	adminInfo := model.Admin{
-		Id: c.Uid,
-	}
-
-	if err = tx.Last(&adminInfo).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = exception.AdminNotExist
-		}
-		return
-	}
-
 	user := model.User{Id: userId}
 
 	if err = tx.Last(&user).Error; err != nil {
@@ -288,18 +277,6 @@ func UpdateProfileByAdmin(c controller.Context, userId string, input UpdateProfi
 	}
 
 	tx = database.Db.Begin()
-
-	// 检查是不是管理员
-	adminInfo := model.Admin{
-		Id: c.Uid,
-	}
-
-	if err = tx.First(&adminInfo).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = exception.AdminNotExist
-		}
-		return
-	}
 
 	updated := model.User{}
 

@@ -108,19 +108,6 @@ func SignIn(c controller.Context, input SignInParams) (res schema.Response) {
 		data.Token = t
 	}
 
-	// 写入登陆记录
-	log := model.LoginLog{
-		Uid:     userInfo.Id,                       // 用户ID
-		Type:    model.LoginLogTypeUserName,        // 默认用户名登陆
-		Command: model.LoginLogCommandLoginSuccess, // 登陆成功
-		Client:  c.UserAgent,                       // 用户的 userAgent
-		LastIp:  c.Ip,                              // 用户的IP
-	}
-
-	if err = tx.Create(&log).Error; err != nil {
-		return
-	}
-
 	return
 }
 
@@ -180,19 +167,6 @@ func SignInWithOAuth(c controller.Context, input SignInWithOAuthParams) (res sch
 		return
 	} else {
 		data.Token = t
-	}
-
-	// 写入登陆记录
-	log := model.LoginLog{
-		Uid:     userInfo.Id,                       // 用户ID
-		Type:    model.LoginLogTypeUserName,        // 默认用户名登陆
-		Command: model.LoginLogCommandLoginSuccess, // 登陆成功
-		Client:  c.UserAgent,                       // 用户的 userAgent
-		LastIp:  c.Ip,                              // 用户的IP
-	}
-
-	if err = tx.Create(&log).Error; err != nil {
-		return
 	}
 
 	data.CreatedAt = userInfo.CreatedAt.Format(time.RFC3339Nano)

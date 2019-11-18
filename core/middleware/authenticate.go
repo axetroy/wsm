@@ -2,11 +2,12 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/axetroy/terminal/core/exception"
 	"github.com/axetroy/terminal/core/schema"
 	"github.com/axetroy/terminal/core/service/token"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 var (

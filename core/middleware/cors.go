@@ -1,9 +1,10 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -18,7 +19,6 @@ var (
 		"Cache-Control",
 		"X-CSRF-Token",
 		"X-Requested-With",
-		"X-Wechat-Binding", // 激活微信帐号
 	}, ",")
 	allowMethods = strings.Join([]string{
 		http.MethodOptions,

@@ -7,8 +7,6 @@ import (
 
 	"github.com/axetroy/terminal/core/config"
 	"github.com/axetroy/terminal/core/model"
-	"github.com/axetroy/terminal/core/service/dotenv"
-	"github.com/axetroy/terminal/core/util"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 )
@@ -36,41 +34,15 @@ func init() {
 
 		// Migrate the schema
 		db.AutoMigrate(
-			new(model.Admin),            // 管理员表
-			new(model.User),             // 用户表
-			new(model.Role),             // 角色表 - RBAC
-			new(model.LoginLog),         // 登陆成功表
-			new(model.Notification),     // 系统消息
-			new(model.NotificationMark), // 系统消息的已读记录
-			new(model.Message),          // 个人消息
-			new(model.Menu),             // 后台管理员菜单
-			new(model.OAuth),            // oAuth2 表
+			new(model.User),  // 用户表
+			new(model.Role),  // 角色表 - RBAC
+			new(model.OAuth), // oAuth2 表
 		)
 
 		log.Println("数据库同步完成.")
 	}
 
 	Db = db
-
-	// 确保超级管理员账号存在
-	if err := db.First(&model.Admin{Username: "admin", IsSuper: true}).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = db.Create(&model.Admin{
-				Username:  "admin",
-				Name:      "admin",
-				Password:  util.GeneratePassword(dotenv.GetByDefault("ADMIN_DEFAULT_PASSWORD", "admin")),
-				Accession: []string{},
-				Status:    model.AdminStatusInit,
-				IsSuper:   true,
-			}).Error
-
-			if err != nil {
-				log.Panicln(err)
-			}
-		} else {
-			log.Panicln(err)
-		}
-	}
 
 	defaultRole := model.Role{Name: model.DefaultUser.Name}
 

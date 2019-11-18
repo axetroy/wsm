@@ -2,11 +2,12 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/axetroy/terminal/core/config"
 	"github.com/axetroy/terminal/core/exception"
 	"github.com/axetroy/terminal/core/schema"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // 优雅退出中间件
