@@ -1,14 +1,13 @@
 package util
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/axetroy/terminal/internal/app/config"
-	"github.com/axetroy/terminal/internal/library/dotenv"
-	"github.com/fatih/color"
 	"log"
 	"os"
 	"runtime"
+
+	"github.com/axetroy/terminal/internal/library/dotenv"
+	"github.com/fatih/color"
 )
 
 func init() {
@@ -16,14 +15,6 @@ func init() {
 
 	if err != nil {
 		log.Panicln(err)
-	}
-}
-
-func printJSON(o interface{}) {
-	if output, err := json.Marshal(o); err != nil {
-		log.Fatal(err)
-	} else {
-		fmt.Println(string(output))
 	}
 }
 
@@ -41,16 +32,4 @@ func PrintEnv() {
 	for _, e := range envs {
 		fmt.Println(e)
 	}
-
-	fmt.Println(color.GreenString("=== Configuration Common ==="))
-	printJSON(config.Common)
-
-	fmt.Println(color.GreenString("=== Configuration Upload ==="))
-	printJSON(config.Upload)
-
-	fmt.Println(color.GreenString("=== Configuration Database ==="))
-	printJSON(config.Database)
-
-	fmt.Println(color.GreenString("=== Configuration User ==="))
-	printJSON(config.User)
 }
