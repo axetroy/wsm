@@ -44,7 +44,7 @@ func (u *Service) LoginWithUsernameRouter(c *gin.Context) {
 		return
 	}
 
-	res = u.LoginWithUsername(controller.NewContext(c), input)
+	res = u.LoginWithUsername(controller.NewContextFromGinContext(c), input)
 }
 
 func (u *Service) LoginWithUsername(c controller.Context, input SignInParams) (res schema.Response) {

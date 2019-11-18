@@ -2,9 +2,9 @@
 package model
 
 import (
-	"github.com/axetroy/terminal/internal/app/exception"
 	"time"
 
+	"github.com/axetroy/terminal/internal/app/exception"
 	"github.com/axetroy/terminal/internal/library/util"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"

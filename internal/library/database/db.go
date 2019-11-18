@@ -36,6 +36,7 @@ func init() {
 		db.AutoMigrate(
 			new(model.User),  // 用户表
 			new(model.OAuth), // oAuth2 表
+			new(model.Host),  // 服务器表
 		)
 
 		log.Println("数据库同步完成.")
@@ -44,10 +45,9 @@ func init() {
 	Db = db
 }
 
-func DeleteRowByTable(tableName string, field string, value interface{}) {
+func DeleteRowByTable(tableName string, field string, value interface{}) (err error) {
 	var (
-		err error
-		tx  *gorm.DB
+		tx *gorm.DB
 	)
 
 	defer func() {
@@ -67,4 +67,6 @@ func DeleteRowByTable(tableName string, field string, value interface{}) {
 	if err = tx.Exec(raw).Error; err != nil {
 		return
 	}
+
+	return
 }

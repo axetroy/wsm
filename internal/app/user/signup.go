@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"github.com/lib/pq"
 	"net/http"
 	"time"
 
@@ -110,6 +111,7 @@ func (u *Service) SignUpWithUsername(input SignUpWithUsernameParams) (res schema
 		Phone:    nil,
 		Email:    nil,
 		Gender:   model.GenderUnknown,
+		Role:     pq.StringArray{},
 	}
 
 	if err = u.CreateUserTx(tx, &userInfo); err != nil {

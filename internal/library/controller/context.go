@@ -14,10 +14,18 @@ type Context struct {
 	Ip        string `json:"ip"`         // IP地址
 }
 
-func NewContext(c *gin.Context) Context {
+func NewContextFromGinContext(c *gin.Context) Context {
 	return Context{
 		Uid:       c.GetString(middleware.ContextUidField),
 		UserAgent: c.GetHeader("user-agent"),
 		Ip:        c.ClientIP(),
+	}
+}
+
+func NewContext(uid string, userAgent string, ip string) Context {
+	return Context{
+		Uid:       uid,
+		UserAgent: userAgent,
+		Ip:        ip,
 	}
 }

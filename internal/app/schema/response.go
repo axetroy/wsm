@@ -1,6 +1,13 @@
 // Copyright 2019 Axetroy. All rights reserved. MIT license.
 package schema
 
+import (
+	"encoding/json"
+	"errors"
+
+	"github.com/axetroy/terminal/internal/library/util"
+)
+
 type Meta struct {
 	Limit    int     `json:"limit"`    // 当前请求获取多少条数据， 默认 10
 	Page     int     `json:"page"`     // 当前第几页，默认 0 开始
@@ -19,6 +26,24 @@ type Response struct {
 	Message string      `json:"message"` // 附带的消息，接口请求错误时，一般都会有错误信息
 	Data    interface{} `json:"data"`    // 接口附带的数据
 	Status  int         `json:"status"`  // 状态码，非 1 状态码则为错误
+}
+
+func (r Response) Decode(dest interface{}) (err error) {
+	if !util.IsPoint(dest) {
+		err = errors.New("decode: dest expect a point")
+		return
+	}
+
+	var b []byte
+	if b, err = json.Marshal(r.Data); err != nil {
+		return
+	}
+
+	if err = json.Unmarshal(b, dest); err != nil {
+		return
+	}
+
+	return
 }
 
 type List struct {

@@ -7,6 +7,7 @@ import (
 	"path"
 
 	"github.com/axetroy/terminal/internal/app/config"
+	"github.com/axetroy/terminal/internal/app/host"
 	"github.com/axetroy/terminal/internal/app/middleware"
 	"github.com/axetroy/terminal/internal/app/oauth2"
 	"github.com/axetroy/terminal/internal/app/schema"
@@ -64,10 +65,17 @@ func init() {
 			authRouter.POST("/signin", user.Core.LoginWithUsernameRouter)  // 登陆账号
 		}
 
+		// host 类
+		{
+			hostRouter := v1.Group("/host")
+			hostRouter.POST("", middleware.Authenticate(false), host.Core.CreateHostRouter) // 创建服务器
+		}
+
+		// shell 类
 		{
 			shellRouter := v1.Group("/shell")
 			shellRouter.GET("/demo", shell.Core.ExampleRouter)
-			shellRouter.GET("", shell.Core.StartTerminalRouter)
+			shellRouter.GET("", middleware.Authenticate(false), shell.Core.StartTerminalRouter)
 		}
 
 		// oAuth2 认证

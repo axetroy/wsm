@@ -2,10 +2,11 @@
 package token
 
 import (
+	"strings"
+
 	"github.com/axetroy/terminal/internal/app/exception"
 	"github.com/axetroy/terminal/internal/library/util"
 	"github.com/dgrijalva/jwt-go"
-	"strings"
 )
 
 // parse jwt token
