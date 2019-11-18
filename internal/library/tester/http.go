@@ -6,5 +6,5 @@ import (
 )
 
 var (
-	HttpUser = mocker.New(app.UserRouter)
+	Http = mocker.New(app.UserRouter)
 )
