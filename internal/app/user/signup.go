@@ -14,7 +14,6 @@ import (
 	"github.com/axetroy/terminal/internal/library/validator"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"github.com/lib/pq"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -108,7 +107,6 @@ func (u *Service) SignUpWithUsername(input SignUpWithUsernameParams) (res schema
 		Nickname: &input.Username,
 		Password: util.GeneratePassword(input.Password),
 		Status:   model.UserStatusInit,
-		Role:     pq.StringArray{model.DefaultUser.Name},
 		Phone:    nil,
 		Email:    nil,
 		Gender:   model.GenderUnknown,

@@ -35,7 +35,6 @@ func init() {
 		// Migrate the schema
 		db.AutoMigrate(
 			new(model.User),  // 用户表
-			new(model.Role),  // 角色表 - RBAC
 			new(model.OAuth), // oAuth2 表
 		)
 
@@ -43,30 +42,6 @@ func init() {
 	}
 
 	Db = db
-
-	defaultRole := model.Role{Name: model.DefaultUser.Name}
-
-	// 确保有默认的角色
-	if err := db.First(&defaultRole).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = db.Create(&model.Role{
-				Name:        model.DefaultUser.Name,
-				Description: model.DefaultUser.Description,
-				Accession:   model.DefaultUser.AccessionArray(),
-				BuildIn:     true,
-			}).Error
-		} else {
-			log.Panicln(err)
-		}
-	} else {
-		// 如果角色已存在，则同步角色的权限
-		if err := db.Model(&defaultRole).Update(&model.Role{
-			Accession: model.DefaultUser.AccessionArray(),
-		}).Error; err != nil {
-			log.Panicln(err)
-		}
-	}
-
 }
 
 func DeleteRowByTable(tableName string, field string, value interface{}) {
