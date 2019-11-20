@@ -68,15 +68,16 @@ func init() {
 		// host 类
 		{
 			hostRouter := v1.Group("/host")
-			hostRouter.POST("", middleware.Authenticate(false), host.Core.CreateHostRouter) // 创建服务器
-			hostRouter.PUT("", middleware.Authenticate(false), host.Core.UpdateHostRouter)  // 更新服务器
+			hostRouter.POST("", userAuthMiddleware, host.Core.CreateHostRouter)      // 创建服务器
+			hostRouter.PUT("", userAuthMiddleware, host.Core.UpdateHostRouter)       // 更新服务器
+			hostRouter.GET("/_/:id", userAuthMiddleware, host.Core.UpdateHostRouter) // 获取服务器信息
 		}
 
 		// shell 类
 		{
 			shellRouter := v1.Group("/shell")
 			shellRouter.GET("/demo", shell.Core.ExampleRouter)
-			shellRouter.GET("", middleware.Authenticate(false), shell.Core.StartTerminalRouter)
+			shellRouter.GET("", userAuthMiddleware, shell.Core.StartTerminalRouter)
 		}
 
 		// oAuth2 认证
