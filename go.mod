@@ -12,11 +12,11 @@ require (
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/gorilla/mux v1.6.2
-	github.com/gorilla/websocket v1.4.0
+	github.com/gorilla/websocket v1.4.1
 	github.com/holdno/snowFlakeByGo v0.0.0-20180510033652-d23f8a8cadd7
 	github.com/jinzhu/gorm v1.9.11
 	github.com/joho/godotenv v1.3.0
-	github.com/jordan-wright/email v0.0.0-20190819015918-041e0cec78b0
+	github.com/jordan-wright/email v0.0.0-20190819015918-041e0cec78b0 // indirect
 	github.com/lib/pq v1.2.0
 	github.com/markbates/goth v1.59.0
 	github.com/mattn/go-colorable v0.1.4 // indirect
