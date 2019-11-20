@@ -16,7 +16,7 @@ require (
 	github.com/holdno/snowFlakeByGo v0.0.0-20180510033652-d23f8a8cadd7
 	github.com/jinzhu/gorm v1.9.11
 	github.com/joho/godotenv v1.3.0
-	github.com/jordan-wright/email v0.0.0-20190819015918-041e0cec78b0
+	github.com/jordan-wright/email v0.0.0-20190819015918-041e0cec78b0 // indirect
 	github.com/lib/pq v1.2.0
 	github.com/markbates/goth v1.59.0
 	github.com/mattn/go-colorable v0.1.4 // indirect
@@ -29,5 +29,5 @@ require (
 	github.com/sec51/twofactor v1.0.0 // indirect
 	github.com/stretchr/testify v1.3.0
 	github.com/urfave/cli v1.22.1
-	golang.org/x/crypto v0.0.0-20191117063200-497ca9f6d64f
+	golang.org/x/crypto v0.0.0-20191119213627-4f8c1d86b1ba
 )
