@@ -49,8 +49,6 @@ github.com/jinzhu/gorm
 github.com/jinzhu/inflection
 # github.com/joho/godotenv v1.3.0
 github.com/joho/godotenv
-# github.com/jordan-wright/email v0.0.0-20190819015918-041e0cec78b0
-github.com/jordan-wright/email
 # github.com/json-iterator/go v1.1.6
 github.com/json-iterator/go
 # github.com/lib/pq v1.2.0
@@ -83,7 +81,7 @@ github.com/pmezard/go-difflib/difflib
 github.com/russross/blackfriday/v2
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
 github.com/shurcooL/sanitized_anchor_name
-# github.com/stretchr/testify v1.3.0
+# github.com/stretchr/testify v1.4.0
 github.com/stretchr/testify/assert
 # github.com/ugorji/go v1.1.4
 github.com/ugorji/go/codec
