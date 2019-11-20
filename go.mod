@@ -27,7 +27,7 @@ require (
 	github.com/sec51/gf256 v0.0.0-20160126143050-2454accbeb9e // indirect
 	github.com/sec51/qrcode v0.0.0-20160126144534-b7779abbcaf1 // indirect
 	github.com/sec51/twofactor v1.0.0 // indirect
-	github.com/stretchr/testify v1.3.0
+	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v1.22.1
 	golang.org/x/crypto v0.0.0-20191117063200-497ca9f6d64f
 )
