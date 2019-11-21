@@ -11,7 +11,7 @@ require (
 	github.com/fatih/color v1.7.0
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-redis/redis v6.15.6+incompatible
-	github.com/gorilla/mux v1.6.2
+	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
 	github.com/holdno/snowFlakeByGo v0.0.0-20180510033652-d23f8a8cadd7
 	github.com/jinzhu/gorm v1.9.11
