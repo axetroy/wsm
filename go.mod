@@ -28,6 +28,6 @@ require (
 	github.com/sec51/qrcode v0.0.0-20160126144534-b7779abbcaf1 // indirect
 	github.com/sec51/twofactor v1.0.0 // indirect
 	github.com/stretchr/testify v1.4.0
-	github.com/urfave/cli v1.22.1
+	github.com/urfave/cli v1.22.2
 	golang.org/x/crypto v0.0.0-20191119213627-4f8c1d86b1ba
 )
