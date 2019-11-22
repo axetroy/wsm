@@ -2,9 +2,10 @@
 package token
 
 import (
+	"time"
+
 	"github.com/axetroy/terminal/internal/library/util"
 	"github.com/dgrijalva/jwt-go"
-	"time"
 )
 
 // generate jwt token

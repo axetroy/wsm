@@ -36,46 +36,4 @@ var (
 	RequirePayPassword       = New("请输入交易密码", 200014)
 	DuplicateBinding         = New("帐号重复绑定", 200015)
 	RenameUserNameFail       = New("无法重命名用户名", 200016)
-
-	// 钱包
-	NotEnoughBalance = New("钱包余额不足", 0)
-	InvalidWallet    = New("无效的钱包", 0)
-
-	// 上传
-	RequireFile    = New("请上传文件", 0)
-	NotSupportType = New("不支持该文件类型", 0)
-	OutOfSize      = New("超出文件大小限制", 0)
-
-	// 地址
-	AddressNotExist = New("地址记录不存在", 0)
-
-	// 管理员
-	AdminExist    = New("管理员已存在", 0)
-	AdminNotExist = New("管理员不存在", 0)
-	AdminNotSuper = New("只有超级管理员才能操作", 0)
-
-	// banner
-	BannerInvalidPlatform = New("无效的平台", 0)
-	BannerNotExist        = New("不存在横幅", 0)
-
-	// 帮助中心
-	HelpParentNotExist = New("父级不存在", 0)
-
-	// 邀请
-	InviteNotExist = New("邀请记录不存在", 0)
-
-	// RBAC 角色
-	RoleNotExist     = New("角色不存在", 0)
-	RoleCannotUpdate = New("无法更新角色", 0)
-	RoleHadBeenUsed  = New("角色正在被使用，无法删除", 0)
-
-	// 系统通知
-	NotificationNotExist = New("系统通知不存在", 0)
-
-	// 用户消息
-	MessageNotExist = New("用户消息不存在", 0)
-
-	// 新闻资讯
-	NewsInvalidType = New("错误的文章类型", 0)
-	NewsNotExist    = New("文章不存在", 0)
 )

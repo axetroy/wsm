@@ -2,17 +2,19 @@ package session
 
 import (
 	"fmt"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 	"io"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 type Terminal struct {
-	Session *ssh.Session
+	client  *ssh.Client
+	session *ssh.Session
 	config  Config
 	exitMsg string
 	stdout  io.Reader
@@ -62,7 +64,7 @@ func (t *Terminal) updateTerminalSize() {
 					continue
 				}
 
-				if err := t.Session.WindowChange(currTermHeight, currTermWidth); err != nil {
+				if err := t.session.WindowChange(currTermHeight, currTermWidth); err != nil {
 					fmt.Printf("Unable to send window-change reqest: %s.", err)
 					continue
 				}
@@ -74,7 +76,11 @@ func (t *Terminal) updateTerminalSize() {
 }
 
 func (t *Terminal) Close() error {
-	return t.Session.Close()
+	if err := t.session.Close(); err != nil {
+		return err
+	}
+
+	return t.client.Close()
 }
 
 func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) error {
@@ -101,21 +107,21 @@ func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) 
 		termType = "xterm-256color"
 	}
 
-	if err = t.Session.RequestPty(termType, t.config.Height, t.config.Width, ssh.TerminalModes{}); err != nil {
+	if err = t.session.RequestPty(termType, t.config.Height, t.config.Width, ssh.TerminalModes{}); err != nil {
 		return err
 	}
 
 	//t.updateTerminalSize()
 
-	if t.stdin, err = t.Session.StdinPipe(); err != nil {
+	if t.stdin, err = t.session.StdinPipe(); err != nil {
 		return err
 	}
 
-	if t.stdout, err = t.Session.StdoutPipe(); err != nil {
+	if t.stdout, err = t.session.StdoutPipe(); err != nil {
 		return err
 	}
 
-	if t.stderr, err = t.Session.StderrPipe(); err != nil {
+	if t.stderr, err = t.session.StderrPipe(); err != nil {
 		return err
 	}
 
@@ -141,13 +147,13 @@ func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) 
 		}
 	}()
 
-	if err = t.Session.Shell(); err != nil {
+	if err = t.session.Shell(); err != nil {
 		return err
 	}
 
 	quit := make(chan int)
 	go func() {
-		if err = t.Session.Wait(); err != nil {
+		if err = t.session.Wait(); err != nil {
 			return
 		}
 		quit <- 1
@@ -179,8 +185,9 @@ func NewTerminal(config Config) (*Terminal, error) {
 	}
 
 	s := Terminal{
+		client:  client,
 		config:  config,
-		Session: session,
+		session: session,
 	}
 
 	return &s, nil
