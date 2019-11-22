@@ -1,0 +1,26 @@
+version: '3'
+services:
+  # 数据库
+  pg:
+    image: postgres:9.6.16-alpine
+    restart: always
+    volumes:
+      - "./volumes/pg:/var/lib/postgresql/data"
+    ports:
+      - 54321:5432
+    environment:
+      - POSTGRES_USER=terminal # 用户名
+      - POSTGRES_PASSWORD=terminal # 数据库密码
+      - POSTGRES_DB=terminal # 数据库名
+
+  # 缓存
+  redis:
+    image: redis:5.0.7-alpine
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - "./volumes/redis:/data"
+    environment:
+      - REDIS_PASSWORD=password
+    command: [ "redis-server", "--requirepass", "password" ]
