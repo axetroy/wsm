@@ -8,7 +8,7 @@ require (
 	github.com/axetroy/mocker v1.1.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fatih/color v1.7.0
-	github.com/gin-gonic/gin v1.4.0
+	github.com/gin-gonic/gin v1.5.0
 	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
@@ -22,5 +22,5 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v1.22.2
-	golang.org/x/crypto v0.0.0-20191119213627-4f8c1d86b1ba
+	golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
 )
