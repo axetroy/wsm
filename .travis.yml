@@ -1,0 +1,42 @@
+language: go
+
+sudo: required
+
+go:
+  - "1.13.1"
+
+dist: trusty
+
+addons:
+  postgresql: "9.6.6"
+
+env:
+  global:
+    - DB_DRIVER=postgres
+    - DB_NAME=gotest
+    - DB_USERNAME=postgres
+    - DB_PASSWORD=postgres
+    - DB_PORT=5432
+    - DB_SYNC=on
+
+services:
+  - postgresql
+
+before_script:
+  # restart postgres
+  - sudo /etc/init.d/postgresql stop
+  - sudo /etc/init.d/postgresql start
+  # start postgres
+  - psql -c 'create database gotest;' -U postgres
+
+
+script:
+  - make test
+
+after_success:
+  # report code cover
+  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/mattn/goveralls
+  - $GOPATH/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - make build
+  - ls -lh ./bin
