@@ -89,18 +89,17 @@ func (s *Service) TransferHost(c controller.Context, hostID string, userID strin
 	hostRecordInfo := db.HostRecord{HostID: hostID, UserID: userID}
 
 	if err = tx.Where(&hostRecordInfo).First(&hostRecordInfo).Error; err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return
+		if err == gorm.ErrRecordNotFound {
+			// 如果未存在，则创建
+			if err = tx.Create(db.HostRecord{
+				HostID: hostID,
+				UserID: userID,
+				Type:   db.HostRecordTypeOwner,
+			}).Error; err != nil {
+				return
+			}
 		}
-
-		// 如果未存在，则创建
-		if err = tx.Create(db.HostRecord{
-			HostID: hostID,
-			UserID: userID,
-			Type:   db.HostRecordTypeOwner,
-		}).Error; err != nil {
-			return
-		}
+		return
 	}
 
 	// 如果已是协作者，则更新资料

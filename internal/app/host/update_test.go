@@ -18,6 +18,7 @@ func TestService_UpdateHost(t *testing.T) {
 	defer func() {
 		_ = db.DeleteRowByTable(new(db.User).TableName(), "id", userInfo.Id)
 		_ = db.DeleteRowByTable(new(db.Host).TableName(), "id", hostInfo.Id)
+		_ = db.DeleteRowByTable(new(db.HostRecord).TableName(), "host_id", hostInfo.Id)
 	}()
 
 	newHost := "1.1.1.1"
@@ -25,6 +26,9 @@ func TestService_UpdateHost(t *testing.T) {
 	r := host.Core.UpdateHost(controller.NewContext(userInfo.Id, "", ""), hostInfo.Id, host.UpdateHostParams{
 		Host: &newHost,
 	})
+
+	assert.Equal(t, schema.StatusSuccess, r.Status)
+	assert.Equal(t, "", r.Message)
 
 	newHostInfo := schema.Host{}
 
