@@ -40,32 +40,18 @@ var upgrader = websocket.Upgrader{} // use default options
 
 func (s *Service) StartTerminalRouter(c *gin.Context) {
 	// search for host
-	hostID := c.Query("id")
+	hostID := c.Query("host_id")
 
-	controllerContext := controller.NewContextFromGinContext(c)
+	ctx := controller.NewContextFromGinContext(c)
 
-	if hostID == "" {
-		c.String(http.StatusBadRequest, "Host not provide")
+	recordInfo := db.HostRecord{Id: hostID, UserID: ctx.Uid}
+
+	if err := db.Db.Where(&recordInfo).Preload("Host").First(&recordInfo).Error; err != nil {
+		c.String(http.StatusBadRequest, exception.NoPermission.Error())
 		return
 	}
 
-	hostInfo := db.Host{
-		Id: hostID,
-	}
-
-	if err := db.Db.Model(&hostInfo).Where(&hostInfo).First(&hostInfo).Error; err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if hostInfo.OwnerID != controllerContext.Uid {
-		recordInfo := db.HostRecord{HostID: hostID, UserID: controllerContext.Uid}
-		if err := db.Db.Where(&recordInfo).First(&recordInfo).Error; err != nil {
-			c.String(http.StatusBadRequest, exception.NoPermission.Error())
-			return
-		}
-		return
-	}
+	hostInfo := recordInfo.Host
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 

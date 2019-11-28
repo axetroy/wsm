@@ -65,7 +65,7 @@ func init() {
 			authRouter.POST("/signin", user.Core.LoginWithUsernameRouter)  // 登陆账号
 		}
 
-		// host 类
+		// 服务器管理
 		{
 			hostRouter := v1.Group("/host")
 			hostRouter.GET("", userAuthMiddleware, host.Core.QueryOperationalServerRouter)                                                    // 获取我可以操作的服务器信息列表
@@ -82,7 +82,7 @@ func init() {
 		{
 			shellRouter := v1.Group("/shell")
 			shellRouter.GET("/demo", shell.Core.ExampleRouter)
-			shellRouter.GET("", userAuthMiddleware, shell.Core.StartTerminalRouter)
+			shellRouter.GET("/connect/:host_id", userAuthMiddleware, shell.Core.StartTerminalRouter) // 开启终端，连接 websocket
 		}
 
 		// oAuth2 认证
@@ -95,7 +95,7 @@ func init() {
 		// 用户类
 		{
 			userRouter := v1.Group("/user")
-			userRouter.Use(userAuthMiddleware)                          // 用户登出
+			userRouter.Use(userAuthMiddleware)
 			userRouter.GET("/profile", user.Core.GetProfileRouter)      // 获取用户详细信息
 			userRouter.PUT("/profile", user.Core.UpdateProfileRouter)   // 更新用户资料
 			userRouter.PUT("/password", user.Core.UpdatePasswordRouter) // 更新登陆密码
