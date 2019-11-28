@@ -21,12 +21,12 @@ import (
 
 func redirectToClient(c *gin.Context, user *goth.User) {
 	var (
-		err       error
-		tx        *gorm.DB
-		finallURL string
+		err      error
+		tx       *gorm.DB
+		finalURL string
 	)
 
-	fontendURL := dotenv.Get("OAUTH_REDIRECT_URL")
+	frontendURL := dotenv.Get("OAUTH_REDIRECT_URL")
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -51,11 +51,11 @@ func redirectToClient(c *gin.Context, user *goth.User) {
 		if err != nil {
 			c.String(http.StatusBadRequest, err.Error())
 		} else {
-			c.Redirect(http.StatusTemporaryRedirect, finallURL)
+			c.Redirect(http.StatusTemporaryRedirect, finalURL)
 		}
 	}()
 
-	uri, err := url.Parse(fontendURL)
+	uri, err := url.Parse(frontendURL)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, "Invalid callback url")
@@ -168,7 +168,7 @@ func redirectToClient(c *gin.Context, user *goth.User) {
 
 	uri.Query().Set("access_token", hash)
 
-	finallURL = uri.String()
+	finalURL = uri.String()
 }
 
 func (s *Service) AuthRouter(c *gin.Context) {
