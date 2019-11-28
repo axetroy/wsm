@@ -94,7 +94,7 @@ github.com/stretchr/testify/assert
 github.com/ugorji/go/codec
 # github.com/urfave/cli v1.22.2
 github.com/urfave/cli
-# golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
+# golang.org/x/crypto v0.0.0-20191128160524-b544559bb6d1
 golang.org/x/crypto/chacha20
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
