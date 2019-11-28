@@ -22,8 +22,7 @@ func TestService_UpdateHost(t *testing.T) {
 
 	newHost := "1.1.1.1"
 
-	r := host.Core.UpdateHost(controller.NewContext(userInfo.Id, "", ""), host.UpdateHostParams{
-		Id:   hostInfo.Id,
+	r := host.Core.UpdateHost(controller.NewContext(userInfo.Id, "", ""), hostInfo.Id, host.UpdateHostParams{
 		Host: &newHost,
 	})
 

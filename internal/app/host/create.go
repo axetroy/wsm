@@ -2,6 +2,8 @@ package host
 
 import (
 	"errors"
+	"fmt"
+	"net"
 	"time"
 
 	"github.com/axetroy/terminal/internal/app/db"
@@ -29,7 +31,7 @@ func (s *Service) CreateHostRouter(c *gin.Context) {
 		res   = schema.Response{}
 	)
 
-	defer helper.Response(&res, nil, err)
+	defer helper.Response(&res, nil, nil, err)
 
 	if err = c.ShouldBindJSON(&input); err != nil {
 		err = exception.InvalidParams
@@ -66,7 +68,7 @@ func (s *Service) CreateHost(c controller.Context, input CreateHostParams) (res 
 			}
 		}
 
-		helper.Response(&res, data, err)
+		helper.Response(&res, data, nil, err)
 	}()
 
 	if err = c.Validator(input); err != nil {
@@ -76,15 +78,21 @@ func (s *Service) CreateHost(c controller.Context, input CreateHostParams) (res 
 	tx = db.Db.Begin()
 
 	hostInfo := db.Host{
-		OwnerID:  c.Uid,
-		Host:     input.Host,
-		Port:     input.Port,
-		Username: input.Username,
-		Password: input.Password,
-		Remark:   input.Remark,
+		OwnerID:    c.Uid,
+		Name:       input.Username + "@" + net.JoinHostPort(input.Host, fmt.Sprintf("%d", input.Port)),
+		Host:       input.Host,
+		Port:       input.Port,
+		Username:   input.Username,
+		Password:   input.Password,
+		PrivateKey: "", // TODO: finish this
+		Remark:     input.Remark,
 	}
 
 	if err = tx.Create(&hostInfo).Error; err != nil {
+		return
+	}
+
+	if err = tx.Create(&db.HostRecord{UserID: c.Uid, HostID: hostInfo.Id, Type: db.HostRecordTypeOwner}).Error; err != nil {
 		return
 	}
 

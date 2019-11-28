@@ -15,7 +15,6 @@ import (
 )
 
 type UpdateHostParams struct {
-	Id       string  `json:"id"`
 	Host     *string `json:"host"`
 	Port     *uint   `json:"port"`
 	Username *string `json:"username"`
@@ -30,17 +29,19 @@ func (s *Service) UpdateHostRouter(c *gin.Context) {
 		res   = schema.Response{}
 	)
 
-	defer helper.Response(&res, nil, err)
+	defer helper.Response(&res, nil, nil, err)
 
 	if err = c.ShouldBindJSON(&input); err != nil {
 		err = exception.InvalidParams
 		return
 	}
 
-	res = s.UpdateHost(controller.NewContextFromGinContext(c), input)
+	hostID := c.Param("host_id")
+
+	res = s.UpdateHost(controller.NewContextFromGinContext(c), hostID, input)
 }
 
-func (s *Service) UpdateHost(c controller.Context, input UpdateHostParams) (res schema.Response) {
+func (s *Service) UpdateHost(c controller.Context, hostID string, input UpdateHostParams) (res schema.Response) {
 	var (
 		err          error
 		data         schema.Host
@@ -68,7 +69,7 @@ func (s *Service) UpdateHost(c controller.Context, input UpdateHostParams) (res 
 			}
 		}
 
-		helper.Response(&res, data, err)
+		helper.Response(&res, data, nil, err)
 	}()
 
 	if err = c.Validator(input); err != nil {
@@ -77,7 +78,7 @@ func (s *Service) UpdateHost(c controller.Context, input UpdateHostParams) (res 
 
 	tx = db.Db.Begin()
 
-	hostInfo := db.Host{Id: input.Id, OwnerID: c.Uid}
+	hostInfo := db.Host{Id: hostID, OwnerID: c.Uid}
 
 	updateModel := db.Host{}
 

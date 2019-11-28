@@ -73,7 +73,7 @@ func (u *Service) LoginWithUsername(c controller.Context, input SignInParams) (r
 			}
 		}
 
-		helper.Response(&res, data, err)
+		helper.Response(&res, data, nil, err)
 	}()
 
 	if err = c.Validator(input); err != nil {

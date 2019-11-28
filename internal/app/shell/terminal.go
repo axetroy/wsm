@@ -45,7 +45,7 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 	controllerContext := controller.NewContextFromGinContext(c)
 
 	if hostID == "" {
-		c.String(http.StatusNotFound, "Host not provide")
+		c.String(http.StatusBadRequest, "Host not provide")
 		return
 	}
 
@@ -53,23 +53,18 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		Id: hostID,
 	}
 
-	if err := db.Db.Model(&hostInfo).Where("id = ?", hostID).First(&hostInfo).Error; err != nil {
-		c.String(http.StatusNotFound, err.Error())
+	if err := db.Db.Model(&hostInfo).Where(&hostInfo).First(&hostInfo).Error; err != nil {
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if hostInfo.OwnerID != controllerContext.Uid {
-		isCollaboration := false
-		for _, v := range hostInfo.Collaborations {
-			if v == controllerContext.Uid {
-				isCollaboration = true
-			}
-		}
-
-		if isCollaboration == false {
-			c.String(http.StatusNotFound, exception.NoPermission.Error())
+		recordInfo := db.HostRecord{HostID: hostID, UserID: controllerContext.Uid}
+		if err := db.Db.Where(&recordInfo).First(&recordInfo).Error; err != nil {
+			c.String(http.StatusBadRequest, exception.NoPermission.Error())
 			return
 		}
+		return
 	}
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)

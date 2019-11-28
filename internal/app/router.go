@@ -68,9 +68,14 @@ func init() {
 		// host 类
 		{
 			hostRouter := v1.Group("/host")
-			hostRouter.POST("", userAuthMiddleware, host.Core.CreateHostRouter)      // 创建服务器
-			hostRouter.PUT("", userAuthMiddleware, host.Core.UpdateHostRouter)       // 更新服务器
-			hostRouter.GET("/_/:id", userAuthMiddleware, host.Core.UpdateHostRouter) // 获取服务器信息
+			hostRouter.GET("", userAuthMiddleware, host.Core.QueryOperationalServerRouter)                                                    // 获取我可以操作的服务器信息列表
+			hostRouter.POST("", userAuthMiddleware, host.Core.CreateHostRouter)                                                               // 创建服务器
+			hostRouter.PUT("/_/:host_id", userAuthMiddleware, host.Core.UpdateHostRouter)                                                     // 更新服务器
+			hostRouter.GET("/_/:host_id", userAuthMiddleware, host.Core.QueryHostRouter)                                                      // 获取服务器信息
+			hostRouter.DELETE("/_/:host_id", userAuthMiddleware, host.Core.QueryOperationalServerRouter)                                      // 删除服务器
+			hostRouter.PUT("/_/:host_id/transfer/:user_id", userAuthMiddleware, host.Core.TransferHostRouter)                                 // 转让服务器
+			hostRouter.POST("/_/:host_id/collaborator/_/:collaborator_uid", userAuthMiddleware, host.Core.AddCollaboratorToHostRouter)        // 添加协作者
+			hostRouter.DELETE("/_/:host_id/collaborator/_/:collaborator_uid", userAuthMiddleware, host.Core.RemoveCollaboratorFromHostRouter) // 删除协作者
 		}
 
 		// shell 类

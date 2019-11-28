@@ -3,6 +3,7 @@ package schema
 // 服务器的相关信息
 type HostPure struct {
 	Id       string  `json:"id"`
+	Name     string  `json:"name"`
 	OwnerID  string  `json:"owner_id"`
 	Host     string  `json:"host"`
 	Port     uint    `json:"port"`

@@ -3,7 +3,6 @@ package schema
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"regexp"
 	"strings"
 )
@@ -65,14 +64,20 @@ func (q *Query) FormatSort() (fields []Sort) {
 	return
 }
 
-func (q *Query) Order(db *gorm.DB) *gorm.DB {
+func (q *Query) orderStr() []string {
 	sorts := q.FormatSort()
 
+	arr := make([]string, 0)
+
 	for _, field := range sorts {
-		db = db.Order(fmt.Sprintf("%s %s", field.Field, field.Order))
+		arr = append(arr, fmt.Sprintf("%s %s", field.Field, field.Order))
 	}
 
-	return db
+	return arr
+}
+
+func (q *Query) Order() string {
+	return strings.Join(q.orderStr(), ", ")
 }
 
 func (q *Query) Normalize() *Query {

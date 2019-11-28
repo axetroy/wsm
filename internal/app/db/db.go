@@ -33,9 +33,10 @@ func init() {
 
 		// Migrate the schema
 		db.AutoMigrate(
-			new(User),  // 用户表
-			new(OAuth), // oAuth2 表
-			new(Host),  // 服务器表
+			new(User),       // 用户表
+			new(OAuth),      // oAuth2 表
+			new(Host),       // 服务器表
+			new(HostRecord), // 服务器许可记录
 		)
 
 		log.Println("数据库同步完成.")

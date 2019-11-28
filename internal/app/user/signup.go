@@ -75,7 +75,7 @@ func (u *Service) SignUpWithUsername(input SignUpWithUsernameParams) (res schema
 			}
 		}
 
-		helper.Response(&res, data, err)
+		helper.Response(&res, data, nil, err)
 	}()
 
 	// 参数校验

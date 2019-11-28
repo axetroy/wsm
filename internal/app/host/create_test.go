@@ -40,5 +40,5 @@ func TestService_CreateHost(t *testing.T) {
 	assert.Equal(t, uint(22), hostInfo.Port)
 	assert.Equal(t, "root", hostInfo.Username)
 	assert.Equal(t, &remark, hostInfo.Remark)
-	assert.Equal(t, &remark, hostInfo.Remark)
+	assert.Equal(t, "root@192.168.0.1:22", hostInfo.Name)
 }

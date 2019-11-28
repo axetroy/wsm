@@ -95,7 +95,7 @@ func (u *Service) GetProfile(c controller.Context) (res schema.Response) {
 			}
 		}
 
-		helper.Response(&res, data, err)
+		helper.Response(&res, data, nil, err)
 	}()
 
 	tx = db.Db.Begin()
@@ -147,7 +147,7 @@ func (u *Service) UpdateProfile(c controller.Context, input UpdateProfileParams)
 			}
 		}
 
-		helper.Response(&res, data, err)
+		helper.Response(&res, data, nil, err)
 	}()
 
 	// 参数校验

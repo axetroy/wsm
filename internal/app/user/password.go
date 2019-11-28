@@ -72,7 +72,7 @@ func (u *Service) UpdatePassword(c controller.Context, input UpdatePasswordParam
 			}
 		}
 
-		helper.Response(&res, nil, err)
+		helper.Response(&res, nil, nil, err)
 	}()
 
 	// 参数校验
