@@ -3,16 +3,16 @@ package schema
 
 // 用户自己的资料
 type ProfilePure struct {
-	Id       string   `json:"id"`
-	Username string   `json:"username"`
-	Nickname *string  `json:"nickname"`
-	Email    *string  `json:"email"`
-	Phone    *string  `json:"phone"`
-	Status   int32    `json:"status"`
-	Gender   int      `json:"gender"`
-	Avatar   string   `json:"avatar"`
-	Role     []string `json:"role"`
-	Level    int32    `json:"level"`
+	Id       string  `json:"id"`
+	Username string  `json:"username"`
+	Nickname *string `json:"nickname"`
+	//Email    *string  `json:"email"`
+	//Phone    *string  `json:"phone"`
+	//Status   int32    `json:"status"`
+	//Gender   int      `json:"gender"`
+	Avatar string `json:"avatar"`
+	//Role     []string `json:"role"`
+	//Level    int32    `json:"level"`
 }
 
 // 公开的用户资料，任何人都可以查阅
