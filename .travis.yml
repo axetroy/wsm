@@ -8,7 +8,7 @@ go:
 dist: trusty
 
 addons:
-  postgresql: "9.6.6"
+  postgresql: "12.1"
 
 env:
   global:
