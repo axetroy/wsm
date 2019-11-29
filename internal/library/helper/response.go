@@ -7,9 +7,14 @@ import (
 
 func Response(res *schema.Response, data interface{}, meta *schema.Meta, err error) {
 	if err != nil {
-		res.Data = nil
 		res.Message = err.Error()
-		res.Status = exception.GetCodeFromError(err)
+
+		if t, ok := err.(exception.Error); ok {
+			res.Status = t.Code()
+		} else {
+			res.Status = exception.Unknown.Code()
+		}
+		res.Data = nil
 		res.Meta = nil
 	} else {
 		res.Data = data

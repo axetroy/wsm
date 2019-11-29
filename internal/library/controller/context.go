@@ -17,7 +17,7 @@ type Context struct {
 
 func (c *Context) Validator(input interface{}) error {
 	if isValid, err := govalidator.ValidateStruct(input); err != nil {
-		return exception.WrapValidatorError(err)
+		return exception.New(err.Error(), exception.InvalidParams.Code())
 	} else if !isValid {
 		return exception.InvalidParams
 	}

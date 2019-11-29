@@ -23,10 +23,10 @@ const (
 )
 
 type Response struct {
-	Message string      `json:"message"` // 附带的消息，接口请求错误时，一般都会有错误信息
-	Data    interface{} `json:"data"`    // 接口附带的数据
-	Status  int         `json:"status"`  // 状态码，非 1 状态码则为错误
-	Meta    *Meta       `json:"meta"`    // 数据列表多了一个 Meta 字段
+	Message string      `json:"message"`        // 附带的消息，接口请求错误时，一般都会有错误信息
+	Data    interface{} `json:"data"`           // 接口附带的数据
+	Status  int         `json:"status"`         // 状态码，非 1 状态码则为错误
+	Meta    *Meta       `json:"meta,omitempty"` // 数据列表多了一个 Meta 字段
 }
 
 func (r Response) Decode(dest interface{}) (err error) {
