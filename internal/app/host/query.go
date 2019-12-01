@@ -100,7 +100,7 @@ func (s *Service) QueryOperationalServer(c controller.Context, input QueryList) 
 		UserID: c.Uid,
 	}
 
-	if err = tx.Limit(query.Limit).Offset(query.Limit * query.Page).Order(query.Order()).Where(filter).Preload("Host").Find(&list).Count(&total).Error; err != nil {
+	if err = tx.Limit(query.Limit).Offset(query.Offset()).Order(query.Order()).Where(filter).Preload("Host").Find(&list).Count(&total).Error; err != nil {
 		return
 	}
 

@@ -2,6 +2,7 @@ package host
 
 import (
 	"errors"
+	"net/http"
 	"time"
 
 	"github.com/axetroy/terminal/internal/app/db"
@@ -29,7 +30,13 @@ func (s *Service) UpdateHostRouter(c *gin.Context) {
 		res   = schema.Response{}
 	)
 
-	defer helper.Response(&res, nil, nil, err)
+	defer func() {
+		if err != nil {
+			res.Data = nil
+			res.Message = err.Error()
+		}
+		c.JSON(http.StatusOK, res)
+	}()
 
 	if err = c.ShouldBindJSON(&input); err != nil {
 		err = exception.InvalidParams

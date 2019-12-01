@@ -2,8 +2,7 @@ package host
 
 import (
 	"errors"
-	"fmt"
-	"net"
+	"net/http"
 	"time"
 
 	"github.com/axetroy/terminal/internal/app/db"
@@ -17,6 +16,8 @@ import (
 )
 
 type CreateHostParams struct {
+	// TODO: validator
+	Name     string  `json:"name" valid:"required~请输入名称"`
 	Host     string  `json:"host" valid:"required~请输入地址"`
 	Port     uint    `json:"port" valid:"required~请输入端口"`
 	Username string  `json:"username" valid:"required~请输入用户名"`
@@ -31,7 +32,13 @@ func (s *Service) CreateHostRouter(c *gin.Context) {
 		res   = schema.Response{}
 	)
 
-	defer helper.Response(&res, nil, nil, err)
+	defer func() {
+		if err != nil {
+			res.Data = nil
+			res.Message = err.Error()
+		}
+		c.JSON(http.StatusOK, res)
+	}()
 
 	if err = c.ShouldBindJSON(&input); err != nil {
 		err = exception.InvalidParams
@@ -79,7 +86,7 @@ func (s *Service) CreateHost(c controller.Context, input CreateHostParams) (res 
 
 	hostInfo := db.Host{
 		OwnerID:    c.Uid,
-		Name:       input.Username + "@" + net.JoinHostPort(input.Host, fmt.Sprintf("%d", input.Port)),
+		Name:       input.Name,
 		Host:       input.Host,
 		Port:       input.Port,
 		Username:   input.Username,

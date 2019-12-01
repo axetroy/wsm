@@ -40,5 +40,7 @@ func Generate(userId string, isAdmin bool) (tokenString string, err error) {
 
 	tokenString, err = token.SignedString([]byte(key))
 
+	tokenString = Prefix + " " + tokenString
+
 	return
 }

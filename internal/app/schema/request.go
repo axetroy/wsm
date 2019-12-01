@@ -23,7 +23,7 @@ type Sort struct {
 
 var (
 	DefaultLimit       = 10            // 默认只获取 10 条数据
-	DefaultPage        = 0             // 默认第 0 页
+	DefaultPage        = 1             // 默认第 1 页
 	DefaultSort        = "-created_at" // 默认按照创建时间排序
 	MaxLimit           = 100           // 最大的查询数量，100 条 防止查询数据过大拖慢服务端性能
 	OrderAsc     Order = "ASC"         // 排序方式，正序
@@ -32,15 +32,7 @@ var (
 	descReg            = regexp.MustCompile("^-")
 )
 
-func NewQuery() *Query {
-	q := Query{}
-
-	q.Normalize()
-
-	return &q
-}
-
-func (q *Query) FormatSort() (fields []Sort) {
+func (q *Query) formatSort() (fields []Sort) {
 	arr := strings.Split(q.Sort, ",")
 
 	for _, field := range arr {
@@ -65,7 +57,7 @@ func (q *Query) FormatSort() (fields []Sort) {
 }
 
 func (q *Query) orderStr() []string {
-	sorts := q.FormatSort()
+	sorts := q.formatSort()
 
 	arr := make([]string, 0)
 
@@ -78,6 +70,10 @@ func (q *Query) orderStr() []string {
 
 func (q *Query) Order() string {
 	return strings.Join(q.orderStr(), ", ")
+}
+
+func (q *Query) Offset() uint32 {
+	return uint32((q.Page - 1) * q.Limit)
 }
 
 func (q *Query) Normalize() *Query {

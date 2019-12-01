@@ -19,5 +19,6 @@ func Response(res *schema.Response, data interface{}, meta *schema.Meta, err err
 	} else {
 		res.Data = data
 		res.Status = schema.StatusSuccess
+		res.Meta = meta
 	}
 }
