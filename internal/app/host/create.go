@@ -16,10 +16,9 @@ import (
 )
 
 type CreateHostParams struct {
-	// TODO: validator
 	Name     string  `json:"name" valid:"required~请输入名称"`
-	Host     string  `json:"host" valid:"required~请输入地址"`
-	Port     uint    `json:"port" valid:"required~请输入端口"`
+	Host     string  `json:"host" valid:"required~请输入地址,host~请输入正确的服务器地址"`
+	Port     uint    `json:"port" valid:"required~请输入端口,port~请输入正确的端口,range(1|65535)"`
 	Username string  `json:"username" valid:"required~请输入用户名"`
 	Password string  `json:"password" valid:"required~请输入密码"`
 	Remark   *string `json:"remark"`

@@ -72,7 +72,6 @@ func (s *Service) QueryOperationalServer(c controller.Context, input QueryList) 
 		list  = make([]db.HostRecord, 0) // 数据库查询出来的原始结果
 		total int64
 		meta  = &schema.Meta{}
-		tx    *gorm.DB
 	)
 
 	defer func() {
@@ -94,13 +93,15 @@ func (s *Service) QueryOperationalServer(c controller.Context, input QueryList) 
 
 	query.Normalize()
 
-	tx = db.Db.Begin()
-
 	filter := db.HostRecord{
 		UserID: c.Uid,
 	}
 
-	if err = tx.Limit(query.Limit).Offset(query.Offset()).Order(query.Order()).Where(filter).Preload("Host").Find(&list).Count(&total).Error; err != nil {
+	if err = db.Db.Where(&filter).Find(&list).Count(&total).Error; err != nil {
+		return
+	}
+
+	if err = db.Db.Limit(query.Limit).Offset(query.Offset()).Order(query.Order()).Where(&filter).Preload("Host").Find(&list).Error; err != nil {
 		return
 	}
 

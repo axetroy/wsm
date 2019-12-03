@@ -72,7 +72,7 @@ func init() {
 			hostRouter.POST("", userAuthMiddleware, host.Core.CreateHostRouter)                                                               // 创建服务器
 			hostRouter.PUT("/_/:host_id", userAuthMiddleware, host.Core.UpdateHostRouter)                                                     // 更新服务器
 			hostRouter.GET("/_/:host_id", userAuthMiddleware, host.Core.QueryHostRouter)                                                      // 获取服务器信息
-			hostRouter.DELETE("/_/:host_id", userAuthMiddleware, host.Core.QueryOperationalServerRouter)                                      // 删除服务器
+			hostRouter.DELETE("/_/:host_id", userAuthMiddleware, host.Core.DeleteHostByIDRouter)                                              // 删除服务器
 			hostRouter.PUT("/_/:host_id/transfer/:user_id", userAuthMiddleware, host.Core.TransferHostRouter)                                 // 转让服务器
 			hostRouter.POST("/_/:host_id/collaborator/_/:collaborator_uid", userAuthMiddleware, host.Core.AddCollaboratorToHostRouter)        // 添加协作者
 			hostRouter.DELETE("/_/:host_id/collaborator/_/:collaborator_uid", userAuthMiddleware, host.Core.RemoveCollaboratorFromHostRouter) // 删除协作者
@@ -83,6 +83,7 @@ func init() {
 			shellRouter := v1.Group("/shell")
 			shellRouter.GET("/demo", shell.Core.ExampleRouter)
 			shellRouter.GET("/connect/:host_id", userAuthMiddleware, shell.Core.StartTerminalRouter) // 开启终端，连接 websocket
+			shellRouter.GET("/test/:host_id", userAuthMiddleware, shell.Core.StartTerminalRouter)    // TODO: 测试服务器是否可连接
 		}
 
 		// oAuth2 认证

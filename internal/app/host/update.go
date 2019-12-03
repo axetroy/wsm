@@ -16,8 +16,9 @@ import (
 )
 
 type UpdateHostParams struct {
-	Host     *string `json:"host"`
-	Port     *uint   `json:"port"`
+	Name     *string `json:"name"`
+	Host     *string `json:"host" valid:"host~请输入正确的服务器地址"`
+	Port     *uint   `json:"port" valid:"port~请输入正确的端口,range(1|65535)"`
 	Username *string `json:"username"`
 	Password *string `json:"password"`
 	Remark   *string `json:"remark"`
@@ -88,6 +89,11 @@ func (s *Service) UpdateHost(c controller.Context, hostID string, input UpdateHo
 	hostInfo := db.Host{Id: hostID, OwnerID: c.Uid}
 
 	updateModel := db.Host{}
+
+	if input.Name != nil {
+		updateModel.Name = *input.Name
+		shouldUpdate = true
+	}
 
 	if input.Host != nil {
 		updateModel.Host = *input.Host
