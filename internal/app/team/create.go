@@ -91,7 +91,19 @@ func (s *Service) CreateTeam(c controller.Context, input CreateTeamParams) (res 
 		Remark:  input.Remark,
 	}
 
+	// 创建 Team
 	if err = tx.Create(&teamInfo).Error; err != nil {
+		return
+	}
+
+	memberInfo := db.TeamMember{
+		TeamID: teamInfo.Id,
+		UserID: c.Uid,
+		Role:   db.TeamRoleOwner,
+	}
+
+	// 创建 Member
+	if err = tx.Create(&memberInfo).Error; err != nil {
 		return
 	}
 

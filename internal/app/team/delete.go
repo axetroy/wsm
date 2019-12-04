@@ -53,8 +53,12 @@ func (s *Service) DeleteTeamByID(c controller.Context, teamID string) (res schem
 		TeamID: teamID,
 	}
 
+	teamMemberInviteRecordInfo := db.TeamMemberInvite{
+		TeamID: teamID,
+	}
+
 	// 删除团队, 仅是拥有者才有权限删除团队
-	if err := tx.Where(&teamInfo).Delete(&teamInfo).Error; err != nil {
+	if err = tx.Where(&teamInfo).Delete(&teamInfo).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = exception.NoPermission
 		}
@@ -62,7 +66,12 @@ func (s *Service) DeleteTeamByID(c controller.Context, teamID string) (res schem
 	}
 
 	// 删除团队记录
-	if err := tx.Where(&teamMemberRecordInfo).Delete(&teamMemberRecordInfo).Error; err != nil {
+	if err = tx.Where(&teamMemberRecordInfo).Delete(&teamMemberRecordInfo).Error; err != nil {
+		return
+	}
+
+	// 删除团队的邀请记录
+	if err = tx.Where(&teamMemberInviteRecordInfo).Delete(&teamMemberInviteRecordInfo).Error; err != nil {
 		return
 	}
 

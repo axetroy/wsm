@@ -72,7 +72,7 @@ func init() {
 			hostRouter.GET("", userAuthMiddleware, host.Core.QueryOperationalServerRouter)                                                    // 获取我可以操作的服务器信息列表
 			hostRouter.POST("", userAuthMiddleware, host.Core.CreateHostRouter)                                                               // 创建服务器
 			hostRouter.PUT("/_/:host_id", userAuthMiddleware, host.Core.UpdateHostRouter)                                                     // 更新服务器
-			hostRouter.GET("/_/:host_id", userAuthMiddleware, host.Core.QueryHostRouter)                                                      // 获取服务器信息
+			hostRouter.GET("/_/:host_id", userAuthMiddleware, host.Core.QueryHostByIDRouter)                                                  // 获取服务器信息
 			hostRouter.DELETE("/_/:host_id", userAuthMiddleware, host.Core.DeleteHostByIDRouter)                                              // 删除服务器
 			hostRouter.PUT("/_/:host_id/transfer/:user_id", userAuthMiddleware, host.Core.TransferHostRouter)                                 // 转让服务器
 			hostRouter.POST("/_/:host_id/collaborator/_/:collaborator_uid", userAuthMiddleware, host.Core.AddCollaboratorToHostRouter)        // 添加协作者
@@ -117,6 +117,7 @@ func init() {
 			teamRouter.PUT("/_/:team_id/member/invite/_/:invite_id", team.Core.ResolveInviteTeamRouter) // 接受/拒绝加入团队
 			teamRouter.DELETE("/_/:team_id/member/_/:user_id/kick", team.Core.KickOutByUIDRouter)       // 管理员/拥有者 把成员踢出团队
 			teamRouter.GET("/_/:team_id/member", team.Core.QueryTeamMembersRouter)                      // 获取团队成员列表
+			teamRouter.GET("/_/:team_id/transfer/:user_id", team.Core.QueryTeamMembersRouter)           // TODO: 转让团队
 		}
 	}
 

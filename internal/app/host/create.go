@@ -85,6 +85,7 @@ func (s *Service) CreateHost(c controller.Context, input CreateHostParams) (res 
 
 	hostInfo := db.Host{
 		OwnerID:    c.Uid,
+		OwnerType:  string(db.HostOwnerTypeUser),
 		Name:       input.Name,
 		Host:       input.Host,
 		Port:       input.Port,

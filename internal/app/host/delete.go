@@ -46,8 +46,9 @@ func (s *Service) DeleteHostByID(c controller.Context, hostID string) (res schem
 	tx = db.Db.Begin()
 
 	hostInfo := db.Host{
-		Id:      hostID,
-		OwnerID: c.Uid,
+		Id:        hostID,
+		OwnerID:   c.Uid,
+		OwnerType: string(db.HostOwnerTypeUser),
 	}
 
 	hostRecordInfo := db.HostRecord{

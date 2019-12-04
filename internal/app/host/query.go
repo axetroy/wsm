@@ -19,7 +19,7 @@ type QueryList struct {
 	schema.Query
 }
 
-func (s *Service) QueryHost(c controller.Context, id string) (res schema.Response) {
+func (s *Service) QueryHostByID(c controller.Context, hostID string) (res schema.Response) {
 	var (
 		err  error
 		data = schema.Host{}
@@ -40,29 +40,30 @@ func (s *Service) QueryHost(c controller.Context, id string) (res schema.Respons
 		helper.Response(&res, data, nil, err)
 	}()
 
-	hostInfo := db.Host{
-		Id: id,
+	hostRecordInfo := db.HostRecord{
+		HostID: hostID,
+		UserID: c.Uid,
 	}
 
-	if err = db.Db.Model(&hostInfo).Where(&hostInfo).First(&hostInfo).Error; err != nil {
+	if err = db.Db.Where(&hostRecordInfo).Preload("Host", "host.owner_type = ?", string(db.HostOwnerTypeUser)).First(&hostRecordInfo).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = exception.NoData
 		}
 		return
 	}
 
-	if err = mapstructure.Decode(hostInfo, &data.HostPure); err != nil {
+	if err = mapstructure.Decode(hostRecordInfo.Host, &data.HostPure); err != nil {
 		return
 	}
 
-	data.CreatedAt = hostInfo.CreatedAt.Format(time.RFC3339Nano)
-	data.UpdatedAt = hostInfo.UpdatedAt.Format(time.RFC3339Nano)
+	data.CreatedAt = hostRecordInfo.CreatedAt.Format(time.RFC3339Nano)
+	data.UpdatedAt = hostRecordInfo.UpdatedAt.Format(time.RFC3339Nano)
 
 	return
 }
 
-func (s *Service) QueryHostRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.QueryHost(controller.NewContextFromGinContext(c), c.Param("host_id")))
+func (s *Service) QueryHostByIDRouter(c *gin.Context) {
+	c.JSON(http.StatusOK, s.QueryHostByID(controller.NewContextFromGinContext(c), c.Param("host_id")))
 }
 
 func (s *Service) QueryOperationalServer(c controller.Context, input QueryList) (res schema.Response) {

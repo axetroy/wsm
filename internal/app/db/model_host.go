@@ -8,9 +8,17 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+type HostOwnerType string
+
+const (
+	HostOwnerTypeUser HostOwnerType = "user"
+	HostOwnerTypeTeam HostOwnerType = "team"
+)
+
 type Host struct {
 	Id         string  `gorm:"primary_key;not null;unique;index;type:varchar(32);" json:"id"` // 用户ID
-	OwnerID    string  `gorm:"not null;index;type:varchar(32);" json:"owner_id"`              // 拥有者
+	OwnerID    string  `gorm:"not null;index;type:varchar(32);" json:"owner_id"`              // 拥有者ID，可以是userID，也可以是 teamID
+	OwnerType  string  `gorm:"not null;index;type:varchar(16);" json:"owner_type"`            // 拥有者的类型，是个人用户拥有还是组织拥有?
 	Name       string  `gorm:"not null;type:varchar(32);" json:"name"`                        // 服务器名
 	Host       string  `gorm:"not null;type:varchar(36);index;" json:"host"`                  // 服务器地址
 	Port       uint    `gorm:"not null;index;" json:"port"`                                   // 端口

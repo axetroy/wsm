@@ -15,7 +15,6 @@ const (
 )
 
 type HostRecord struct {
-	// TODO: user_id + host_id + delete_at 联合唯一
 	Id     string         `gorm:"primary_key;not null;unique;index;type:varchar(32);" json:"id"` // 记录 ID
 	UserID string         `gorm:"not null;index;type:varchar(32);" json:"user_id"`               // 对应的用户 ID
 	HostID string         `gorm:"not null;index;type:varchar(32);" json:"host_id"`               // 对应的服务器 ID
