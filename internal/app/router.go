@@ -85,6 +85,7 @@ func init() {
 			shellRouter.GET("/demo", shell.Core.ExampleRouter)
 			shellRouter.GET("/connect/:host_id", userAuthMiddleware, shell.Core.StartTerminalRouter) // 开启终端，连接 websocket
 			shellRouter.GET("/test/:host_id", userAuthMiddleware, shell.Core.StartTerminalRouter)    // TODO: 测试服务器是否可连接
+			shellRouter.POST("/test", userAuthMiddleware, shell.Core.TestPublicServerRouter)         // 测试服务器是否可连接，给定服务器的相关信息即可，无需登陆验证
 		}
 
 		// oAuth2 认证

@@ -125,3 +125,27 @@ func NewTerminal(config Config) (*Terminal, error) {
 
 	return &s, nil
 }
+
+// 测试服务器是否可用
+func Test(config Config) bool {
+	sshConfig := &ssh.ClientConfig{
+		User: config.Username,
+		Auth: []ssh.AuthMethod{
+			ssh.Password(config.Password),
+		},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		BannerCallback:  ssh.BannerDisplayStderr(),
+	}
+
+	addr := net.JoinHostPort(config.Host, strconv.Itoa(int(config.Port)))
+
+	client, err := ssh.Dial("tcp", addr, sshConfig)
+
+	if err != nil {
+		return false
+	}
+
+	defer client.Close()
+
+	return true
+}
