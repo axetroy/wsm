@@ -18,7 +18,6 @@ import (
 )
 
 type UpdateProfileParams struct {
-	Username *string    `json:"username"` // 用户名，部分用户有机会修改自己的用户名，比如微信注册的帐号
 	Nickname *string    `json:"nickname" valid:"length(1|36)~昵称长度为1-36位"`
 	Gender   *db.Gender `json:"gender"`
 	Avatar   *string    `json:"avatar"`
@@ -158,25 +157,6 @@ func (u *Service) UpdateProfile(c controller.Context, input UpdateProfileParams)
 	tx = db.Db.Begin()
 
 	updated := db.User{}
-
-	if input.Username != nil {
-		shouldUpdate = true
-
-		if err = validator.ValidateUsername(*input.Username); err != nil {
-			return
-		}
-
-		u := db.User{Id: c.Uid}
-
-		if err = tx.Where(&u).First(&u).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				err = exception.UserNotExist
-			}
-			return
-		}
-
-		updated.Username = *input.Username
-	}
 
 	if input.Nickname != nil {
 		updated.Nickname = input.Nickname
