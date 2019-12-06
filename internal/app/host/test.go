@@ -15,7 +15,8 @@ func TestCreateHost() (profile schema.ProfileWithToken, hostInfo schema.Host, er
 
 	remark := "remark"
 
-	r := Core.CreateHost(controller.NewContext(profile.Id, "", ""), CreateHostParams{
+	r := Core.CreateHostByUser(controller.NewContext(profile.Id, "", ""), CreateHostByUserParams{
+		Name:     "test server",
 		Host:     "192.168.0.1",
 		Port:     22,
 		Username: "root",

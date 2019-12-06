@@ -69,10 +69,10 @@ func init() {
 		// 服务器管理
 		{
 			hostRouter := v1.Group("/host")
-			hostRouter.GET("", userAuthMiddleware, host.Core.QueryOperationalServerRouter)                                                    // 获取我可以操作的服务器信息列表
-			hostRouter.POST("", userAuthMiddleware, host.Core.CreateHostRouter)                                                               // 创建服务器
+			hostRouter.GET("", userAuthMiddleware, host.Core.QueryMyOperationalServerRouter)                                                  // 获取我可以操作的服务器信息列表
+			hostRouter.POST("", userAuthMiddleware, host.Core.CreateHostByUserRouter)                                                         // 创建服务器
 			hostRouter.PUT("/_/:host_id", userAuthMiddleware, host.Core.UpdateHostRouter)                                                     // 更新服务器
-			hostRouter.GET("/_/:host_id", userAuthMiddleware, host.Core.QueryHostByIDRouter)                                                  // 获取服务器信息
+			hostRouter.GET("/_/:host_id", userAuthMiddleware, host.Core.QueryMyHostByIDRouter)                                                // 获取服务器信息
 			hostRouter.DELETE("/_/:host_id", userAuthMiddleware, host.Core.DeleteHostByIDRouter)                                              // 删除服务器
 			hostRouter.PUT("/_/:host_id/transfer/:user_id", userAuthMiddleware, host.Core.TransferHostRouter)                                 // 转让服务器
 			hostRouter.POST("/_/:host_id/collaborator/_/:collaborator_uid", userAuthMiddleware, host.Core.AddCollaboratorToHostRouter)        // 添加协作者
@@ -120,6 +120,7 @@ func init() {
 			teamRouter.DELETE("/_/:team_id", team.Core.DeleteTeamByIDRouter)                            // 解散团队, 只有拥有者才有权限删除
 			teamRouter.DELETE("/_/:team_id/quit", team.Core.QuitTeamRouter)                             // 团队成员退出团队(团队的拥有者无法退出)
 			teamRouter.PUT("/_/:team_id/role/:user_id", team.Core.UpdateMemberRoleRouter)               // 更改团队成员的角色，只有拥有者和管理员可以操作
+			teamRouter.POST("/_/:team_id/host", team.Core.UpdateMemberRoleRouter)                       // TODO: 添加团队的服务器，只有拥有者和管理员可以操作
 		}
 	}
 

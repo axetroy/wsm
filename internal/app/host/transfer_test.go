@@ -34,7 +34,7 @@ func TestService_TransferHost(t *testing.T) {
 	assert.Nil(t, r.Data)
 
 	// 再查询是否已转让成功
-	r1 := host.Core.QueryHost(controller.NewContext(targetUserInfo.Id, "", ""), hostInfo.Id)
+	r1 := host.Core.QueryMyHostByID(controller.NewContext(targetUserInfo.Id, "", ""), hostInfo.Id)
 
 	assert.Equal(t, schema.StatusSuccess, r.Status)
 	assert.Equal(t, "", r.Message)

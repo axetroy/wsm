@@ -15,7 +15,18 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-type CreateHostParams struct {
+type CreateHostCommonParams struct {
+	OwnerId   string           `json:"owner_id" valid:"请输入拥有者的ID，可以是用户 ID，可以是组织ID"`
+	OwnerType db.HostOwnerType `json:"owner_type" valid:"required~请输入拥有者的类型"`
+	Name      string           `json:"name" valid:"required~请输入名称"`
+	Host      string           `json:"host" valid:"required~请输入地址,host~请输入正确的服务器地址"`
+	Port      uint             `json:"port" valid:"required~请输入端口,port~请输入正确的端口,range(1|65535)"`
+	Username  string           `json:"username" valid:"required~请输入用户名"`
+	Password  string           `json:"password" valid:"required~请输入密码"`
+	Remark    *string          `json:"remark"`
+}
+
+type CreateHostByUserParams struct {
 	Name     string  `json:"name" valid:"required~请输入名称"`
 	Host     string  `json:"host" valid:"required~请输入地址,host~请输入正确的服务器地址"`
 	Port     uint    `json:"port" valid:"required~请输入端口,port~请输入正确的端口,range(1|65535)"`
@@ -24,9 +35,9 @@ type CreateHostParams struct {
 	Remark   *string `json:"remark"`
 }
 
-func (s *Service) CreateHostRouter(c *gin.Context) {
+func (s *Service) CreateHostByUserRouter(c *gin.Context) {
 	var (
-		input CreateHostParams
+		input CreateHostByUserParams
 		err   error
 		res   = schema.Response{}
 	)
@@ -44,10 +55,10 @@ func (s *Service) CreateHostRouter(c *gin.Context) {
 		return
 	}
 
-	res = s.CreateHost(controller.NewContextFromGinContext(c), input)
+	res = s.CreateHostByUser(controller.NewContextFromGinContext(c), input)
 }
 
-func (s *Service) CreateHost(c controller.Context, input CreateHostParams) (res schema.Response) {
+func (s *Service) CreateHostByUser(c controller.Context, input CreateHostByUserParams) (res schema.Response) {
 	var (
 		err  error
 		data schema.Host
@@ -85,7 +96,7 @@ func (s *Service) CreateHost(c controller.Context, input CreateHostParams) (res 
 
 	hostInfo := db.Host{
 		OwnerID:    c.Uid,
-		OwnerType:  string(db.HostOwnerTypeUser),
+		OwnerType:  db.HostOwnerTypeUser,
 		Name:       input.Name,
 		Host:       input.Host,
 		Port:       input.Port,

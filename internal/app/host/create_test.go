@@ -20,7 +20,8 @@ func TestService_CreateHost(t *testing.T) {
 
 	remark := "master server"
 
-	r := host.Core.CreateHost(controller.NewContext(profile.Id, "", ""), host.CreateHostParams{
+	r := host.Core.CreateHostByUser(controller.NewContext(profile.Id, "", ""), host.CreateHostByUserParams{
+		Name:     "test server",
 		Host:     "192.168.0.1",
 		Port:     22,
 		Username: "root",
@@ -40,5 +41,5 @@ func TestService_CreateHost(t *testing.T) {
 	assert.Equal(t, uint(22), hostInfo.Port)
 	assert.Equal(t, "root", hostInfo.Username)
 	assert.Equal(t, &remark, hostInfo.Remark)
-	assert.Equal(t, "root@192.168.0.1:22", hostInfo.Name)
+	assert.Equal(t, "test server", hostInfo.Name)
 }

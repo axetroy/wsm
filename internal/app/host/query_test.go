@@ -21,7 +21,7 @@ func TestService_QueryHost(t *testing.T) {
 		_ = db.DeleteRowByTable(new(db.HostRecord).TableName(), "host_id", hostInfo.Id)
 	}()
 
-	r := host.Core.QueryHost(controller.NewContext(userInfo.Id, "", ""), hostInfo.Id)
+	r := host.Core.QueryMyHostByID(controller.NewContext(userInfo.Id, "", ""), hostInfo.Id)
 
 	assert.Equal(t, "", r.Message)
 	assert.Equal(t, schema.StatusSuccess, r.Status)
@@ -37,7 +37,7 @@ func TestService_QueryHost(t *testing.T) {
 	assert.Equal(t, hostInfo.Remark, data.Remark)
 }
 
-func TestService_QueryOperationalServer(t *testing.T) {
+func TestService_QueryMyOperationalServer(t *testing.T) {
 	userInfo, hostInfo, err := host.TestCreateHost()
 
 	assert.Nil(t, err)
@@ -48,7 +48,7 @@ func TestService_QueryOperationalServer(t *testing.T) {
 		_ = db.DeleteRowByTable(new(db.HostRecord).TableName(), "host_id", hostInfo.Id)
 	}()
 
-	r := host.Core.QueryOperationalServer(controller.NewContext(userInfo.Id, "", ""), host.QueryList{})
+	r := host.Core.QueryMyOperationalServer(controller.NewContext(userInfo.Id, "", ""), host.QueryList{})
 
 	assert.Equal(t, "", r.Message)
 	assert.Equal(t, schema.StatusSuccess, r.Status)

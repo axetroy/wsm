@@ -19,7 +19,7 @@ type QueryList struct {
 	schema.Query
 }
 
-func (s *Service) QueryHostByID(c controller.Context, hostID string) (res schema.Response) {
+func (s *Service) QueryMyHostByID(c controller.Context, hostID string) (res schema.Response) {
 	var (
 		err  error
 		data = schema.Host{}
@@ -62,11 +62,11 @@ func (s *Service) QueryHostByID(c controller.Context, hostID string) (res schema
 	return
 }
 
-func (s *Service) QueryHostByIDRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.QueryHostByID(controller.NewContextFromGinContext(c), c.Param("host_id")))
+func (s *Service) QueryMyHostByIDRouter(c *gin.Context) {
+	c.JSON(http.StatusOK, s.QueryMyHostByID(controller.NewContextFromGinContext(c), c.Param("host_id")))
 }
 
-func (s *Service) QueryOperationalServer(c controller.Context, input QueryList) (res schema.Response) {
+func (s *Service) QueryMyOperationalServer(c controller.Context, input QueryList) (res schema.Response) {
 	var (
 		err   error
 		data  = make([]schema.Host, 0)   // 输出到外部的结果
@@ -125,7 +125,7 @@ func (s *Service) QueryOperationalServer(c controller.Context, input QueryList) 
 	return
 }
 
-func (s *Service) QueryOperationalServerRouter(c *gin.Context) {
+func (s *Service) QueryMyOperationalServerRouter(c *gin.Context) {
 	var (
 		err   error
 		res   = schema.Response{}
@@ -145,5 +145,5 @@ func (s *Service) QueryOperationalServerRouter(c *gin.Context) {
 		return
 	}
 
-	res = s.QueryOperationalServer(controller.NewContextFromGinContext(c), input)
+	res = s.QueryMyOperationalServer(controller.NewContextFromGinContext(c), input)
 }

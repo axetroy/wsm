@@ -30,7 +30,7 @@ func TestService_DeleteHostByID(t *testing.T) {
 	assert.Equal(t, "", r.Message)
 	assert.Nil(t, r.Data)
 
-	r1 := host.Core.QueryHost(ctx, hostInfo.Id)
+	r1 := host.Core.QueryMyHostByID(ctx, hostInfo.Id)
 	assert.Equal(t, exception.NoData.Code(), r1.Status)
 	assert.Equal(t, exception.NoData.Error(), r1.Message)
 	assert.Nil(t, r1.Data)
