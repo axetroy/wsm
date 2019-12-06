@@ -75,6 +75,7 @@ func (s *Service) DeleteTeamByID(c controller.Context, teamID string) (res schem
 		return
 	}
 
+	// TODO: 删除团队的服务器
 	return
 }
 
