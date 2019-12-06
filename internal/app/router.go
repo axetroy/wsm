@@ -117,7 +117,8 @@ func init() {
 			teamRouter.PUT("/_/:team_id/member/invite/_/:invite_id", team.Core.ResolveInviteTeamRouter) // 接受/拒绝加入团队
 			teamRouter.DELETE("/_/:team_id/member/_/:user_id/kick", team.Core.KickOutByUIDRouter)       // 管理员/拥有者 把成员踢出团队
 			teamRouter.GET("/_/:team_id/member", team.Core.QueryTeamMembersRouter)                      // 获取团队成员列表
-			teamRouter.GET("/_/:team_id/transfer/:user_id", team.Core.QueryTeamMembersRouter)           // TODO: 转让团队
+			teamRouter.GET("/_/:team_id/transfer/:user_id", team.Core.TransferTeamRouter)               // 转让团队
+			teamRouter.DELETE("/_/:team_id/quit", team.Core.QueryTeamMembersRouter)                     // TODO: 团队成员退出团队(团队的拥有者无法退出)
 		}
 	}
 
