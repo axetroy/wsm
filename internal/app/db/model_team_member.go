@@ -1,9 +1,11 @@
 package db
 
 import (
+	"log"
 	"time"
 
-	"github.com/axetroy/terminal/internal/library/util"
+	"github.com/axetroy/terminal/internal/app/config"
+	"github.com/bwmarrin/snowflake"
 	"github.com/jinzhu/gorm"
 )
 
@@ -15,6 +17,20 @@ const (
 	TeamRoleMember  TeamRole = "member"        // 成员, 具有 查询和连接服务器的权限
 	TeamRoleVisitor TeamRole = "visitor"       // 游客, 仅有查询服务器的权限, 连接服务器的权限都没有
 )
+
+var (
+	teamMemberID *snowflake.Node
+)
+
+func init() {
+	node, err := snowflake.NewNode(config.Common.MachineId)
+
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	teamMemberID = node
+}
 
 type TeamMember struct {
 	Id     string   `gorm:"primary_key;not null;unique;index;type:varchar(32);" json:"id"` // ID
@@ -36,8 +52,8 @@ func (t *TeamMember) TableName() string {
 
 func (t *TeamMember) BeforeCreate(scope *gorm.Scope) error {
 	// 生成ID
-	uid := util.GenerateId()
-	if err := scope.SetColumn("id", uid); err != nil {
+	id := teamMemberID.Generate().String()
+	if err := scope.SetColumn("id", id); err != nil {
 		return err
 	}
 	return nil

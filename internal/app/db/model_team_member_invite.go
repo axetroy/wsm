@@ -1,11 +1,27 @@
 package db
 
 import (
+	"log"
 	"time"
 
-	"github.com/axetroy/terminal/internal/library/util"
+	"github.com/axetroy/terminal/internal/app/config"
+	"github.com/bwmarrin/snowflake"
 	"github.com/jinzhu/gorm"
 )
+
+var (
+	teamMemberInviteID *snowflake.Node
+)
+
+func init() {
+	node, err := snowflake.NewNode(config.Common.MachineId)
+
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	teamMemberInviteID = node
+}
 
 type TeamMemberInvite struct {
 	Id        string   `gorm:"primary_key;not null;unique;index;type:varchar(32);" json:"id"` // ID
@@ -27,8 +43,8 @@ func (t *TeamMemberInvite) TableName() string {
 
 func (t *TeamMemberInvite) BeforeCreate(scope *gorm.Scope) error {
 	// 生成ID
-	uid := util.GenerateId()
-	if err := scope.SetColumn("id", uid); err != nil {
+	id := teamMemberInviteID.Generate().String()
+	if err := scope.SetColumn("id", id); err != nil {
 		return err
 	}
 	return nil

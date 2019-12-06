@@ -2,9 +2,11 @@
 package db
 
 import (
+	"log"
 	"time"
 
-	"github.com/axetroy/terminal/internal/library/util"
+	"github.com/axetroy/terminal/internal/app/config"
+	"github.com/bwmarrin/snowflake"
 	"github.com/jinzhu/gorm"
 )
 
@@ -24,6 +26,20 @@ var (
 		ProviderGoogle:   true,
 	}
 )
+
+var (
+	oAuthID *snowflake.Node
+)
+
+func init() {
+	node, err := snowflake.NewNode(config.Common.MachineId)
+
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	oAuthID = node
+}
 
 type OAuth struct {
 	Id       string        `gorm:"primary_key;unique;not null;index;type:varchar(32)" json:"id"`    // ID
@@ -62,6 +78,7 @@ func (o *OAuth) IsValidProvider() bool {
 }
 
 func (o *OAuth) BeforeCreate(scope *gorm.Scope) (err error) {
-	err = scope.SetColumn("id", util.GenerateId())
+	id := oAuthID.Generate().String()
+	err = scope.SetColumn("id", id)
 	return
 }

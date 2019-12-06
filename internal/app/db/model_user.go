@@ -2,10 +2,12 @@
 package db
 
 import (
+	"log"
 	"time"
 
+	"github.com/axetroy/terminal/internal/app/config"
 	"github.com/axetroy/terminal/internal/app/exception"
-	"github.com/axetroy/terminal/internal/library/util"
+	"github.com/bwmarrin/snowflake"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"
 )
@@ -25,6 +27,20 @@ const (
 	GenderMale               // 男
 	GenderFemale             // 女
 )
+
+var (
+	userID *snowflake.Node
+)
+
+func init() {
+	node, err := snowflake.NewNode(config.Common.MachineId)
+
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	userID = node
+}
 
 type User struct {
 	Id       string         `gorm:"primary_key;not null;unique;index;type:varchar(32)" json:"id"` // 用户ID
@@ -52,7 +68,7 @@ func (u *User) TableName() string {
 
 func (u *User) BeforeCreate(scope *gorm.Scope) error {
 	// 生成ID
-	uid := util.GenerateId()
+	uid := userID.Generate().String()
 	if err := scope.SetColumn("id", uid); err != nil {
 		return err
 	}

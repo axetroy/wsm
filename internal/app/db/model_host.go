@@ -2,9 +2,11 @@
 package db
 
 import (
+	"log"
 	"time"
 
-	"github.com/axetroy/terminal/internal/library/util"
+	"github.com/axetroy/terminal/internal/app/config"
+	"github.com/bwmarrin/snowflake"
 	"github.com/jinzhu/gorm"
 )
 
@@ -14,6 +16,20 @@ const (
 	HostOwnerTypeUser HostOwnerType = "user"
 	HostOwnerTypeTeam HostOwnerType = "team"
 )
+
+var (
+	hostID *snowflake.Node
+)
+
+func init() {
+	node, err := snowflake.NewNode(config.Common.MachineId)
+
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	hostID = node
+}
 
 type Host struct {
 	Id         string        `gorm:"primary_key;not null;unique;index;type:varchar(32);" json:"id"` // 用户ID
@@ -40,7 +56,7 @@ func (u *Host) TableName() string {
 
 func (u *Host) BeforeCreate(scope *gorm.Scope) error {
 	// 生成ID
-	uid := util.GenerateId()
+	uid := hostID.Generate().String()
 	if err := scope.SetColumn("id", uid); err != nil {
 		return err
 	}

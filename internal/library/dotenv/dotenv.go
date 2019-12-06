@@ -135,6 +135,18 @@ func GetIntByDefault(key string, defaultValue int) int {
 	return result
 }
 
+func GetInt64ByDefault(key string, defaultValue int64) int64 {
+	val := GetByDefault(key, fmt.Sprintf("%d", defaultValue))
+
+	id, err := strconv.ParseInt(val, 0, 10)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return id
+}
+
 func GetStrArrayByDefault(key string, defaultValue []string) []string {
 	val := GetByDefault(key, fmt.Sprintf("%s", strings.Join(defaultValue, ",")))
 

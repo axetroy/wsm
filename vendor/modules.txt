@@ -6,6 +6,8 @@ github.com/asaskevich/govalidator
 github.com/axetroy/go-fs
 # github.com/axetroy/mocker v1.1.0
 github.com/axetroy/mocker
+# github.com/bwmarrin/snowflake v0.3.0
+github.com/bwmarrin/snowflake
 # github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d
 github.com/cpuguy83/go-md2man/v2/md2man
 # github.com/davecgh/go-spew v1.1.1
@@ -46,8 +48,6 @@ github.com/gorilla/securecookie
 github.com/gorilla/sessions
 # github.com/gorilla/websocket v1.4.1
 github.com/gorilla/websocket
-# github.com/holdno/snowFlakeByGo v0.0.0-20180510033652-d23f8a8cadd7
-github.com/holdno/snowFlakeByGo
 # github.com/jinzhu/gorm v1.9.11
 github.com/jinzhu/gorm
 # github.com/jinzhu/inflection v1.0.0
@@ -102,7 +102,6 @@ golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/poly1305
 golang.org/x/crypto/ssh
-golang.org/x/crypto/ssh/terminal
 # golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -115,7 +114,6 @@ golang.org/x/oauth2/jwt
 # golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
-golang.org/x/sys/windows
 # google.golang.org/appengine v1.4.0
 google.golang.org/appengine
 google.golang.org/appengine/internal
