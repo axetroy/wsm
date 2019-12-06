@@ -14,9 +14,8 @@ import (
 
 func (s *Service) TransferTeam(c controller.Context, teamID string, userID string) (res schema.Response) {
 	var (
-		err  error
-		data = make([]schema.ProfilePublic, 0)
-		tx   *gorm.DB
+		err error
+		tx  *gorm.DB
 	)
 
 	defer func() {
@@ -39,7 +38,7 @@ func (s *Service) TransferTeam(c controller.Context, teamID string, userID strin
 			}
 		}
 
-		helper.Response(&res, data, nil, err)
+		helper.Response(&res, nil, nil, err)
 	}()
 
 	tx = db.Db.Begin()

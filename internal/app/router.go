@@ -112,13 +112,13 @@ func init() {
 			teamRouter.POST("", team.Core.CreateTeamRouter)                                             // 创建团队
 			teamRouter.GET("/_/:team_id", team.Core.QueryMyTeamRouter)                                  // 获取我的团队信息, 只有加入团队才能调用
 			teamRouter.PUT("/_/:team_id", team.Core.UpdateTeamRouter)                                   // 更新团队, 只有管理员或者拥有者才能更新
-			teamRouter.DELETE("/_/:team_id", team.Core.DeleteTeamByIDRouter)                            // 删除团队, 只有用着者才有权限删除
 			teamRouter.POST("/_/:team_id/member/invite", team.Core.InviteTeamRouter)                    // 邀请成员加入团队
 			teamRouter.PUT("/_/:team_id/member/invite/_/:invite_id", team.Core.ResolveInviteTeamRouter) // 接受/拒绝加入团队
 			teamRouter.DELETE("/_/:team_id/member/_/:user_id/kick", team.Core.KickOutByUIDRouter)       // 管理员/拥有者 把成员踢出团队
 			teamRouter.GET("/_/:team_id/member", team.Core.QueryTeamMembersRouter)                      // 获取团队成员列表
 			teamRouter.GET("/_/:team_id/transfer/:user_id", team.Core.TransferTeamRouter)               // 转让团队
-			teamRouter.DELETE("/_/:team_id/quit", team.Core.QueryTeamMembersRouter)                     // TODO: 团队成员退出团队(团队的拥有者无法退出)
+			teamRouter.DELETE("/_/:team_id", team.Core.DeleteTeamByIDRouter)                            // 解散团队, 只有拥有者才有权限删除
+			teamRouter.DELETE("/_/:team_id/quit", team.Core.QuitTeamRouter)                             // 团队成员退出团队(团队的拥有者无法退出)
 		}
 	}
 
