@@ -4,14 +4,15 @@ package app
 import (
 	"context"
 	"crypto/tls"
-	"github.com/axetroy/terminal/internal/app/config"
-	"github.com/axetroy/terminal/internal/app/db"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/axetroy/terminal/internal/app/config"
+	"github.com/axetroy/terminal/internal/app/db"
 )
 
 func Serve() error {
