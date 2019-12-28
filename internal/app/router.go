@@ -102,6 +102,7 @@ func init() {
 			userRouter.GET("/profile", user.Core.GetProfileRouter)      // 获取用户详细信息
 			userRouter.PUT("/profile", user.Core.UpdateProfileRouter)   // 更新用户资料
 			userRouter.PUT("/password", user.Core.UpdatePasswordRouter) // 更新登陆密码
+			userRouter.GET("/search", user.Core.SearchUserRouter)       // 搜索用户
 		}
 
 		// 团队相关
