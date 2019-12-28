@@ -80,7 +80,8 @@ func (s *Service) InviteTeam(c controller.Context, teamID string, input InviteTe
 	tx = db.Db.Begin()
 
 	ownerMemberInfo := db.TeamMember{
-		UserID: teamID,
+		TeamID: teamID,
+		UserID: c.Uid,
 	}
 
 	if err := tx.Where(&ownerMemberInfo).Find(&ownerMemberInfo).Error; err != nil {
