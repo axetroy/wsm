@@ -3,6 +3,7 @@ package team
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/axetroy/terminal/internal/app/db"
 	"github.com/axetroy/terminal/internal/app/exception"
@@ -22,8 +23,8 @@ type QueryMemberList struct {
 func (s *Service) QueryTeamMembers(c controller.Context, input QueryMemberList) (res schema.Response) {
 	var (
 		err   error
-		data  = make([]schema.ProfilePublic, 0) // 输出到外部的结果
-		list  = make([]db.TeamMember, 0)        // 数据库查询出来的原始结果
+		data  = make([]schema.TeamMember, 0) // 输出到外部的结果
+		list  = make([]db.TeamMember, 0)     // 数据库查询出来的原始结果
 		total int64
 		meta  = &schema.Meta{}
 	)
@@ -57,7 +58,7 @@ func (s *Service) QueryTeamMembers(c controller.Context, input QueryMemberList) 
 		filter.Role = *input.Role
 	}
 
-	if err = db.Db.Where(&filter).Find(&list).Count(&total).Error; err != nil {
+	if err = db.Db.Model(&filter).Where(&filter).Count(&total).Error; err != nil {
 		return
 	}
 
@@ -66,11 +67,13 @@ func (s *Service) QueryTeamMembers(c controller.Context, input QueryMemberList) 
 	}
 
 	for _, v := range list {
-		memberInfoPublic := schema.ProfilePublic{}
-		if err = mapstructure.Decode(v.Team, &memberInfoPublic); err != nil {
+		teamMemberInfo := schema.TeamMember{}
+		if err = mapstructure.Decode(v.User, &teamMemberInfo.ProfilePublic); err != nil {
 			return
 		}
-		data = append(data, memberInfoPublic)
+		teamMemberInfo.Role = v.Role
+		teamMemberInfo.CreatedAt = v.CreatedAt.Format(time.RFC3339Nano)
+		data = append(data, teamMemberInfo)
 	}
 
 	meta.Total = total
