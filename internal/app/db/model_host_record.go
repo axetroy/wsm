@@ -12,8 +12,9 @@ import (
 type HostRecordType string
 
 const (
-	HostRecordTypeOwner        HostRecordType = "owner"
-	HostRecordTypeCollaborator HostRecordType = "collaborator"
+	HostRecordTypeOwner        HostRecordType = "owner"        // 拥有者
+	HostRecordTypeCollaborator HostRecordType = "collaborator" // 协作者，可查看/连接服务器
+	HostRecordTypeVisitor      HostRecordType = "visitor"      // 访客，仅能查看服务器
 )
 
 var (

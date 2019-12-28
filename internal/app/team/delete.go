@@ -49,6 +49,11 @@ func (s *Service) DeleteTeamByID(c controller.Context, teamID string) (res schem
 		OwnerID: c.Uid,
 	}
 
+	teamHostInfo := db.Host{
+		OwnerID:   teamID,
+		OwnerType: db.HostOwnerTypeTeam,
+	}
+
 	teamMemberRecordInfo := db.TeamMember{
 		TeamID: teamID,
 	}
@@ -75,7 +80,10 @@ func (s *Service) DeleteTeamByID(c controller.Context, teamID string) (res schem
 		return
 	}
 
-	// TODO: 删除团队的服务器
+	// 删除团队的服务器
+	if err := tx.Where(&teamHostInfo).Delete(&teamHostInfo).Error; err != nil {
+		return
+	}
 	return
 }
 

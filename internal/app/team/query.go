@@ -69,8 +69,8 @@ func (s *Service) QueryMyTeamRouter(c *gin.Context) {
 func (s *Service) QueryMyTeams(c controller.Context, input QueryList) (res schema.Response) {
 	var (
 		err   error
-		data  = make([]schema.Team, 0)   // 输出到外部的结果
-		list  = make([]db.TeamMember, 0) // 数据库查询出来的原始结果
+		data  = make([]schema.TeamWithMember, 0) // 输出到外部的结果
+		list  = make([]db.TeamMember, 0)         // 数据库查询出来的原始结果
 		total int64
 		meta  = &schema.Meta{}
 	)
@@ -107,10 +107,12 @@ func (s *Service) QueryMyTeams(c controller.Context, input QueryList) (res schem
 	}
 
 	for _, v := range list {
-		d := schema.Team{}
+		d := schema.TeamWithMember{}
 		if err = mapstructure.Decode(v.Team, &d.TeamPure); err != nil {
 			return
 		}
+		d.UserID = v.UserID
+		d.Role = v.Role
 		d.CreatedAt = v.CreatedAt.Format(time.RFC3339Nano)
 		d.UpdatedAt = v.UpdatedAt.Format(time.RFC3339Nano)
 		data = append(data, d)

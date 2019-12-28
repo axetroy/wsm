@@ -20,7 +20,7 @@ func TestService_CreateHost(t *testing.T) {
 
 	remark := "master server"
 
-	r := host.Core.CreateHostByUser(controller.NewContext(profile.Id, "", ""), host.CreateHostByUserParams{
+	r := host.Core.CreateHostByUser(controller.NewContext(profile.Id, "", ""), host.CreateHostCommonParams{
 		Name:     "test server",
 		Host:     "192.168.0.1",
 		Port:     22,

@@ -83,13 +83,13 @@ func redirectToClient(c *gin.Context, user *goth.User) {
 			}
 
 			if userName == "" {
-				userName = user.Provider + util.GenerateId()
+				userName = user.Provider + util.RandomNumeric(11)
 			}
 
 			userInfo = db.User{
 				Username: userName,
 				Nickname: &user.NickName,
-				Password: util.GeneratePassword(util.GenerateId()),
+				Password: util.GeneratePassword(util.RandomString(6)),
 				Email:    nil,
 				Phone:    nil,
 				Status:   db.UserStatusInit,
@@ -142,13 +142,13 @@ func redirectToClient(c *gin.Context, user *goth.User) {
 		}
 
 		if userName == "" {
-			userName = user.Provider + util.GenerateId()
+			userName = user.Provider + util.RandomNumeric(11)
 		}
 
 		userInfo = db.User{
 			Username: userName,
 			Nickname: &user.NickName,
-			Password: util.GeneratePassword(util.GenerateId()),
+			Password: util.GeneratePassword(util.RandomString(6)),
 			Email:    nil,
 			Phone:    nil,
 			Status:   db.UserStatusInit,
