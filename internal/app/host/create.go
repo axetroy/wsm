@@ -15,18 +15,13 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-type CreateHostCommonParams struct {
+type CreateHostParams struct {
 	OwnerId   string           `json:"owner_id" valid:"请输入拥有者的ID，可以是用户 ID，可以是组织ID"`
 	OwnerType db.HostOwnerType `json:"owner_type" valid:"required~请输入拥有者的类型"`
-	Name      string           `json:"name" valid:"required~请输入名称"`
-	Host      string           `json:"host" valid:"required~请输入地址,host~请输入正确的服务器地址"`
-	Port      uint             `json:"port" valid:"required~请输入端口,port~请输入正确的端口,range(1|65535)"`
-	Username  string           `json:"username" valid:"required~请输入用户名"`
-	Password  string           `json:"password" valid:"required~请输入密码"`
-	Remark    *string          `json:"remark"`
+	CreateHostCommonParams
 }
 
-type CreateHostByUserParams struct {
+type CreateHostCommonParams struct {
 	Name     string  `json:"name" valid:"required~请输入名称"`
 	Host     string  `json:"host" valid:"required~请输入地址,host~请输入正确的服务器地址"`
 	Port     uint    `json:"port" valid:"required~请输入端口,port~请输入正确的端口,range(1|65535)"`
@@ -35,30 +30,7 @@ type CreateHostByUserParams struct {
 	Remark   *string `json:"remark"`
 }
 
-func (s *Service) CreateHostByUserRouter(c *gin.Context) {
-	var (
-		input CreateHostByUserParams
-		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.CreateHostByUser(controller.NewContextFromGinContext(c), input)
-}
-
-func (s *Service) CreateHostByUser(c controller.Context, input CreateHostByUserParams) (res schema.Response) {
+func (s *Service) CreateHostCommon(c controller.Context, input CreateHostParams) (res schema.Response) {
 	var (
 		err  error
 		data schema.Host
@@ -95,8 +67,8 @@ func (s *Service) CreateHostByUser(c controller.Context, input CreateHostByUserP
 	tx = db.Db.Begin()
 
 	hostInfo := db.Host{
-		OwnerID:    c.Uid,
-		OwnerType:  db.HostOwnerTypeUser,
+		OwnerID:    input.OwnerId,
+		OwnerType:  input.OwnerType,
 		Name:       input.Name,
 		Host:       input.Host,
 		Port:       input.Port,
@@ -110,7 +82,35 @@ func (s *Service) CreateHostByUser(c controller.Context, input CreateHostByUserP
 		return
 	}
 
-	if err = tx.Create(&db.HostRecord{UserID: c.Uid, HostID: hostInfo.Id, Type: db.HostRecordTypeOwner}).Error; err != nil {
+	switch input.OwnerType {
+	// 如果是用户个人创建的服务器，则写入记录
+	case db.HostOwnerTypeUser:
+		if err = tx.Create(&db.HostRecord{UserID: input.OwnerId, HostID: hostInfo.Id, Type: db.HostRecordTypeOwner}).Error; err != nil {
+			return
+		}
+		break
+	// 如果是组织，则看看是否有权限
+	case db.HostOwnerTypeTeam:
+		teamMemberInfo := db.TeamMember{
+			TeamID: input.OwnerId,
+			UserID: c.Uid,
+		}
+		if err = tx.Where(&teamMemberInfo).First(&teamMemberInfo).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				err = exception.NoPermission
+			}
+			return
+		}
+
+		// 校验是否拥有权限
+		if teamMemberInfo.Role != db.TeamRoleAdmin && teamMemberInfo.Role != db.TeamRoleOwner {
+			err = exception.NoPermission
+			return
+		}
+
+		break
+	default:
+		err = exception.Unknown
 		return
 	}
 
@@ -122,4 +122,68 @@ func (s *Service) CreateHostByUser(c controller.Context, input CreateHostByUserP
 	data.UpdatedAt = hostInfo.UpdatedAt.Format(time.RFC3339Nano)
 
 	return
+}
+
+func (s *Service) CreateHostByUser(c controller.Context, input CreateHostCommonParams) (res schema.Response) {
+	return s.CreateHostCommon(c, CreateHostParams{
+		OwnerId:                c.Uid,
+		OwnerType:              db.HostOwnerTypeUser,
+		CreateHostCommonParams: input,
+	})
+}
+
+func (s *Service) CreateHostByTeam(c controller.Context, teamID string, input CreateHostCommonParams) (res schema.Response) {
+	return s.CreateHostCommon(c, CreateHostParams{
+		OwnerId:                teamID,
+		OwnerType:              db.HostOwnerTypeTeam,
+		CreateHostCommonParams: input,
+	})
+}
+
+func (s *Service) CreateHostByUserRouter(c *gin.Context) {
+	var (
+		input CreateHostCommonParams
+		err   error
+		res   = schema.Response{}
+	)
+
+	defer func() {
+		if err != nil {
+			res.Data = nil
+			res.Message = err.Error()
+		}
+		c.JSON(http.StatusOK, res)
+	}()
+
+	if err = c.ShouldBindJSON(&input); err != nil {
+		err = exception.InvalidParams
+		return
+	}
+
+	res = s.CreateHostByUser(controller.NewContextFromGinContext(c), input)
+}
+
+func (s *Service) CreateHostByTeamRouter(c *gin.Context) {
+	var (
+		input CreateHostCommonParams
+		err   error
+		res   = schema.Response{}
+	)
+
+	defer func() {
+		if err != nil {
+			res.Data = nil
+			res.Message = err.Error()
+		}
+		c.JSON(http.StatusOK, res)
+	}()
+
+	if err = c.ShouldBindJSON(&input); err != nil {
+		err = exception.InvalidParams
+		return
+	}
+
+	teamID := c.Param("team_id")
+
+	res = s.CreateHostByTeam(controller.NewContextFromGinContext(c), teamID, input)
 }

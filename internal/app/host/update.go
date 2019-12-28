@@ -86,7 +86,139 @@ func (s *Service) UpdateHost(c controller.Context, hostID string, input UpdateHo
 
 	tx = db.Db.Begin()
 
-	hostInfo := db.Host{Id: hostID, OwnerID: c.Uid}
+	hostInfo := db.Host{Id: hostID, OwnerID: c.Uid, OwnerType: db.HostOwnerTypeUser}
+
+	updateModel := db.Host{}
+
+	if input.Name != nil {
+		updateModel.Name = *input.Name
+		shouldUpdate = true
+	}
+
+	if input.Host != nil {
+		updateModel.Host = *input.Host
+		shouldUpdate = true
+	}
+
+	if input.Port != nil {
+		updateModel.Port = *input.Port
+		shouldUpdate = true
+	}
+
+	if input.Username != nil {
+		updateModel.Username = *input.Username
+		shouldUpdate = true
+	}
+
+	if input.Password != nil {
+		updateModel.Password = *input.Password
+		shouldUpdate = true
+	}
+
+	if input.Remark != nil {
+		updateModel.Remark = input.Remark
+		shouldUpdate = true
+	}
+
+	if shouldUpdate {
+		if err = tx.Model(&hostInfo).Updates(&updateModel).First(&hostInfo).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				err = exception.NoData
+			}
+			return
+		}
+	}
+
+	if err = mapstructure.Decode(hostInfo, &data.HostPure); err != nil {
+		return
+	}
+
+	data.CreatedAt = hostInfo.CreatedAt.Format(time.RFC3339Nano)
+	data.UpdatedAt = hostInfo.UpdatedAt.Format(time.RFC3339Nano)
+
+	return
+}
+
+func (s *Service) UpdateHostByTeamRouter(c *gin.Context) {
+	var (
+		input UpdateHostParams
+		err   error
+		res   = schema.Response{}
+	)
+
+	defer func() {
+		if err != nil {
+			res.Data = nil
+			res.Message = err.Error()
+		}
+		c.JSON(http.StatusOK, res)
+	}()
+
+	if err = c.ShouldBindJSON(&input); err != nil {
+		err = exception.InvalidParams
+		return
+	}
+
+	teamID := c.Param("team_id")
+	hostID := c.Param("host_id")
+
+	res = s.UpdateHostByTeam(controller.NewContextFromGinContext(c), teamID, hostID, input)
+}
+
+func (s *Service) UpdateHostByTeam(c controller.Context, teamID string, hostID string, input UpdateHostParams) (res schema.Response) {
+	var (
+		err          error
+		data         schema.Host
+		tx           *gorm.DB
+		shouldUpdate bool
+	)
+
+	defer func() {
+		if r := recover(); r != nil {
+			switch t := r.(type) {
+			case string:
+				err = errors.New(t)
+			case error:
+				err = t
+			default:
+				err = exception.Unknown
+			}
+		}
+
+		if tx != nil {
+			if err != nil || !shouldUpdate {
+				_ = tx.Rollback().Error
+			} else {
+				err = tx.Commit().Error
+			}
+		}
+
+		helper.Response(&res, data, nil, err)
+	}()
+
+	if err = c.Validator(input); err != nil {
+		return
+	}
+
+	tx = db.Db.Begin()
+
+	teamMemberInfo := db.TeamMember{}
+
+	// 查询用户是否在团队中
+	if err = db.Db.Where(db.TeamMember{TeamID: teamID, UserID: c.Uid}).First(&teamMemberInfo).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = exception.NoPermission
+		}
+		return
+	}
+
+	// 只有拥有者和管理员才能删除
+	if teamMemberInfo.Role != db.TeamRoleOwner && teamMemberInfo.Role != db.TeamRoleAdmin {
+		err = exception.NoPermission
+		return
+	}
+
+	hostInfo := db.Host{Id: hostID, OwnerID: teamID, OwnerType: db.HostOwnerTypeTeam}
 
 	updateModel := db.Host{}
 

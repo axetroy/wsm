@@ -40,7 +40,9 @@ func (t *Terminal) Close() (err error) {
 		return nil
 	}
 	defer func() {
-		err = t.closeHandler()
+		if t.closeHandler != nil {
+			err = t.closeHandler()
+		}
 		t.closed = true
 	}()
 

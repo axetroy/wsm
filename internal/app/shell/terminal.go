@@ -1,15 +1,20 @@
 package shell
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/axetroy/terminal/internal/app/db"
 	"github.com/axetroy/terminal/internal/app/exception"
+	"github.com/axetroy/terminal/internal/app/schema"
 	"github.com/axetroy/terminal/internal/library/controller"
+	"github.com/axetroy/terminal/internal/library/helper"
 	"github.com/axetroy/terminal/internal/library/session"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/jinzhu/gorm"
 )
 
 type WebsocketStream struct {
@@ -43,9 +48,8 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+// 连接 WebSocket
 func (s *Service) StartTerminalRouter(c *gin.Context) {
-	// search for host
-
 	var (
 		hostID = c.Param("host_id")
 		rows   = 25
@@ -78,14 +82,52 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 
 	ctx := controller.NewContextFromGinContext(c)
 
-	recordInfo := db.HostRecord{HostID: hostID, UserID: ctx.Uid}
+	hostInfo := db.Host{Id: hostID}
 
-	if err := db.Db.Where(&recordInfo).Preload("Host").First(&recordInfo).Error; err != nil {
-		c.String(http.StatusBadRequest, exception.NoPermission.Error())
+	if err := db.Db.Where(&hostInfo).First(&hostInfo).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.String(http.StatusNotFound, exception.NoData.Error())
+			return
+		}
+		c.String(http.StatusInternalServerError, exception.NoPermission.Error())
 		return
 	}
 
-	hostInfo := recordInfo.Host
+	fmt.Println(hostInfo)
+	fmt.Println(hostInfo.OwnerType)
+
+	if hostInfo.OwnerType == db.HostOwnerTypeUser {
+		// 如果是用户持有的的服务器
+		recordInfo := db.HostRecord{HostID: hostID, UserID: ctx.Uid}
+		if err := db.Db.Where(&recordInfo).First(&recordInfo).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				c.String(http.StatusNotFound, exception.NoPermission.Error())
+				return
+			}
+			c.String(http.StatusInternalServerError, exception.Unknown.Error())
+			return
+		}
+	} else if hostInfo.OwnerType == db.HostOwnerTypeTeam {
+		// 查询操作者是否属于该组织
+		memberInfo := db.TeamMember{TeamID: hostInfo.OwnerID, UserID: ctx.Uid}
+		if err := db.Db.Where(&memberInfo).First(&memberInfo).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				c.String(http.StatusNotFound, exception.NoPermission.Error())
+				return
+			}
+			c.String(http.StatusInternalServerError, exception.Unknown.Error())
+			return
+		}
+
+		// 校验权限是否足够
+		if memberInfo.Role == db.TeamRoleVisitor {
+			c.String(http.StatusBadRequest, exception.NoPermission.Error())
+			return
+		}
+	} else {
+		c.String(http.StatusBadRequest, exception.NoData.Error())
+		return
+	}
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 
@@ -124,4 +166,108 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+}
+
+// 测试一个服务器是否可连接
+func (s *Service) TestHostConnect(c controller.Context, hostID string) (res schema.Response) {
+	var (
+		err      error
+		data     bool
+		terminal *session.Terminal
+	)
+
+	defer func() {
+		if r := recover(); r != nil {
+			switch t := r.(type) {
+			case string:
+				err = errors.New(t)
+			case error:
+				err = t
+			default:
+				err = exception.Unknown
+			}
+		}
+
+		if terminal != nil {
+			if terminalCloseErr := terminal.Close(); terminalCloseErr != nil {
+				if err == nil {
+					err = terminalCloseErr
+				}
+			}
+		}
+
+		if err == nil {
+			data = true
+		}
+
+		helper.Response(&res, data, nil, err)
+	}()
+
+	hostInfo := db.Host{
+		Id: hostID,
+	}
+
+	if err = db.Db.Where(&hostInfo).First(&hostInfo).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = exception.NoData
+		}
+		return
+	}
+
+	if hostInfo.OwnerType == db.HostOwnerTypeUser {
+		// 如果是用户个人持有
+		hostRecordInfo := db.HostRecord{
+			HostID: hostID,
+			UserID: c.Uid,
+		}
+		if err = db.Db.Where(&hostRecordInfo).First(&hostRecordInfo).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				err = exception.NoPermission
+			}
+			return
+		}
+
+		if hostRecordInfo.Type != db.HostRecordTypeOwner && hostRecordInfo.Type != db.HostRecordTypeCollaborator {
+			err = exception.NoPermission
+			return
+		}
+
+	} else if hostInfo.OwnerType == db.HostOwnerTypeTeam {
+		// 如果是团队持有
+		memberInfo := db.TeamMember{
+			TeamID: hostInfo.OwnerID,
+			UserID: c.Uid,
+		}
+
+		if err = db.Db.Where(&memberInfo).First(&memberInfo).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				err = exception.NoPermission
+			}
+			return
+		}
+
+		if memberInfo.Role == db.TeamRoleVisitor {
+			err = exception.NoPermission
+			return
+		}
+	}
+
+	terminal, err = session.NewTerminal(session.Config{
+		Host:     hostInfo.Host,
+		Port:     hostInfo.Port,
+		Username: hostInfo.Username,
+		Password: hostInfo.Password,
+		Width:    80,
+		Height:   25,
+	})
+
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (s *Service) TestHostConnectRouter(c *gin.Context) {
+	c.JSON(http.StatusOK, s.TestHostConnect(controller.NewContextFromGinContext(c), c.Param("host_id")))
 }

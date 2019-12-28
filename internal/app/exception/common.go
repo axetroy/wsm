@@ -4,6 +4,8 @@ package exception
 var (
 	SystemMaintenance = New("系统维护中", -1)
 	Unknown           = New("未知错误", 0)
+	DataBase          = New("数据库错误", 100)
+	DataBinding       = New("数据转换错误", 101)
 	InvalidParams     = New("参数不正确", 100000)
 	NoData            = New("找不到数据", 100001)
 	NoPermission      = New("没有权限", 100002)

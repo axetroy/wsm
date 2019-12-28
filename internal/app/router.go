@@ -84,7 +84,7 @@ func init() {
 			shellRouter := v1.Group("/shell")
 			shellRouter.GET("/demo", shell.Core.ExampleRouter)
 			shellRouter.GET("/connect/:host_id", userAuthMiddleware, shell.Core.StartTerminalRouter) // 开启终端，连接 websocket
-			shellRouter.GET("/test/:host_id", userAuthMiddleware, shell.Core.StartTerminalRouter)    // TODO: 测试服务器是否可连接
+			shellRouter.GET("/test/:host_id", userAuthMiddleware, shell.Core.TestHostConnectRouter)  // 测试服务器是否可连接
 			shellRouter.POST("/test", userAuthMiddleware, shell.Core.TestPublicServerRouter)         // 测试服务器是否可连接，给定服务器的相关信息即可，无需登陆验证
 		}
 
@@ -120,7 +120,11 @@ func init() {
 			teamRouter.DELETE("/_/:team_id", team.Core.DeleteTeamByIDRouter)                            // 解散团队, 只有拥有者才有权限删除
 			teamRouter.DELETE("/_/:team_id/quit", team.Core.QuitTeamRouter)                             // 团队成员退出团队(团队的拥有者无法退出)
 			teamRouter.PUT("/_/:team_id/role/:user_id", team.Core.UpdateMemberRoleRouter)               // 更改团队成员的角色，只有拥有者和管理员可以操作
-			teamRouter.POST("/_/:team_id/host", team.Core.UpdateMemberRoleRouter)                       // TODO: 添加团队的服务器，只有拥有者和管理员可以操作
+			teamRouter.POST("/_/:team_id/host", host.Core.CreateHostByTeamRouter)                       // 添加团队的服务器，只有拥有者和管理员可以操作
+			teamRouter.GET("/_/:team_id/host", host.Core.QueryHostByTeamRouter)                         // 获取团队的服务器列表，只有拥有者和管理员可以操作
+			teamRouter.GET("/_/:team_id/host/_/:host_id", host.Core.QueryMyHostByTeamRouter)            // 获取团队的服务器信息，只有拥有者和管理员可以操作
+			teamRouter.DELETE("/_/:team_id/host/_/:host_id", host.Core.DeleteHostByTeamRouter)          // 删除服务器，只有拥有者和管理员可以操作
+			teamRouter.PUT("/_/:team_id/host/_/:host_id", host.Core.UpdateHostByTeamRouter)             // 更新服务器，只有拥有者和管理员可以操作
 		}
 	}
 
