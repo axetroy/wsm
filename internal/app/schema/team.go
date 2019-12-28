@@ -36,3 +36,18 @@ type TeamMember struct {
 	Role      db.TeamRole `json:"role"`       // 用户在团队的角色
 	CreatedAt string      `json:"created_at"` // 用户加入团队的时间
 }
+
+type TeamMemberInvitePure struct {
+	ID     string         `json:"id"`
+	Role   db.TeamRole    `json:"role"`
+	State  db.InviteState `json:"state"`
+	Remark *string        `json:"remark"`
+}
+
+type TeamMemberInvite struct {
+	TeamMemberInvitePure
+	User      ProfilePublic `json:"user"`
+	Team      TeamPure      `json:"team"`
+	CreatedAt string        `json:"created_at"`
+	UpdatedAt string        `json:"updated_at"`
+}

@@ -109,25 +109,28 @@ func init() {
 		{
 			teamRouter := v1.Group("/team")
 			teamRouter.Use(userAuthMiddleware)
-			teamRouter.GET("", team.Core.QueryMyTeamsRouter)                                            // 获取我所在的团队列表
-			teamRouter.POST("", team.Core.CreateTeamRouter)                                             // 创建团队
-			teamRouter.GET("/_/:team_id", team.Core.QueryMyTeamRouter)                                  // 获取我的团队信息, 只有加入团队才能调用
-			teamRouter.PUT("/_/:team_id", team.Core.UpdateTeamRouter)                                   // 更新团队, 只有管理员或者拥有者才能更新
-			teamRouter.GET("/_/:team_id/stat", team.Core.StatTeamRouter)                                // 获取团队的统计信息
-			teamRouter.GET("/_/:team_id/profile", team.Core.GetMyProfileRouter)                         // 获取我在团队中的信息
-			teamRouter.POST("/_/:team_id/member/invite", team.Core.InviteTeamRouter)                    // 邀请成员加入团队
-			teamRouter.PUT("/_/:team_id/member/invite/_/:invite_id", team.Core.ResolveInviteTeamRouter) // 接受/拒绝加入团队
-			teamRouter.DELETE("/_/:team_id/member/_/:user_id", team.Core.KickOutByUIDRouter)            // 管理员/拥有者 把成员踢出团队
-			teamRouter.GET("/_/:team_id/member", team.Core.QueryTeamMembersRouter)                      // 获取团队成员列表
-			teamRouter.GET("/_/:team_id/transfer/:user_id", team.Core.TransferTeamRouter)               // 转让团队
-			teamRouter.DELETE("/_/:team_id", team.Core.DeleteTeamByIDRouter)                            // 解散团队, 只有拥有者才有权限删除
-			teamRouter.DELETE("/_/:team_id/quit", team.Core.QuitTeamRouter)                             // 团队成员退出团队(团队的拥有者无法退出)
-			teamRouter.PUT("/_/:team_id/role/:user_id", team.Core.UpdateMemberRoleRouter)               // 更改团队成员的角色，只有拥有者和管理员可以操作
-			teamRouter.POST("/_/:team_id/host", host.Core.CreateHostByTeamRouter)                       // 添加团队的服务器，只有拥有者和管理员可以操作
-			teamRouter.GET("/_/:team_id/host", host.Core.QueryHostByTeamRouter)                         // 获取团队的服务器列表，只有拥有者和管理员可以操作
-			teamRouter.GET("/_/:team_id/host/_/:host_id", host.Core.QueryMyHostByTeamRouter)            // 获取团队的服务器信息，只有拥有者和管理员可以操作
-			teamRouter.DELETE("/_/:team_id/host/_/:host_id", host.Core.DeleteHostByTeamRouter)          // 删除服务器，只有拥有者和管理员可以操作
-			teamRouter.PUT("/_/:team_id/host/_/:host_id", host.Core.UpdateHostByTeamRouter)             // 更新服务器，只有拥有者和管理员可以操作
+			teamRouter.GET("", team.Core.QueryMyTeamsRouter)                                              // 获取我所在的团队列表
+			teamRouter.POST("", team.Core.CreateTeamRouter)                                               // 创建团队
+			teamRouter.GET("/invite", team.Core.GetMyInvitedRecordRouter)                                 // 获取我的受邀列表，仅仅获取未处理的邀请
+			teamRouter.GET("/_/:team_id", team.Core.QueryMyTeamRouter)                                    // 获取我的团队信息, 只有加入团队才能调用
+			teamRouter.PUT("/_/:team_id", team.Core.UpdateTeamRouter)                                     // 更新团队, 只有管理员或者拥有者才能更新
+			teamRouter.GET("/_/:team_id/stat", team.Core.StatTeamRouter)                                  // 获取团队的统计信息
+			teamRouter.GET("/_/:team_id/profile", team.Core.GetMyProfileRouter)                           // 获取我在团队中的信息
+			teamRouter.GET("/_/:team_id/member/invite", team.Core.GetTeamInviteRecordRouter)              // 获取发出去的团队邀请
+			teamRouter.POST("/_/:team_id/member/invite", team.Core.InviteTeamRouter)                      // 邀请成员加入团队
+			teamRouter.PUT("/_/:team_id/member/invite/_/:invite_id", team.Core.ResolveInviteTeamRouter)   // 收邀者 接受/拒绝加入团队
+			teamRouter.DELETE("/_/:team_id/member/invite/_/:invite_id", team.Core.CancelInviteTeamRouter) // 团队管理者取消邀请
+			teamRouter.DELETE("/_/:team_id/member/_/:user_id", team.Core.KickOutByUIDRouter)              // 管理员/拥有者 把成员踢出团队
+			teamRouter.GET("/_/:team_id/member", team.Core.QueryTeamMembersRouter)                        // 获取团队成员列表
+			teamRouter.GET("/_/:team_id/transfer/:user_id", team.Core.TransferTeamRouter)                 // 转让团队
+			teamRouter.DELETE("/_/:team_id", team.Core.DeleteTeamByIDRouter)                              // 解散团队, 只有拥有者才有权限删除
+			teamRouter.DELETE("/_/:team_id/quit", team.Core.QuitTeamRouter)                               // 团队成员退出团队(团队的拥有者无法退出)
+			teamRouter.PUT("/_/:team_id/role/:user_id", team.Core.UpdateMemberRoleRouter)                 // 更改团队成员的角色，只有拥有者和管理员可以操作
+			teamRouter.POST("/_/:team_id/host", host.Core.CreateHostByTeamRouter)                         // 添加团队的服务器，只有拥有者和管理员可以操作
+			teamRouter.GET("/_/:team_id/host", host.Core.QueryHostByTeamRouter)                           // 获取团队的服务器列表，只有拥有者和管理员可以操作
+			teamRouter.GET("/_/:team_id/host/_/:host_id", host.Core.QueryMyHostByTeamRouter)              // 获取团队的服务器信息，只有拥有者和管理员可以操作
+			teamRouter.DELETE("/_/:team_id/host/_/:host_id", host.Core.DeleteHostByTeamRouter)            // 删除服务器，只有拥有者和管理员可以操作
+			teamRouter.PUT("/_/:team_id/host/_/:host_id", host.Core.UpdateHostByTeamRouter)               // 更新服务器，只有拥有者和管理员可以操作
 		}
 	}
 

@@ -21,9 +21,9 @@ type Member struct {
 }
 
 type CreateTeamParams struct {
-	Name    string   `json:"name" valid:"required~请输入名称"`      // team 名称
-	Members []string `json:"members" valid:"required~请添加成员列表"` // 组成员的 ID 列表
-	Remark  *string  `json:"remark"`                           // 备注
+	Name    string   `json:"name" valid:"required~请输入名称"` // 团队名称
+	Members []string `json:"members"`                     // 成员的 ID 列表
+	Remark  *string  `json:"remark"`                      // 备注
 }
 
 func (s *Service) CreateTeamRouter(c *gin.Context) {
@@ -91,7 +91,7 @@ func (s *Service) CreateTeam(c controller.Context, input CreateTeamParams) (res 
 		Remark:  input.Remark,
 	}
 
-	// 创建 Team
+	// 创建团队
 	if err = tx.Create(&teamInfo).Error; err != nil {
 		return
 	}
@@ -105,6 +105,35 @@ func (s *Service) CreateTeam(c controller.Context, input CreateTeamParams) (res 
 	// 创建 Member
 	if err = tx.Create(&memberInfo).Error; err != nil {
 		return
+	}
+
+	if input.Members != nil && len(input.Members) > 0 {
+		memberMap := map[string]string{}
+		for _, memberID := range input.Members {
+			// 防止重复
+			if _, ok := memberMap[memberID]; ok {
+				continue
+			}
+
+			memberMap[memberID] = "1"
+			userInfo := db.User{}
+
+			if err = tx.Where(&db.User{Id: memberID}).First(&userInfo).Error; err != nil {
+				if err == gorm.ErrRecordNotFound {
+					err = exception.UserExist
+				}
+				return
+			}
+
+			// 创建 Member
+			if err = tx.Create(&db.TeamMember{
+				TeamID: teamInfo.Id,
+				UserID: memberID,
+				Role:   db.TeamRoleMember,
+			}).Error; err != nil {
+				return
+			}
+		}
 	}
 
 	if err = mapstructure.Decode(teamInfo, &data.TeamPure); err != nil {
