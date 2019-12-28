@@ -16,6 +16,14 @@ type Team struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+type TeamWithMember struct {
+	TeamPure
+	UserID    string      `json:"user_id"` // 用户 ID
+	Role      db.TeamRole `json:"role"`    // 用户在团队中扮演的角色
+	CreatedAt string      `json:"created_at"`
+	UpdatedAt string      `json:"updated_at"`
+}
+
 type TeamStat struct {
 	Team
 	MemberNum int `json:"member_num"` // 团队的成员数量
