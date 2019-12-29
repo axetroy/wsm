@@ -16,7 +16,7 @@ do
     goos=${os_arch%/*}
     goarch=${os_arch#*/}
 
-    filename=terminal
+    filename=wsm
 
     if [[ ${goos} == "windows" ]];
     then
@@ -25,14 +25,14 @@ do
 
     echo building ${os_arch}
 
-    CGO_ENABLED=0 GOOS=${goos} GOARCH=${goarch} go build -gcflags=-trimpath=$GOPATH -asmflags=-trimpath=$GOPATH -ldflags "-s -w" -o ./bin/${filename} ./cmd/user/main.go >/dev/null 2>&1
+    GO111MODULE=on CGO_ENABLED=0 GOOS=${goos} GOARCH=${goarch} go build -gcflags=-trimpath=$GOPATH -asmflags=-trimpath=$GOPATH -ldflags "-s -w" -o ./bin/${filename} ./cmd/user/main.go
 
     # if build success
     if [[ $? == 0 ]];then
         releases+=(${os_arch})
         cd ./bin
 
-        tar -czf terminal_${goos}_${goarch}.tar.gz ${filename}
+        tar -czf wsm_${goos}_${goarch}.tar.gz ${filename}
 
         rm -rf ./${filename}
 

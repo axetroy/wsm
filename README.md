@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/axetroy/wsm.svg?token=QMG6TLRNwECnaTsy6ssj&branch=master)](https://travis-ci.com/axetroy/wsm)
+[![Build Status](https://github.com/axetroy/wsm/workflows/ci/badge.svg)](https://github.com/axetroy/wsm/actions)
 [![Coverage Status](https://coveralls.io/repos/github/axetroy/wsm/badge.svg?branch=master)](https://coveralls.io/github/axetroy/wsm?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/axetroy/wsm)](https://goreportcard.com/report/github.com/axetroy/wsm)
 ![License](https://img.shields.io/github/license/axetroy/wsm.svg)
