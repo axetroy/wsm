@@ -11,6 +11,7 @@ jobs:
         node: ['v12.13.0']
         os: [ubuntu-latest, windows-latest, macos-latest]
     name: Node.js ${{ matrix.node }} test in ${{ matrix.os }}
+    working-directory: ./frontend
 
     steps:
       - uses: actions/checkout@master
@@ -22,7 +23,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Dependency
-        run: cd ./frontend && yarn
+        run: yarn
 
       - name: Build
-        run: cd ./frontend && npm run build
+        run: npm run build
