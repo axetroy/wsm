@@ -111,7 +111,7 @@ func init() {
 			teamRouter.Use(userAuthMiddleware)
 			teamRouter.GET("", team.Core.QueryMyTeamsRouter)                                              // 获取我所在的团队列表
 			teamRouter.POST("", team.Core.CreateTeamRouter)                                               // 创建团队
-			teamRouter.GET("/invite", team.Core.GetMyInvitedRecordRouter)                                 // 获取我的受邀列表，仅仅获取未处理的邀请
+			teamRouter.GET("/invite", team.Core.GetMyInvitedRecordRouter)                                 // 获取我的受邀列表
 			teamRouter.GET("/_/:team_id", team.Core.QueryMyTeamRouter)                                    // 获取我的团队信息, 只有加入团队才能调用
 			teamRouter.PUT("/_/:team_id", team.Core.UpdateTeamRouter)                                     // 更新团队, 只有管理员或者拥有者才能更新
 			teamRouter.GET("/_/:team_id/stat", team.Core.StatTeamRouter)                                  // 获取团队的统计信息

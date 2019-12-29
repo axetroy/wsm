@@ -102,13 +102,16 @@ func (s *Service) QueryMyTeams(c controller.Context, input QueryList) (res schem
 		return
 	}
 
-	if err = db.Db.Limit(query.Limit).Offset(query.Offset()).Order(query.Order()).Where(&filter).Preload("Team").Find(&list).Error; err != nil {
+	if err = db.Db.Limit(query.Limit).Offset(query.Offset()).Order(query.Order()).Where(&filter).Preload("Team").Preload("Team.Owner").Find(&list).Error; err != nil {
 		return
 	}
 
 	for _, v := range list {
 		d := schema.TeamWithMember{}
 		if err = mapstructure.Decode(v.Team, &d.TeamPure); err != nil {
+			return
+		}
+		if err = mapstructure.Decode(v.Team.Owner, &d.Owner); err != nil {
 			return
 		}
 		d.UserID = v.UserID

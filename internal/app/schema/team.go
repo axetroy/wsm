@@ -18,10 +18,11 @@ type Team struct {
 
 type TeamWithMember struct {
 	TeamPure
-	UserID    string      `json:"user_id"` // 用户 ID
-	Role      db.TeamRole `json:"role"`    // 用户在团队中扮演的角色
-	CreatedAt string      `json:"created_at"`
-	UpdatedAt string      `json:"updated_at"`
+	Owner     ProfilePublic `json:"owner"`   // 团队拥有者的基本信息
+	UserID    string        `json:"user_id"` // 用户 ID
+	Role      db.TeamRole   `json:"role"`    // 用户在团队中扮演的角色
+	CreatedAt string        `json:"created_at"`
+	UpdatedAt string        `json:"updated_at"`
 }
 
 type TeamStat struct {

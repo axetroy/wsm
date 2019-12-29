@@ -26,6 +26,7 @@ func init() {
 type Team struct {
 	Id      string  `gorm:"primary_key;not null;unique;index;type:varchar(32);" json:"id"` // 团队ID
 	OwnerID string  `gorm:"not null;index;type:varchar(32);" json:"owner_id"`              // 拥有者
+	Owner   User    `gorm:"foreignkey:OwnerID" json:"owner"`                               // ** 关联外键 **
 	Name    string  `gorm:"not null;type:varchar(32);" json:"name"`                        // 团队名
 	Remark  *string `gorm:"null;type:varchar(36);" json:"remark"`                          // 备注
 

@@ -486,7 +486,6 @@ func (s *Service) GetMyInvitedRecord(c controller.Context, teamID string, input 
 	filter := db.TeamMemberInvite{
 		TeamID: teamID,
 		UserID: c.Uid,
-		State:  db.InviteStateInit,
 	}
 
 	if err = db.Db.Where(&filter).Find(&list).Count(&total).Error; err != nil {
