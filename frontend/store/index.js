@@ -37,9 +37,9 @@ export const actions = {
       store.commit('SET_USER', profile)
     }
   },
+  // 更新用户的资料
   async updateProfile(store, { $axios }) {
     const { data: profile } = await $axios.$get('/user/profile')
     store.commit('SET_USER', profile)
   }
 }
-

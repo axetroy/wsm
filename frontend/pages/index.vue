@@ -1,11 +1,13 @@
 <template>
-  <div class="container">
-    Home
-  </div>
+  <div class="container"></div>
 </template>
 
 <script>
-export default {}
+export default {
+  async asyncData({ redirect }) {
+    redirect('/host')
+  }
+}
 </script>
 
 <style></style>

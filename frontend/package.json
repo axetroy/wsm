@@ -1,7 +1,7 @@
 {
-  "name": "iTerminal-fontend",
+  "name": "wsm",
   "version": "1.0.0",
-  "description": "Iterminal frontend",
+  "description": "wsm",
   "author": "axetroy",
   "private": true,
   "scripts": {

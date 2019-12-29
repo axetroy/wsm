@@ -1,8 +1,9 @@
 import cookie from 'js-cookie'
 
 export const state = () => ({
-  workspaces: [], // 可用的工作区列表
-  current: undefined // 当前工作区 ID
+  workspaces: [], // 可用的工作区列表，没有翻页，所有的都在这里
+  current: undefined, // 当前工作区 ID
+  profile: undefined // 我在该工作区中的成员身份
 })
 
 export const getters = {
@@ -11,6 +12,9 @@ export const getters = {
   },
   current(state) {
     return state.current
+  },
+  profile(state) {
+    return state.profile
   }
 }
 
@@ -27,7 +31,18 @@ export const mutations = {
     } else {
       cookie.remove('workspace')
     }
+  },
+  UPDATE_PROFILE(state, profile) {
+    state.profile = profile
   }
 }
 
-export const actions = {}
+export const actions = {
+  // TODO: 还未使用
+  async updateProfile(store, { $axios }) {
+    const { profile } = await $axios.$get(
+      `/team/_/${store.getters.profile}/profile`
+    )
+    store.commit('UPDATE_PROFILE', profile)
+  }
+}

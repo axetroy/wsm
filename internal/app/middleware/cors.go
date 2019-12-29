@@ -38,7 +38,7 @@ func CORS() gin.HandlerFunc {
 		c.Writer.Header().Set("Access-Control-Allow-Methods", allowMethods)
 
 		if c.Request.Method == http.MethodOptions {
-			c.AbortWithStatus(204)
+			c.AbortWithStatus(http.StatusOK)
 			return
 		}
 

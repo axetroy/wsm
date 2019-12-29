@@ -2,8 +2,14 @@
   <el-container style="height: 100vh;">
     <el-aside width="200px" class="aside">
       <el-menu :default-active="$route.path" router>
-        <el-menu-item index="/">首页</el-menu-item>
-        <el-menu-item index="/host">服务器管理</el-menu-item>
+        <!-- <el-menu-item index="/">
+          <i class="el-icon-s-home" />
+          首页
+        </el-menu-item> -->
+        <el-menu-item index="/host">
+          <i class="el-icon-s-promotion" />
+          服务器管理
+        </el-menu-item>
         <el-submenu index="/team">
           <template slot="title">
             <i class="el-icon-location"></i>
@@ -22,7 +28,10 @@
     <el-container>
       <el-header class="header text-right">
         <div class="workpsace">
-          <span>工作区:</span>
+          <span>
+            <i class="el-icon-menu" />
+            工作空间 |</span
+          >
           <el-select
             v-model="workspace"
             placeholder="请选择工作区"
@@ -209,8 +218,9 @@ body,
     position: absolute;
     left: 50%;
     top: 50%;
-    min-width: 300px;
+    min-width: 250px;
     transform: translateX(-50%) translateY(-50%);
+    margin-left: -100px;
   }
 }
 </style>
