@@ -21,6 +21,6 @@ require (
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/stretchr/testify v1.4.0
-	github.com/urfave/cli/v2/v2 v2.1.1
+	github.com/urfave/cli v1.22.2
 	golang.org/x/crypto v0.0.0-20191227163750-53104e6ec876
 )
