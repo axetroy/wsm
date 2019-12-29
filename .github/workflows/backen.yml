@@ -1,4 +1,4 @@
-name: ci
+name: backen
 
 on: [push, pull_request]
 

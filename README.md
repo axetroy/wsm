@@ -1,4 +1,5 @@
-[![Build Status](https://github.com/axetroy/wsm/workflows/ci/badge.svg)](https://github.com/axetroy/wsm/actions)
+[![Build Status](https://github.com/axetroy/wsm/workflows/backen/badge.svg)](https://github.com/axetroy/wsm/actions)
+[![Build Status](https://github.com/axetroy/wsm/workflows/frontend/badge.svg)](https://github.com/axetroy/wsm/actions)
 [![Coverage Status](https://coveralls.io/repos/github/axetroy/wsm/badge.svg?branch=master)](https://coveralls.io/github/axetroy/wsm?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/axetroy/wsm)](https://goreportcard.com/report/github.com/axetroy/wsm)
 ![License](https://img.shields.io/github/license/axetroy/wsm.svg)

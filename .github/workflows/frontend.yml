@@ -1,0 +1,28 @@
+name: backen
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        node: ['v12.13.0']
+        os: [ubuntu-latest, window-latest, macos-latest]
+    name: Node.js ${{ matrix.node }} test in ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Dependency
+        run: yarn
+
+      - name: Build
+        run: npm run build
