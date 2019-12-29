@@ -1,6 +1,6 @@
 package schema
 
-import "github.com/axetroy/terminal/internal/app/db"
+import "github.com/axetroy/wsm/internal/app/db"
 
 // 团队信息相关
 type TeamPure struct {

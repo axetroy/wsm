@@ -3,9 +3,9 @@ package user
 import (
 	"errors"
 
-	"github.com/axetroy/terminal/internal/app/schema"
-	"github.com/axetroy/terminal/internal/library/controller"
-	"github.com/axetroy/terminal/internal/library/util"
+	"github.com/axetroy/wsm/internal/app/schema"
+	"github.com/axetroy/wsm/internal/library/controller"
+	"github.com/axetroy/wsm/internal/library/util"
 )
 
 // create a test user

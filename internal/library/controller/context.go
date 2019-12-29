@@ -3,8 +3,8 @@ package controller
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/axetroy/terminal/internal/app/exception"
-	"github.com/axetroy/terminal/internal/app/middleware"
+	"github.com/axetroy/wsm/internal/app/exception"
+	"github.com/axetroy/wsm/internal/app/middleware"
 	"github.com/gin-gonic/gin"
 )
 

@@ -3,9 +3,9 @@ package host
 import (
 	"errors"
 
-	"github.com/axetroy/terminal/internal/app/schema"
-	"github.com/axetroy/terminal/internal/app/user"
-	"github.com/axetroy/terminal/internal/library/controller"
+	"github.com/axetroy/wsm/internal/app/schema"
+	"github.com/axetroy/wsm/internal/app/user"
+	"github.com/axetroy/wsm/internal/library/controller"
 )
 
 func TestCreateHost() (profile schema.ProfileWithToken, hostInfo schema.Host, err error) {

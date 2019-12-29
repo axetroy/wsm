@@ -4,8 +4,8 @@ package token
 import (
 	"strings"
 
-	"github.com/axetroy/terminal/internal/app/exception"
-	"github.com/axetroy/terminal/internal/library/util"
+	"github.com/axetroy/wsm/internal/app/exception"
+	"github.com/axetroy/wsm/internal/library/util"
 	"github.com/dgrijalva/jwt-go"
 )
 

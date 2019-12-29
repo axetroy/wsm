@@ -2,7 +2,7 @@
 package config
 
 import (
-	"github.com/axetroy/terminal/internal/library/dotenv"
+	"github.com/axetroy/wsm/internal/library/dotenv"
 )
 
 type database struct {

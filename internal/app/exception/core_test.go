@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/axetroy/terminal/internal/app/exception"
+	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/stretchr/testify/assert"
 )
 

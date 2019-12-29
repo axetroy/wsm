@@ -2,11 +2,11 @@ package shell
 
 import (
 	"errors"
-	"github.com/axetroy/terminal/internal/app/exception"
-	"github.com/axetroy/terminal/internal/app/schema"
-	"github.com/axetroy/terminal/internal/library/controller"
-	"github.com/axetroy/terminal/internal/library/helper"
-	"github.com/axetroy/terminal/internal/library/session"
+	"github.com/axetroy/wsm/internal/app/exception"
+	"github.com/axetroy/wsm/internal/app/schema"
+	"github.com/axetroy/wsm/internal/library/controller"
+	"github.com/axetroy/wsm/internal/library/helper"
+	"github.com/axetroy/wsm/internal/library/session"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

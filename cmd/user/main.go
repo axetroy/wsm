@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 
-	App "github.com/axetroy/terminal"
-	app2 "github.com/axetroy/terminal/internal/app"
-	"github.com/axetroy/terminal/internal/library/daemon"
-	"github.com/axetroy/terminal/internal/library/util"
+	App "github.com/axetroy/wsm"
+	app2 "github.com/axetroy/wsm/internal/app"
+	"github.com/axetroy/wsm/internal/library/daemon"
+	"github.com/axetroy/wsm/internal/library/util"
 	"github.com/urfave/cli/v2"
 )
 

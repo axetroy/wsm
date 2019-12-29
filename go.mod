@@ -1,4 +1,4 @@
-module github.com/axetroy/terminal
+module github.com/axetroy/wsm
 
 go 1.13
 

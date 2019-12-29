@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/axetroy/terminal/internal/app/config"
+	"github.com/axetroy/wsm/internal/app/config"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 )

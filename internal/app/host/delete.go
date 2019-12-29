@@ -5,11 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 
-	"github.com/axetroy/terminal/internal/app/db"
-	"github.com/axetroy/terminal/internal/app/exception"
-	"github.com/axetroy/terminal/internal/app/schema"
-	"github.com/axetroy/terminal/internal/library/controller"
-	"github.com/axetroy/terminal/internal/library/helper"
+	"github.com/axetroy/wsm/internal/app/db"
+	"github.com/axetroy/wsm/internal/app/exception"
+	"github.com/axetroy/wsm/internal/app/schema"
+	"github.com/axetroy/wsm/internal/library/controller"
+	"github.com/axetroy/wsm/internal/library/helper"
 	"github.com/jinzhu/gorm"
 )
 

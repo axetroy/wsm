@@ -11,8 +11,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/axetroy/terminal/internal/app/config"
-	"github.com/axetroy/terminal/internal/app/db"
+	"github.com/axetroy/wsm/internal/app/config"
+	"github.com/axetroy/wsm/internal/app/db"
 )
 
 func Serve() error {

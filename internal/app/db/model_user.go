@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/axetroy/terminal/internal/app/config"
-	"github.com/axetroy/terminal/internal/app/exception"
+	"github.com/axetroy/wsm/internal/app/config"
+	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/bwmarrin/snowflake"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"

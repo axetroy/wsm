@@ -6,7 +6,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/axetroy/terminal/internal/library/dotenv"
+	"github.com/axetroy/wsm/internal/library/dotenv"
 	"github.com/fatih/color"
 )
 

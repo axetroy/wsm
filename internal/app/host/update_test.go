@@ -1,12 +1,12 @@
 package host_test
 
 import (
-	"github.com/axetroy/terminal/internal/app/schema"
-	"github.com/axetroy/terminal/internal/library/controller"
+	"github.com/axetroy/wsm/internal/app/schema"
+	"github.com/axetroy/wsm/internal/library/controller"
 	"testing"
 
-	"github.com/axetroy/terminal/internal/app/db"
-	"github.com/axetroy/terminal/internal/app/host"
+	"github.com/axetroy/wsm/internal/app/db"
+	"github.com/axetroy/wsm/internal/app/host"
 	"github.com/stretchr/testify/assert"
 )
 

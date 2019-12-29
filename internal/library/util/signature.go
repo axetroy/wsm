@@ -4,7 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"fmt"
-	"github.com/axetroy/terminal/internal/app/config"
+	"github.com/axetroy/wsm/internal/app/config"
 	"io"
 )
 

@@ -1,8 +1,8 @@
 package helper
 
 import (
-	"github.com/axetroy/terminal/internal/app/exception"
-	"github.com/axetroy/terminal/internal/app/schema"
+	"github.com/axetroy/wsm/internal/app/exception"
+	"github.com/axetroy/wsm/internal/app/schema"
 )
 
 func Response(res *schema.Response, data interface{}, meta *schema.Meta, err error) {

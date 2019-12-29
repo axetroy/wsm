@@ -4,7 +4,7 @@ package token
 import (
 	"time"
 
-	"github.com/axetroy/terminal/internal/library/util"
+	"github.com/axetroy/wsm/internal/library/util"
 	"github.com/dgrijalva/jwt-go"
 )
 

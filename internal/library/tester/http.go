@@ -2,7 +2,7 @@ package tester
 
 import (
 	"github.com/axetroy/mocker"
-	"github.com/axetroy/terminal/internal/app"
+	"github.com/axetroy/wsm/internal/app"
 )
 
 var (

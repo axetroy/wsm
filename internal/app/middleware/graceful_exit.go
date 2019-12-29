@@ -2,11 +2,11 @@
 package middleware
 
 import (
-	schema2 "github.com/axetroy/terminal/internal/app/schema"
+	schema2 "github.com/axetroy/wsm/internal/app/schema"
 	"net/http"
 
-	"github.com/axetroy/terminal/internal/app/config"
-	"github.com/axetroy/terminal/internal/app/exception"
+	"github.com/axetroy/wsm/internal/app/config"
+	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/gin-gonic/gin"
 )
 
