@@ -2,6 +2,8 @@ package util_test
 
 import (
 	"testing"
+
+	"github.com/axetroy/wsm/internal/library/util"
 )
 
 func TestSignature(t *testing.T) {
@@ -24,7 +26,7 @@ func TestSignature(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Signature(tt.args.input)
+			got, err := util.Signature(tt.args.input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Signature() error = %v, wantErr %v", err, tt.wantErr)
 				return

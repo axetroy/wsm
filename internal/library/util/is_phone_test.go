@@ -1,8 +1,10 @@
 package util_test
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/axetroy/wsm/internal/library/util"
+	"github.com/stretchr/testify/assert"
 )
 
 type testCase struct {
@@ -27,6 +29,6 @@ func TestIsPhone(t *testing.T) {
 	}
 
 	for _, input := range tests {
-		assert.Equal(t, input.Expect, IsPhone(input.Input))
+		assert.Equal(t, input.Expect, util.IsPhone(input.Input))
 	}
 }

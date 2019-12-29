@@ -16,11 +16,11 @@ jobs:
       postgres:
         image: postgres:9.6.16
         env:
-          POSTGRES_USER: gotest
-          POSTGRES_PASSWORD: gotest
-          POSTGRES_DB: gotest
+          POSTGRES_USER: terminal
+          POSTGRES_PASSWORD: terminal
+          POSTGRES_DB: terminal
         ports:
-          - 65432:5432
+          - 54321:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
