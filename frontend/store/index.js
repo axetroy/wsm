@@ -36,5 +36,10 @@ export const actions = {
 
       store.commit('SET_USER', profile)
     }
+  },
+  async updateProfile(store, { $axios }) {
+    const { data: profile } = await $axios.$get('/user/profile')
+    store.commit('SET_USER', profile)
   }
 }
+

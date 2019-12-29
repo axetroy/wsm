@@ -2,7 +2,7 @@
   <div class="main">
     <el-card shadow="never">
       <div slot="header">
-        <h4>可操作服务器列表</h4>
+        <h4>{{ currentWorkspace ? '团队' : '我' }}的服务器列表</h4>
         <nuxt-link
           v-if="
             currentWorkspace

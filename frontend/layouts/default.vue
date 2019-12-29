@@ -38,7 +38,7 @@
           </el-select>
         </div>
 
-        <el-dropdown @command="handleCommand" trigger="click">
+        <el-dropdown @command="handleCommand" trigger="hover">
           <span class="username">
             <i class="el-icon-user" />
             欢迎您，{{ user ? user.nickname : '' }}

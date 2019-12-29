@@ -24,8 +24,8 @@ const (
 
 	// 用户性别
 	GenderUnknown Gender = 0 // 未知性别
-	GenderMale               // 男
-	GenderFemale             // 女
+	GenderMale               // 1 男
+	GenderFemale             // 2 女
 )
 
 var (
@@ -52,7 +52,7 @@ type User struct {
 	Status   UserStatus     `gorm:"not null" json:"status"`                                       // 状态
 	Role     pq.StringArray `gorm:"not null;type:varchar(36)[]" json:"role"`                      // 角色, 用户可以拥有多个角色
 	Avatar   string         `gorm:"not null;type:varchar(128)" json:"avatar"`                     // 头像
-	Gender   Gender         `gorm:"default(0)" json:"gender"`                                     // 性别
+	Gender   Gender         `gorm:"not null;default(0)" json:"gender"`                            // 性别
 
 	// 外键关联
 	OAuth []OAuth `gorm:"foreignkey:Uid" json:"oauth"` // **外键**
@@ -72,6 +72,11 @@ func (u *User) BeforeCreate(scope *gorm.Scope) error {
 	if err := scope.SetColumn("id", uid); err != nil {
 		return err
 	}
+
+	if err := scope.SetColumn("gender", GenderUnknown); err != nil {
+		return err
+	}
+
 	return nil
 }
 

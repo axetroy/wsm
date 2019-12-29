@@ -62,9 +62,7 @@ func (u *Service) UpdateProfileRouter(c *gin.Context) {
 		return
 	}
 
-	res = u.UpdateProfile(controller.Context{
-		Uid: c.GetString(middleware.ContextUidField),
-	}, input)
+	res = u.UpdateProfile(controller.NewContextFromGinContext(c), input)
 }
 
 func (u *Service) GetProfile(c controller.Context) (res schema.Response) {
