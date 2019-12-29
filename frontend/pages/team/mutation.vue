@@ -1,0 +1,103 @@
+<template>
+  <div class="main">
+    <el-card shadow="never">
+      <div slot="header">
+        <h4>{{ type === 'create' ? '创建' : '修改' }}团队</h4>
+      </div>
+      <el-form
+        label-width="160px"
+        status-icon
+        :model="form"
+        :ref="formName"
+        :rules="formRules"
+      >
+        <el-form-item label="团队名称" required prop="name">
+          <el-input v-model="form.name" />
+        </el-form-item>
+        <el-form-item label="团队成员" prop="members">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            placeholder="请输入要邀请的团队成员的ID，每一个ID一行"
+            v-model="form.members"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">提交</el-button>
+          <el-button @click="$router.go(-1)">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+  </div>
+</template>
+
+<script>
+export default {
+  async asyncData({ $axios, query }) {
+    const type = query.id !== undefined ? 'update' : 'create'
+
+    const formRules = {}
+
+    let form = {
+      name: '',
+      members: ''
+    }
+
+    if (type === 'update') {
+      const { data } = await $axios.$get('/team/_/' + query.id)
+      form = data
+      if (!form) {
+        return redirect('/404')
+      }
+    }
+
+    return {
+      type,
+      formName: 'form',
+      formRules,
+      form
+    }
+  },
+  methods: {
+    onSubmit() {
+      this.$refs[this.formName].validate(valid => {
+        if (valid) {
+          switch (this.type) {
+            case 'create':
+              return this.create()
+            case 'update':
+              return this.update()
+          }
+        }
+      })
+    },
+    async update() {
+      const form = this.form
+      form.port = +form.port
+      try {
+        await this.$axios.$put('/team/_/' + this.$route.query.id, form)
+        this.$success('更新成功.')
+        this.$router.back()
+      } catch (err) {
+        this.$error(err.message)
+      }
+    },
+    async create() {
+      const form = this.form
+      form.port = +form.port
+      try {
+        await this.$axios.$post('/team', {
+          ...form,
+          members: form.members.split('\n').filter(v => v)
+        })
+        this.$success('创建成功.')
+        this.$router.back()
+      } catch (err) {
+        console.dir(err)
+        this.$error(err.message)
+      }
+    }
+  }
+}
+</script>
