@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         go: ['1.13.5']
-        os: [ubuntu-latest, macOS-latest, windows-latest]
+        os: [ubuntu-latest, macOS-latest]
     name: Go ${{ matrix.go }} test in ${{ matrix.os }}
 
     services:
