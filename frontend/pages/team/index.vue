@@ -11,20 +11,20 @@
         <el-col :span="6">
           <el-card
             >团队成员:
-            <div>{{ stat.member_num }}</div></el-card
-          >
+            <div>{{ stat.member_num }}</div>
+          </el-card>
         </el-col>
         <el-col :span="6">
           <el-card
             >团队服务器:
-            <div>{{ stat.host_num }}</div></el-card
-          >
+            <div>{{ stat.host_num }}</div>
+          </el-card>
         </el-col>
         <el-col :span="6">
           <el-card>
             创建日期:
-            <div>{{ stat.created_at | dateformat }}</div></el-card
-          >
+            <div>{{ stat.created_at | dateformat }}</div>
+          </el-card>
         </el-col>
       </el-row>
 
@@ -37,10 +37,9 @@
                 memberProfile.role === 'administrator'
             "
             :to="`/team/${currentWorkspace}/invite`"
-            ><el-button type="primary" size="small" round
-              >邀请成员</el-button
-            ></nuxt-link
           >
+            <el-button type="primary" size="small" round>邀请成员 </el-button>
+          </nuxt-link>
         </div>
 
         <el-table :data="members" border style="width: 100%">
@@ -96,11 +95,9 @@
       <el-card>
         <div slot="header">
           <h4>所属团队</h4>
-          <nuxt-link to="/team/mutation"
-            ><el-button type="primary" size="small" round
-              >创建团队</el-button
-            ></nuxt-link
-          >
+          <nuxt-link to="/team/mutation">
+            <el-button type="primary" size="small" round>创建团队 </el-button>
+          </nuxt-link>
         </div>
 
         <el-table :data="teams" border style="width: 100%">

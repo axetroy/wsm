@@ -45,7 +45,7 @@ func (s *Service) QueryMyTeam(c controller.Context, teamID string) (res schema.R
 		UserID: c.Uid,
 	}
 
-	if err = db.Db.Model(&teamMemberInfo).Where(&teamMemberInfo).Preload("Team").First(&teamMemberInfo).Error; err != nil {
+	if err = db.Db.Model(&teamMemberInfo).Where(&teamMemberInfo).Preload("Team").Preload("Team.Owner").First(&teamMemberInfo).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = exception.NoData
 		}
@@ -98,7 +98,7 @@ func (s *Service) QueryMyTeams(c controller.Context, input QueryList) (res schem
 		UserID: c.Uid,
 	}
 
-	if err = db.Db.Where(&filter).Find(&list).Count(&total).Error; err != nil {
+	if err = db.Db.Where(&filter).Count(&total).Error; err != nil {
 		return
 	}
 

@@ -84,7 +84,7 @@ func (s *Service) UpdateTeam(c controller.Context, teamID string, input UpdateTe
 
 	ownerInfo := db.TeamMember{TeamID: teamID, UserID: c.Uid}
 
-	if err = tx.Where(&ownerInfo).Find(&ownerInfo).Error; err != nil {
+	if err = tx.Where(&ownerInfo).First(&ownerInfo).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = exception.NoPermission
 		}
@@ -97,7 +97,9 @@ func (s *Service) UpdateTeam(c controller.Context, teamID string, input UpdateTe
 		return
 	}
 
-	updateModel := db.Team{}
+	updateModel := db.Team{
+		Id: teamID,
+	}
 
 	if input.Name != nil {
 		updateModel.Name = *input.Name
@@ -110,7 +112,7 @@ func (s *Service) UpdateTeam(c controller.Context, teamID string, input UpdateTe
 	}
 
 	if shouldUpdate {
-		if err = tx.Model(&updateModel).Updates(&updateModel).First(&ownerInfo).Error; err != nil {
+		if err = tx.Model(&updateModel).Where(&db.Team{Id: teamID}).Updates(&updateModel).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				err = exception.NoData
 			}
