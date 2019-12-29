@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         node: ['v12.13.0']
-        os: [ubuntu-latest, window-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     name: Node.js ${{ matrix.node }} test in ${{ matrix.os }}
 
     steps:
