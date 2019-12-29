@@ -21,11 +21,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name:
-        run: cd ./frontend
-
       - name: Dependency
-        run: yarn
+        run: cd ./frontend && yarn
 
       - name: Build
-        run: npm run build
+        run: cd ./frontend && npm run build
