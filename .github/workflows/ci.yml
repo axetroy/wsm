@@ -11,6 +11,19 @@ jobs:
         go: ['1.13.5']
         os: [ubuntu-latest, macOS-latest, windows-latest]
     name: Go ${{ matrix.go }} test in ${{ matrix.os }}
+
+    services:
+      postgres:
+        image: postgres:9.6.16
+        env:
+          POSTGRES_USER: gotest
+          POSTGRES_PASSWORD: gotest
+          POSTGRES_DB: gotest
+        ports:
+          - 65432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
       - uses: actions/checkout@master
         with:
