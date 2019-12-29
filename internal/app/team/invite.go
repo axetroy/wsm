@@ -493,7 +493,7 @@ func (s *Service) GetMyInvitedRecord(c controller.Context, teamID string, input 
 		return
 	}
 
-	if err = db.Db.Limit(query.Limit).Offset(query.Offset()).Order(query.Order()).Where(&filter).Preload("User").Preload("Team").Find(&list).Error; err != nil {
+	if err = db.Db.Limit(query.Limit).Offset(query.Offset()).Order(query.Order()).Where(&filter).Preload("User").Preload("Team").Preload("Team.Owner").Find(&list).Error; err != nil {
 		if err != gorm.ErrRecordNotFound {
 			err = exception.NoPermission
 		}
@@ -511,6 +511,11 @@ func (s *Service) GetMyInvitedRecord(c controller.Context, teamID string, input 
 			return
 		}
 		if err = mapstructure.Decode(v.Team, &d.Team); err != nil {
+			err = exception.DataBinding.New(err.Error())
+			return
+		}
+
+		if err = mapstructure.Decode(v.Team.Owner, &d.Team.Owner); err != nil {
 			err = exception.DataBinding.New(err.Error())
 			return
 		}

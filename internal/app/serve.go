@@ -71,7 +71,7 @@ func Serve() error {
 
 	log.Println("Shutdown Server...")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 
 	defer cancel()
 
@@ -82,7 +82,7 @@ func Serve() error {
 	// catching ctx.Done(). timeout of 5 seconds.
 	select {
 	case <-ctx.Done():
-		log.Println("Timeout of 5 seconds.")
+		log.Println("Timeout of 1 seconds.")
 	}
 
 	_ = db.Db.Close()

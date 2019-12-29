@@ -2,32 +2,37 @@
 package main
 
 import (
-	app2 "github.com/axetroy/terminal/internal/app"
 	"log"
 	"os"
 
 	App "github.com/axetroy/terminal"
+	app2 "github.com/axetroy/terminal/internal/app"
 	"github.com/axetroy/terminal/internal/library/daemon"
 	"github.com/axetroy/terminal/internal/library/util"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Usage = "user server controller"
-	app.Author = App.Author
-	app.Email = App.Email
+	app.Authors = []*cli.Author{
+		{
+			Name:  App.Author,
+			Email: App.Email,
+		},
+	}
 	app.Version = App.Version
 	cli.AppHelpTemplate = App.CliTemplate
 
-	app.Commands = []cli.Command{
+	app.Commands = []*cli.Command{
 		{
 			Name:  "start",
 			Usage: "start user server",
 			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "daemon, d",
-					Usage: "running in daemon mode",
+				&cli.BoolFlag{
+					Name:    "daemon",
+					Aliases: []string{"d"},
+					Usage:   "running in daemon mode",
 				},
 			},
 			Action: func(c *cli.Context) error {

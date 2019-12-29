@@ -4,10 +4,11 @@ import "github.com/axetroy/terminal/internal/app/db"
 
 // 团队信息相关
 type TeamPure struct {
-	Id      string  `json:"id"`
-	Name    string  `json:"name"`
-	OwnerID string  `json:"owner_id"`
-	Remark  *string `json:"remark"`
+	Id      string        `json:"id"`
+	Name    string        `json:"name"`
+	OwnerID string        `json:"owner_id"`
+	Owner   ProfilePublic `json:"owner"`
+	Remark  *string       `json:"remark"`
 }
 
 type Team struct {
