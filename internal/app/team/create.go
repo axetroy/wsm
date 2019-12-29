@@ -120,7 +120,7 @@ func (s *Service) CreateTeam(c controller.Context, input CreateTeamParams) (res 
 
 			if err = tx.Where(&db.User{Id: memberID}).First(&userInfo).Error; err != nil {
 				if err == gorm.ErrRecordNotFound {
-					err = exception.UserExist
+					err = exception.UserNotExist
 				}
 				return
 			}
