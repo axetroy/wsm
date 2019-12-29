@@ -1,4 +1,4 @@
-// Copyright 2019 Axetroy. All rights reserved. MIT license.
+// Copyright 2019 Axetroy. All rights reserved. Apache License 2.0.
 package db
 
 import (
