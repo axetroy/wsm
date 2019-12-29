@@ -1,4 +1,4 @@
-name: backen
+name: frontend
 
 on: [push, pull_request]
 
@@ -20,6 +20,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
+
+      - name:
+        run: cd ./frontend
 
       - name: Dependency
         run: yarn
