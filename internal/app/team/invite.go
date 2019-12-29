@@ -2,6 +2,7 @@ package team
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -131,7 +132,7 @@ func (s *Service) InviteTeam(c controller.Context, teamID string, input InviteTe
 				return
 			}
 		} else {
-			err = exception.Duplicate
+			err = exception.Duplicate.New(fmt.Sprintf("用户 `%s` 已经存在团队中", memberInfo.UserID))
 			return
 		}
 
