@@ -3,7 +3,29 @@ import cookie from 'js-cookie'
 export const state = () => ({
   workspaces: [], // 可用的工作区列表，没有翻页，所有的都在这里
   current: undefined, // 当前工作区 ID
-  profile: undefined // 我在该工作区中的成员身份
+  profile: undefined, // 我在该工作区中的成员身份
+  roles: [
+    {
+      label: '全部',
+      value: undefined
+    },
+    {
+      label: '拥有者',
+      value: 'owner'
+    },
+    {
+      label: '管理员',
+      value: 'administrator'
+    },
+    {
+      label: '成员',
+      value: 'member'
+    },
+    {
+      label: '访客',
+      value: 'visitor'
+    }
+  ]
 })
 
 export const getters = {
@@ -15,6 +37,9 @@ export const getters = {
   },
   profile(state) {
     return state.profile
+  },
+  roles(state) {
+    return state.roles
   }
 }
 
@@ -47,12 +72,13 @@ export const actions = {
     const { data: workspaces } = await $axios.$get('/team')
     store.commit('UPDATE_WORKSPACES', [defaultWorkspace].concat(workspaces))
   },
-  // TODO: 还未使用
-  async updateProfile(store, { $axios }) {
+  async getProfile(store, { $axios }) {
     const { profile } = await $axios.$get(
-      `/team/_/${store.getters.profile}/profile`
+      `/team/_/${store.getters.current}/profile`
     )
     store.commit('UPDATE_PROFILE', profile)
+
+    return profile
   },
   switchWorkspace(store, workspaceID) {
     store.commit('SWITCH_WORKSPACE', workspaceID)

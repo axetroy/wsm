@@ -181,13 +181,13 @@ body,
     background-color: @bg-color;
     color: #fff;
 
-    & .is-active {
+    &.is-active {
       background-color: @bg-color-darken2;
     }
 
     .el-submenu__title {
-      & .active,
-      & :hover {
+      &.active,
+      &:hover {
         background-color: @bg-color-darken1;
       }
 

@@ -33,8 +33,9 @@
           <h4>团队成员</h4>
           <nuxt-link
             v-if="
-              memberProfile.role === 'owner' ||
-                memberProfile.role === 'administrator'
+              memberProfile &&
+                (memberProfile.role === 'owner' ||
+                  memberProfile.role === 'administrator')
             "
             :to="`/team/${currentWorkspace}/invite`"
           >
@@ -65,11 +66,12 @@
             <template slot-scope="scope">
               <el-popconfirm
                 v-if="
-                  memberProfile.id !== scope.row.id &&
+                  memberProfile &&
+                    memberProfile.id !== scope.row.id &&
                     memberProfile.role === 'owner'
                 "
                 title="你确定要踢出团队吗"
-                v-on="{ onConfirm: () => kickoutMemberFromTeam(scope.row) }"
+                v-on="{ onConfirm: () => kickMemberFromTeam(scope.row) }"
               >
                 <el-button type="text" size="small" slot="reference">
                   踢出团队
@@ -188,29 +190,25 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  async asyncData({ $axios, store }) {
+  async asyncData(context) {
+    const { $axios, store } = context
     const currentWorkspace = store.getters['workspace/current']
 
     if (currentWorkspace) {
-      const [
-        { data: stat },
-        { data: members, meta },
-        { data: memberProfile }
-      ] = await Promise.all([
+      const [{ data: stat }, { data: members, meta }] = await Promise.all([
         $axios.$get(`/team/_/${currentWorkspace}/stat`),
         $axios.$get(`/team/_/${currentWorkspace}/member`),
-        $axios.$get(`/team/_/${currentWorkspace}/profile`)
+        store.dispatch('workspace/getProfile', context)
       ])
 
       return {
         stat,
         members,
         teams: [],
-        meta: meta,
-        memberProfile
+        meta: meta
       }
     } else {
       const { meta, data: teams } = await $axios.$get('/team')
@@ -219,40 +217,15 @@ export default {
         stat: {},
         members: [],
         teams,
-        meta,
-        memberProfile: {}
+        meta
       }
-    }
-  },
-  data() {
-    return {
-      roles: [
-        {
-          label: '全部',
-          value: undefined
-        },
-        {
-          label: '拥有者',
-          value: 'owner'
-        },
-        {
-          label: '管理员',
-          value: 'administrator'
-        },
-        {
-          label: '成员',
-          value: 'member'
-        },
-        {
-          label: '访客',
-          value: 'visitor'
-        }
-      ]
     }
   },
   computed: {
     ...mapGetters({
-      currentWorkspace: 'workspace/current'
+      roles: 'workspace/roles',
+      currentWorkspace: 'workspace/current',
+      memberProfile: 'workspace/profile'
     })
   },
   watch: {
@@ -262,17 +235,16 @@ export default {
         this.$axios.$get(`/team/_/${val}/stat`).then(({ data: stat }) => {
           this.stat = stat
         })
-        this.$axios
-          .$get(`/team/_/${val}/profile`)
-          .then(({ data: memberProfile }) => {
-            this.memberProfile = memberProfile
-          })
+        this.getTeamMemberProfile(this)
       } else {
         this.changeTeamPage(0)
       }
     }
   },
   methods: {
+    ...mapActions({
+      getTeamMemberProfile: 'workspace/getProfile'
+    }),
     async changeTeamPage(page) {
       const { meta, data: teams } = await this.$axios.$get('/team', {
         params: {
@@ -333,7 +305,7 @@ export default {
         this.$error(`退出失败: ${err.message}`)
       }
     },
-    async kickoutMemberFromTeam(member) {
+    async kickMemberFromTeam(member) {
       const currentWorkspace = this.currentWorkspace
       try {
         await this.$axios.$delete(

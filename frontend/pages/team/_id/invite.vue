@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   async asyncData({ $axios, query }) {},
   data() {
@@ -69,25 +71,15 @@ export default {
         username: '',
         role: 'member'
       },
-      selectedMembers: [],
-      roles: [
-        {
-          label: '拥有者',
-          value: 'owner'
-        },
-        {
-          label: '管理员',
-          value: 'administrator'
-        },
-        {
-          label: '成员',
-          value: 'member'
-        },
-        {
-          label: '访客',
-          value: 'visitor'
-        }
-      ]
+      selectedMembers: []
+    }
+  },
+  computed: {
+    ...mapGetters({
+      _roles: 'workspace/roles'
+    }),
+    roles() {
+      return this._roles.filter(v => v.value !== undefined)
     }
   },
   methods: {

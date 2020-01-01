@@ -61,13 +61,15 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   async asyncData({ $axios, query }) {
     const type = query.id !== undefined ? 'update' : 'create'
 
-    const formRules = {}
+    const formRules = {
+      name: [{ required: true, message: '请输入团队名称' }]
+    }
 
     let form = {
       name: '',
@@ -87,25 +89,15 @@ export default {
       formName: 'form',
       formRules,
       form,
-      selectedMembers: [],
-      roles: [
-        {
-          label: '拥有者',
-          value: 'owner'
-        },
-        {
-          label: '管理员',
-          value: 'administrator'
-        },
-        {
-          label: '成员',
-          value: 'member'
-        },
-        {
-          label: '访客',
-          value: 'visitor'
-        }
-      ]
+      selectedMembers: []
+    }
+  },
+  computed: {
+    ...mapGetters({
+      _roles: 'workspace/roles'
+    }),
+    roles() {
+      return this._roles.filter(v => v.value !== undefined)
     }
   },
   methods: {
