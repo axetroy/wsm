@@ -12,7 +12,7 @@
         </el-menu-item>
         <el-submenu index="/team">
           <template slot="title">
-            <i class="el-icon-location"></i>
+            <i class="el-icon-location" />
             <span>团队管理</span>
           </template>
           <el-menu-item index="/team">{{
@@ -27,7 +27,7 @@
 
     <el-container>
       <el-header class="header text-right">
-        <div class="workpsace">
+        <div class="workspace">
           <span>
             <i class="el-icon-menu" />
             工作空间 |</span
@@ -214,7 +214,7 @@ body,
     }
   }
 
-  .workpsace {
+  .workspace {
     position: absolute;
     left: 50%;
     top: 50%;
