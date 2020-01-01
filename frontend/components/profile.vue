@@ -53,7 +53,7 @@
                 <i
                   class="i-icon i-icon-22 el-icon-edit el-input__icon"
                   slot="prefix"
-                ></i>
+                />
               </el-input>
             </el-form-item>
             <el-form-item prop="sex" label="性别">
@@ -93,7 +93,7 @@
                 <i
                   class="i-icon i-icon-22 el-icon-edit el-input__icon"
                   slot="prefix"
-                ></i>
+                />
               </el-input>
             </el-form-item>
             <el-form-item prop="new" label="新密码" required>
@@ -106,7 +106,7 @@
                 <i
                   class="i-icon i-icon-22 el-icon-edit el-input__icon"
                   slot="prefix"
-                ></i>
+                />
               </el-input>
             </el-form-item>
             <el-form-item prop="confirm" label="确认密码" required>
@@ -119,7 +119,7 @@
                 <i
                   class="i-icon i-icon-22 el-icon-edit el-input__icon"
                   slot="prefix"
-                ></i>
+                />
               </el-input>
             </el-form-item>
             <el-form-item>

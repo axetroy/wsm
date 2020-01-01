@@ -17,7 +17,7 @@ export default function({ $axios, redirect, req, res }) {
           ? ClientCookie.get(TOKEN_KEY)
           : CookieParse(req.headers.cookie || '')[TOKEN_KEY]
 
-      return tokenRaw
+      return tokenRaw || ''
     }
   }
 

@@ -98,11 +98,11 @@ func (s *Service) QueryMyTeams(c controller.Context, input QueryList) (res schem
 		UserID: c.Uid,
 	}
 
-	if err = db.Db.Where(&filter).Count(&total).Error; err != nil {
+	if err = db.Db.Model(&filter).Where(&filter).Count(&total).Error; err != nil {
 		return
 	}
 
-	if err = db.Db.Limit(query.Limit).Offset(query.Offset()).Order(query.Order()).Where(&filter).Preload("Team").Preload("Team.Owner").Find(&list).Error; err != nil {
+	if err = db.Db.Model(&filter).Limit(query.Limit).Offset(query.Offset()).Order(query.Order()).Where(&filter).Preload("Team").Preload("Team.Owner").Find(&list).Error; err != nil {
 		return
 	}
 
