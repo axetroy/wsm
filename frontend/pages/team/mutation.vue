@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   async asyncData({ $axios, query }) {
     const type = query.id !== undefined ? 'update' : 'create'
@@ -107,6 +109,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      updateWorkspaces: 'workspace/updateWorkspaces'
+    }),
     onSubmit() {
       this.$refs[this.formName].validate(valid => {
         if (valid) {
@@ -139,6 +144,7 @@ export default {
           members: this.selectedMembers.map(v => v.id)
         })
         this.$success('创建成功.')
+        this.updateWorkspaces(this)
         this.$router.back()
       } catch (err) {
         console.dir(err)

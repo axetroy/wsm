@@ -15,12 +15,12 @@
             <i class="el-icon-location" />
             <span>团队管理</span>
           </template>
-          <el-menu-item index="/team">{{
-            currentWorkspace === undefined ? '我的团队' : '团队信息'
-          }}</el-menu-item>
-          <el-menu-item index="/team/invite">{{
-            currentWorkspace === undefined ? '邀请我的' : '团队邀请'
-          }}</el-menu-item>
+          <el-menu-item index="/team"
+            >{{ currentWorkspace === undefined ? '我的团队' : '团队信息' }}
+          </el-menu-item>
+          <el-menu-item index="/team/invite"
+            >{{ currentWorkspace === undefined ? '邀请我的' : '团队邀请' }}
+          </el-menu-item>
         </el-submenu>
       </el-menu>
     </el-aside>
@@ -75,15 +75,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import ClientCookie from 'js-cookie'
 import Console from '../components/console'
 import Profile from '../components/profile'
-
-const defaultWorkspace = {
-  id: undefined,
-  name: '当前帐号'
-}
 
 export default {
   components: {
@@ -93,8 +88,7 @@ export default {
   data() {
     return {
       profileDialogVisible: false,
-      workspace: this.currentWorkspace,
-      workspaces: [defaultWorkspace]
+      workspace: this.currentWorkspace
     }
   },
   computed: {
@@ -102,19 +96,23 @@ export default {
       user: 'user',
       hosts: 'console/hosts',
       currentHost: 'console/currentHost',
+      workspaces: 'workspace/workspaces',
       currentWorkspace: 'workspace/current'
     })
   },
+  watch: {
+    currentWorkspace(val) {
+      this.workspace = val
+    }
+  },
   methods: {
+    ...mapActions({
+      updateWorkspaces: 'workspace/updateWorkspaces',
+      switchWorkspace: 'workspace/switchWorkspace'
+    }),
     async fetchWorkspaces() {
-      const { data } = await this.$axios.$get('/team')
-
-      if (data?.length) {
-        this.workspaces = [defaultWorkspace].concat(data)
-        if (this.currentWorkspace) {
-          this.workspace = this.currentWorkspace
-        }
-      }
+      await this.updateWorkspaces(this)
+      this.workspace = this.currentWorkspace
     },
     handleCommand(command) {
       switch (command) {
@@ -140,7 +138,7 @@ export default {
       this.profileDialogVisible = true
     },
     onChangeWorkspace(workspaceID) {
-      this.$store.commit('workspace/SWITCH_WORKSPACE', workspaceID)
+      this.switchWorkspace(workspaceID)
     }
   },
   mounted() {
@@ -169,9 +167,11 @@ body,
   width: 200px;
   color: #333;
   background-color: @bg-color;
+
   .el-menu {
     border-right: solid 1px @bg-color;
   }
+
   .el-menu-item:hover {
     background-color: @bg-color-darken1;
   }
@@ -180,15 +180,17 @@ body,
   .el-submenu {
     background-color: @bg-color;
     color: #fff;
-    &.is-active {
+
+    & .is-active {
       background-color: @bg-color-darken2;
     }
 
     .el-submenu__title {
-      &.active,
-      &:hover {
+      & .active,
+      & :hover {
         background-color: @bg-color-darken1;
       }
+
       &,
       i {
         color: #fff !important;
@@ -209,6 +211,7 @@ body,
   .username {
     cursor: pointer;
     color: #fff;
+
     i {
       margin-right: 5px;
     }

@@ -37,12 +37,24 @@ export const mutations = {
   }
 }
 
+const defaultWorkspace = {
+  id: undefined,
+  name: '当前帐号'
+}
+
 export const actions = {
+  async updateWorkspaces(store, { $axios }) {
+    const { data: workspaces } = await $axios.$get('/team')
+    store.commit('UPDATE_WORKSPACES', [defaultWorkspace].concat(workspaces))
+  },
   // TODO: 还未使用
   async updateProfile(store, { $axios }) {
     const { profile } = await $axios.$get(
       `/team/_/${store.getters.profile}/profile`
     )
     store.commit('UPDATE_PROFILE', profile)
+  },
+  switchWorkspace(store, workspaceID) {
+    store.commit('SWITCH_WORKSPACE', workspaceID)
   }
 }
