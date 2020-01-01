@@ -34,7 +34,7 @@
               {{ user ? user.id : '' }}
             </el-form-item>
             <el-form-item label="用户名">
-              <div>{{ user.username }}</div>
+              <div>{{ user ? user.username : '' }}</div>
             </el-form-item>
             <el-form-item label="头像">
               <el-upload
@@ -45,15 +45,12 @@
                 :before-upload="beforeAvatarUpload"
               >
                 <img v-if="user.avatar" :src="user.avatar" class="avatar" />
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                <i v-else class="el-icon-plus avatar-uploader-icon" />
               </el-upload>
             </el-form-item>
             <el-form-item prop="nickname" label="昵称">
               <el-input v-model="profileForm.nickname" auto-complete="off">
-                <i
-                  class="i-icon i-icon-22 el-icon-edit el-input__icon"
-                  slot="prefix"
-                />
+                <i class="el-icon-edit el-input__icon" slot="prefix" />
               </el-input>
             </el-form-item>
             <el-form-item prop="sex" label="性别">

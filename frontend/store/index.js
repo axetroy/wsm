@@ -35,7 +35,7 @@ export const actions = {
     }
 
     if (token) {
-      await store.dispatch('updateProfile', context)
+      await store.dispatch('getProfile', context)
     }
   },
   // 更新用户的资料

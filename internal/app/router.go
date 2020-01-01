@@ -106,6 +106,7 @@ func init() {
 			teamRouter := v1.Group("/team")
 			teamRouter.Use(userAuthMiddleware)
 			teamRouter.GET("", team.Core.QueryMyTeamsRouter)                                              // 获取我所在的团队列表
+			teamRouter.GET("/all", team.Core.GetAllTeamsRouter)                                           // 获取所有的团队，没有翻页
 			teamRouter.POST("", team.Core.CreateTeamRouter)                                               // 创建团队
 			teamRouter.GET("/invite", team.Core.GetMyInvitedRecordRouter)                                 // 获取我的受邀列表
 			teamRouter.GET("/_/:team_id", team.Core.QueryMyTeamRouter)                                    // 获取我的团队信息, 只有加入团队才能调用
