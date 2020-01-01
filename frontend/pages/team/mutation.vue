@@ -14,14 +14,42 @@
         <el-form-item label="团队名称" required prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="团队成员" prop="members">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4 }"
-            placeholder="请输入要邀请的团队成员的ID，每一个ID一行"
-            v-model="form.members"
+        <el-form-item v-if="type === 'create'" label="团队成员">
+          <el-autocomplete
+            v-model="form.username"
+            :fetch-suggestions="querySearchAsync"
+            placeholder="请输入用户名"
+            @select="handleSelect"
           >
-          </el-input>
+            <el-select
+              v-model="form.role"
+              slot="prepend"
+              placeholder="请选择"
+              style="width: 90px"
+            >
+              <el-option label="管理员" value="administrator" />
+              <el-option label="成员" value="member" />
+              <el-option label="访客" value="visitor" />
+            </el-select>
+          </el-autocomplete>
+          <div>
+            <el-tag
+              class="tag"
+              v-for="member in selectedMembers"
+              :key="member.id"
+              closable
+              type="success"
+              @close="removeMember(member)"
+            >
+              {{ member.username }} :
+              <span
+                v-for="v of roles"
+                :key="v.value"
+                v-if="member.role === v.value"
+                >{{ v.label }}</span
+              >
+            </el-tag>
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">提交</el-button>
@@ -41,7 +69,7 @@ export default {
 
     let form = {
       name: '',
-      members: ''
+      role: 'member'
     }
 
     if (type === 'update') {
@@ -56,7 +84,26 @@ export default {
       type,
       formName: 'form',
       formRules,
-      form
+      form,
+      selectedMembers: [],
+      roles: [
+        {
+          label: '拥有者',
+          value: 'owner'
+        },
+        {
+          label: '管理员',
+          value: 'administrator'
+        },
+        {
+          label: '成员',
+          value: 'member'
+        },
+        {
+          label: '访客',
+          value: 'visitor'
+        }
+      ]
     }
   },
   methods: {
@@ -89,7 +136,7 @@ export default {
       try {
         await this.$axios.$post('/team', {
           ...form,
-          members: form.members.split('\n').filter(v => v)
+          members: this.selectedMembers.map(v => v.id)
         })
         this.$success('创建成功.')
         this.$router.back()
@@ -97,7 +144,51 @@ export default {
         console.dir(err)
         this.$error(err.message)
       }
+    },
+    handleSelect(user) {
+      const index = this.selectedMembers.findIndex(v => v.id === user.id)
+
+      if (index >= 0) {
+        this.selectedMembers.splice(index, 1)
+      }
+
+      this.selectedMembers.push({ ...user, role: this.form.role })
+      this.form.username = ''
+    },
+    querySearchAsync(queryString, cb) {
+      if (queryString === '') {
+        cb([])
+        return
+      }
+
+      this.$axios
+        .$get('/user/search', {
+          params: {
+            account: queryString
+          }
+        })
+        .then(({ data: users }) => {
+          const list = users.map(v => {
+            return {
+              ...v,
+              value: v.username
+            }
+          })
+          cb(list)
+        })
+    },
+    removeMember(member) {
+      const index = this.selectedMembers.findIndex(v => v.id === member.id)
+      this.selectedMembers.splice(index, 1)
     }
   }
 }
 </script>
+
+<style lang="less" scope>
+.tag {
+  &:not(:last-child) {
+    margin-right: 20px;
+  }
+}
+</style>

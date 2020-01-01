@@ -43,7 +43,6 @@ export default function({ $axios, redirect, req, res }) {
             if (process.client) {
               ClientCookie.remove(TOKEN_KEY)
             } else {
-              // TODO: 删除 Cookie
               res.setHeader(
                 'Set-Cookie',
                 `${TOKEN_KEY}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`

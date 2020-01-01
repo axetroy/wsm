@@ -11,7 +11,7 @@
         :ref="formName"
         :rules="formRules"
       >
-        <el-form-item prop="username">
+        <el-form-item label="邀请成员">
           <el-autocomplete
             v-model="form.username"
             :fetch-suggestions="querySearchAsync"
@@ -24,29 +24,29 @@
               placeholder="请选择"
               style="width: 90px"
             >
-              <el-option label="管理员" value="administrator"></el-option>
-              <el-option label="成员" value="member"></el-option>
-              <el-option label="访客" value="visitor"></el-option>
+              <el-option label="管理员" value="administrator" />
+              <el-option label="成员" value="member" />
+              <el-option label="访客" value="visitor" />
             </el-select>
           </el-autocomplete>
-        </el-form-item>
-        <el-form-item label="已选用户">
-          <el-tag
-            class="tag"
-            v-for="member in selectedMembers"
-            :key="member.id"
-            closable
-            type="success"
-            @close="removeMember(member)"
-          >
-            {{ member.username }} :
-            <span
-              v-for="v of roles"
-              :key="v.value"
-              v-if="member.role === v.value"
-              >{{ v.label }}</span
+          <div>
+            <el-tag
+              class="tag"
+              v-for="member in selectedMembers"
+              :key="member.id"
+              closable
+              type="success"
+              @close="removeMember(member)"
             >
-          </el-tag>
+              {{ member.username }} :
+              <span
+                v-for="v of roles"
+                :key="v.value"
+                v-if="member.role === v.value"
+                >{{ v.label }}</span
+              >
+            </el-tag>
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">提交</el-button>
