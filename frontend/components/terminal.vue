@@ -66,18 +66,14 @@ export default {
 
       // Attach the socket to the terminal
       socket.onopen = ev => {
-        console.log('on connect...')
         // term.writeln('----------CONNECT SUCCESS----------')
       }
 
       socket.onerror = ev => {
-        console.dir(ev)
         term.writeln('----------ERROR----------')
       }
 
       socket.onclose = ev => {
-        console.log('on close')
-
         term.writeln('----------CLOSE----------')
       }
     },

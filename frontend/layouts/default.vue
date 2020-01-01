@@ -66,11 +66,7 @@
 
     <profile :visible.sync="profileDialogVisible" />
 
-    <console
-      v-if="hosts && hosts.length"
-      :hosts="hosts"
-      :currentHost="currentHost"
-    />
+    <console />
   </el-container>
 </template>
 
@@ -95,7 +91,6 @@ export default {
     ...mapGetters({
       user: 'user',
       hosts: 'console/hosts',
-      currentHost: 'console/currentHost',
       workspaces: 'workspace/workspaces',
       currentWorkspace: 'workspace/current'
     })

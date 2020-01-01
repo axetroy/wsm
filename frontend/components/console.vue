@@ -1,11 +1,39 @@
 <template>
-  <div id="console-pannel" :class="isShow ? 'active' : ''">
+  <div
+    v-if="hosts && hosts.length"
+    id="console-panel"
+    :class="isShow ? 'active' : ''"
+  >
     <div id="console-header">
-      <div @click="toggle" id="console-title">
+      <div id="console-title">
         <template v-if="isShow">
-          <i class="el-icon-download" />终端控制台
+          <span class="tab-icon">
+            <i class="icon-fn icon-close" @click="closeAll()" />
+            <i
+              class="icon-fn"
+              :class="{ 'icon-min': isShow }"
+              @click="hide()"
+            />
+            <i class="icon-fn icon-max" @click="show()" />
+          </span>
+          <span @click="toggle" class="title"
+            ><i class="el-icon-download" />终端控制台</span
+          >
         </template>
-        <template v-else> <i class="el-icon-upload2" />终端控制台 </template>
+        <template v-else>
+          <span class="tab-icon">
+            <i class="icon-fn icon-close" @click="closeAll()" />
+            <i
+              class="icon-fn"
+              :class="{ 'icon-min': isShow }"
+              @click="hide()"
+            />
+            <i class="icon-fn icon-max" @click="show()" />
+          </span>
+          <span @click="toggle" class="title"
+            ><i class="el-icon-download" />终端控制台</span
+          >
+        </template>
       </div>
       <el-tabs
         id="console-tab"
@@ -30,38 +58,26 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import 'xterm/css/xterm.css'
 import Terminal from './terminal'
+import 'xterm/css/xterm.css'
 
 export default {
   components: {
     Terminal
   },
   data() {
-    const hosts = this.$props.hosts || []
+    const hosts = this.$store.getters['workspace/hosts'] || []
 
     return {
       active: true,
       activeName: hosts.length ? hosts[0].id : ''
     }
   },
-  props: {
-    hosts: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    currentHost: {
-      type: String,
-      default() {
-        return ''
-      }
-    }
-  },
   computed: {
     ...mapGetters({
-      isShow: 'console/isShow'
+      isShow: 'console/isShow',
+      currentHost: 'console/currentHost',
+      hosts: 'console/hosts'
     })
   },
   watch: {
@@ -85,13 +101,25 @@ export default {
     handleTabsEdit(hostId, action) {
       switch (action) {
         case 'remove':
-          const terminalInstance = this.$refs['terminal-' + hostId][0]
-
-          if (terminalInstance) {
-            terminalInstance.dispose()
-            this.removeHost(hostId)
-          }
+          this.close(hostId)
       }
+    },
+    close(hostId) {
+      const terminalInstance = this.$refs['terminal-' + hostId][0]
+
+      if (terminalInstance) {
+        terminalInstance.dispose()
+      }
+
+      this.removeHost(hostId)
+    },
+    // 关闭终端，断开所有连接
+    closeAll() {
+      const hosts = this.hosts.map(v => v)
+      for (const host of hosts) {
+        this.close(host.id)
+      }
+      this.hide()
     }
   }
 }
@@ -101,13 +129,15 @@ export default {
 @bg-color: #2e323b;
 @bg-color-darken1: darken(@bg-color, 10%);
 
-#console-pannel {
+#console-panel {
   .el-tabs__content {
     padding: 0;
     width: 100%;
   }
+
   .el-tabs--border-card {
     border: 0;
+
     .el-tabs__header {
       background-color: @bg-color;
       border-bottom: 1px solid @bg-color;
@@ -118,12 +148,14 @@ export default {
       color: #8b8b8b;
       border-bottom: 0;
       border-top: 0;
+
       &.is-active {
         background-color: white;
         color: #000;
       }
     }
   }
+
   .el-tabs__new-tab {
     display: none;
   }
@@ -138,7 +170,7 @@ export default {
 @console-height: 595px;
 @height: @title-height + @tab-height + @console-height;
 
-#console-pannel {
+#console-panel {
   position: absolute;
   bottom: -@height + @title-height;
   left: 0;
@@ -163,6 +195,36 @@ export default {
     color: #fff;
     line-height: @title-height;
     text-align: center;
+
+    .tab-icon {
+      position: absolute;
+      left: 5px;
+
+      .icon-fn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        cursor: pointer;
+        background-color: grey;
+
+        &.icon-close {
+          background-color: red;
+        }
+
+        &.icon-min {
+          background-color: yellow;
+        }
+
+        &.icon-max {
+          background-color: green;
+        }
+      }
+    }
+
+    .title {
+      cursor: pointer;
+    }
   }
 }
 
