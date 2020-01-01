@@ -20,7 +20,7 @@
             <i
               class="i-icon i-icon-22 i-user el-icon-edit el-input__icon"
               slot="prefix"
-            ></i>
+            />
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -34,7 +34,7 @@
             <i
               class="i-icon i-icon-22 el-icon-edit el-input__icon"
               slot="prefix"
-            ></i>
+            />
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-const ClientCookie = require('js-cookie')
+import cookie from 'js-cookie'
 
 export default {
   layout: 'entry',
@@ -100,7 +100,7 @@ export default {
             .$post('/auth/signin', body)
             .then(({ data: profile }) => {
               const { token } = profile
-              ClientCookie.set('Authorization', token)
+              cookie.set('Authorization', token)
               this.$store.commit('SET_USER', profile)
               this.loading = false
               this.$success('登陆成功...')
