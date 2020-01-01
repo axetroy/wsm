@@ -31,7 +31,7 @@
             style="width: 100%"
           >
             <el-form-item label="ID">
-              {{ user.id }}
+              {{ user ? user.id : '' }}
             </el-form-item>
             <el-form-item label="用户名">
               <div>{{ user.username }}</div>
@@ -241,7 +241,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      updateProfile: 'updateProfile'
+      getProfile: 'getProfile'
     }),
     handleClose() {
       this.$emit('update:visible', false)
@@ -288,7 +288,7 @@ export default {
               this.$success('修改成功...')
 
               // 更新资料
-              this.updateProfile(this).then(() => {
+              this.getProfile().then(() => {
                 form.clearValidate()
               })
             })

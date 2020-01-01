@@ -18,11 +18,9 @@
             auto-complete="off"
             placeholder="用户名"
             @keyup.enter.native="submitForm()"
+            clearable
           >
-            <i
-              class="i-icon i-icon-22 i-user el-icon-edit el-input__icon"
-              slot="prefix"
-            ></i>
+            <i class="el-icon-user" slot="prefix" />
           </el-input>
         </el-form-item>
         <el-form-item prop="password" label="密码">
@@ -31,11 +29,9 @@
             v-model="loginForm.password"
             auto-complete="off"
             placeholder="密码"
+            clearable
           >
-            <i
-              class="i-icon i-icon-22 i-password el-icon-edit el-input__icon"
-              slot="prefix"
-            ></i>
+            <i class="el-icon-lock" slot="prefix" />
           </el-input>
         </el-form-item>
         <el-form-item prop="password_confirm" label="确认密码">
@@ -45,11 +41,9 @@
             auto-complete="off"
             placeholder="确认密码"
             @keyup.enter.native="submitForm()"
+            clearable
           >
-            <i
-              class="i-icon i-icon-22 i-password el-icon-edit el-input__icon"
-              slot="prefix"
-            ></i>
+            <i class="el-icon-lock" slot="prefix" />
           </el-input>
         </el-form-item>
         <el-form-item>

@@ -1,3 +1,5 @@
+import cookie from 'js-cookie'
+
 const CookieParse = require('cookie').parse
 
 export const state = () => ({
@@ -37,8 +39,18 @@ export const actions = {
     }
   },
   // 更新用户的资料
-  async updateProfile(store, { $axios }) {
-    const { data: profile } = await $axios.$get('/user/profile')
+  async getProfile(store) {
+    const { data: profile } = await this.$axios.$get('/user/profile')
     store.commit('SET_USER', profile)
+    return profile
+  },
+  // 登录
+  async login(store, body) {
+    const { data: profile } = await this.$axios.$post('/auth/signin', body)
+
+    const { token } = profile
+    cookie.set('Authorization', token)
+    store.commit('SET_USER', profile)
+    return profile
   }
 }

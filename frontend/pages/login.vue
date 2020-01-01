@@ -16,11 +16,9 @@
             auto-complete="off"
             placeholder="用户名"
             @keyup.enter.native="submitForm()"
+            clearable
           >
-            <i
-              class="i-icon i-icon-22 i-user el-icon-edit el-input__icon"
-              slot="prefix"
-            />
+            <i class="el-icon-user" slot="prefix" />
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -30,11 +28,9 @@
             auto-complete="off"
             placeholder="密码"
             @keyup.enter.native="submitForm()"
+            clearable
           >
-            <i
-              class="i-icon i-icon-22 el-icon-edit el-input__icon"
-              slot="prefix"
-            />
+            <i class="el-icon-lock" slot="prefix" />
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -70,6 +66,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import cookie from 'js-cookie'
 
 export default {
@@ -89,6 +86,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      login: 'login'
+    }),
     submitForm() {
       const form = this.loginForm
       this.$refs[this.formName].validate(valid => {
@@ -96,12 +96,8 @@ export default {
           const body = { ...form }
           this.loading = true
 
-          this.$axios
-            .$post('/auth/signin', body)
-            .then(({ data: profile }) => {
-              const { token } = profile
-              cookie.set('Authorization', token)
-              this.$store.commit('SET_USER', profile)
+          this.login(body)
+            .then(() => {
               this.loading = false
               this.$success('登陆成功...')
               this.$router.push({ path: '/' })
