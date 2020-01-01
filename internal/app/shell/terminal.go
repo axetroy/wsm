@@ -2,7 +2,6 @@ package shell
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -92,9 +91,6 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		c.String(http.StatusInternalServerError, exception.NoPermission.Error())
 		return
 	}
-
-	fmt.Println(hostInfo)
-	fmt.Println(hostInfo.OwnerType)
 
 	if hostInfo.OwnerType == db.HostOwnerTypeUser {
 		// 如果是用户持有的的服务器

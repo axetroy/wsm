@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   async asyncData({ $axios, store }) {
@@ -120,6 +120,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      appendHost: 'console/appendHost',
+      activeHost: 'console/activeHost',
+      showConsole: 'console/show'
+    }),
     async changePage(page) {
       const { meta, data } = await this.$axios.$get(
         this.currentWorkspace
@@ -157,21 +162,9 @@ export default {
     },
     // 连接服务器，打开终端
     async connect(host) {
-      try {
-        const { data } = await this.$axios.$get(`/shell/test/${host.id}`)
-
-        if (data !== true) {
-          this.$warning('服务器不可用')
-          return
-        }
-      } catch (err) {
-        this.$error(err.message)
-        return false
-      }
-
-      this.$store.commit('console/APPEND_HOST', host) // 添加这个服务器
-      this.$store.commit('console/SET_CURRENT_HOST', host.id) // 设置当前的 ID
-      this.$store.commit('console/SET_CONSOLE_SHOW', true) // 显示 console
+      this.appendHost(host) // 添加这个服务器
+      this.activeHost(host) // 激活当前服务器
+      this.showConsole()
     },
     // 测试服务器是否可用
     async test(host) {

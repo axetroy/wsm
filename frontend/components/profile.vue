@@ -87,10 +87,7 @@
                 auto-complete="off"
                 placeholder="请输入旧密码"
               >
-                <i
-                  class="i-icon i-icon-22 el-icon-edit el-input__icon"
-                  slot="prefix"
-                />
+                <i class="el-icon-lock" slot="prefix" />
               </el-input>
             </el-form-item>
             <el-form-item prop="new" label="新密码" required>
@@ -100,10 +97,7 @@
                 auto-complete="off"
                 placeholder="请输入新密码"
               >
-                <i
-                  class="i-icon i-icon-22 el-icon-edit el-input__icon"
-                  slot="prefix"
-                />
+                <i class="el-icon-lock" slot="prefix" />
               </el-input>
             </el-form-item>
             <el-form-item prop="confirm" label="确认密码" required>
@@ -113,10 +107,7 @@
                 auto-complete="off"
                 placeholder="请再次输入新密码"
               >
-                <i
-                  class="i-icon i-icon-22 el-icon-edit el-input__icon"
-                  slot="prefix"
-                />
+                <i class="el-icon-lock" slot="prefix" />
               </el-input>
             </el-form-item>
             <el-form-item>

@@ -107,11 +107,11 @@ export default {
   },
   methods: {
     ...mapActions({
-      updateWorkspaces: 'workspace/updateWorkspaces',
+      getWorkspaces: 'workspace/getWorkspaces',
       switchWorkspace: 'workspace/switchWorkspace'
     }),
     async fetchWorkspaces() {
-      await this.updateWorkspaces(this)
+      await this.getWorkspaces()
       this.workspace = this.currentWorkspace
     },
     handleCommand(command) {

@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      updateWorkspaces: 'workspace/updateWorkspaces'
+      getWorkspaces: 'workspace/getWorkspaces'
     }),
     onSubmit() {
       this.$refs[this.formName].validate(valid => {
@@ -136,7 +136,7 @@ export default {
           members: this.selectedMembers.map(v => v.id)
         })
         this.$success('创建成功.')
-        this.updateWorkspaces(this)
+        this.getWorkspaces()
         this.$router.back()
       } catch (err) {
         console.dir(err)

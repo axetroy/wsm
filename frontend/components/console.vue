@@ -1,8 +1,8 @@
 <template>
-  <div id="console-pannel" :class="consoleShow ? 'active' : ''">
+  <div id="console-pannel" :class="isShow ? 'active' : ''">
     <div id="console-header">
       <div @click="toggle" id="console-title">
-        <template v-if="consoleShow">
+        <template v-if="isShow">
           <i class="el-icon-download" />终端控制台
         </template>
         <template v-else> <i class="el-icon-upload2" />终端控制台 </template>
@@ -21,11 +21,7 @@
           :key="v.id"
           @click="toggle"
         >
-          <terminal
-            class="terminal"
-            :ref="'terminal-' + v.id"
-            :host="v"
-          ></terminal>
+          <terminal class="terminal" :ref="'terminal-' + v.id" :host="v" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -33,9 +29,9 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import 'xterm/css/xterm.css'
 import Terminal from './terminal'
-import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -65,25 +61,27 @@ export default {
   },
   computed: {
     ...mapGetters({
-      consoleShow: 'console/consoleShow'
+      isShow: 'console/isShow'
     })
   },
   watch: {
     hosts(val) {
       if (val && val.length) {
-        this.$store.commit('console/SET_CONSOLE_SHOW', true)
+        this.show()
       }
     },
     currentHost(val) {
       this.activeName = val
-      this.$store.commit('console/SET_CONSOLE_SHOW', true)
-      return
+      this.show()
     }
   },
   methods: {
-    toggle() {
-      this.$store.commit('console/SET_CONSOLE_SHOW', !this.consoleShow)
-    },
+    ...mapActions({
+      toggle: 'console/toggle',
+      show: 'console/show',
+      hide: 'console/hide',
+      removeHost: 'console/removeHost'
+    }),
     handleTabsEdit(hostId, action) {
       switch (action) {
         case 'remove':
@@ -91,8 +89,7 @@ export default {
 
           if (terminalInstance) {
             terminalInstance.dispose()
-            this.$store.commit('console/REMOVE_HOST', hostId)
-            // const newHosts = this.props.slice(0)
+            this.removeHost(hostId)
           }
       }
     }

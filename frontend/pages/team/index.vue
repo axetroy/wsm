@@ -201,7 +201,7 @@ export default {
       const [{ data: stat }, { data: members, meta }] = await Promise.all([
         $axios.$get(`/team/_/${currentWorkspace}/stat`),
         $axios.$get(`/team/_/${currentWorkspace}/member`),
-        store.dispatch('workspace/getProfile', context)
+        store.dispatch('workspace/getCurrentTeamMemberProfile')
       ])
 
       return {
@@ -235,7 +235,7 @@ export default {
         this.$axios.$get(`/team/_/${val}/stat`).then(({ data: stat }) => {
           this.stat = stat
         })
-        this.getTeamMemberProfile(this)
+        this.getCurrentTeamMemberProfile()
       } else {
         this.changeTeamPage(0)
       }
@@ -243,7 +243,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTeamMemberProfile: 'workspace/getProfile'
+      getCurrentTeamMemberProfile: 'workspace/getCurrentTeamMemberProfile'
     }),
     async changeTeamPage(page) {
       const { meta, data: teams } = await this.$axios.$get('/team', {
