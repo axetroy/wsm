@@ -18,7 +18,8 @@ export const mutations = {
 
 export const actions = {
   // 初始化
-  async nuxtServerInit(store, { $axios, req, app }) {
+  async nuxtServerInit(store, context) {
+    const { req } = context
     const TOKEN_KEY = 'Authorization'
     const WORKSPACE_KEY = 'workspace'
 
@@ -32,9 +33,7 @@ export const actions = {
     }
 
     if (token) {
-      const { data: profile } = await $axios.$get('/user/profile')
-
-      store.commit('SET_USER', profile)
+      await store.dispatch('updateProfile', context)
     }
   },
   // 更新用户的资料
