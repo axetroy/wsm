@@ -154,7 +154,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   async asyncData({ $axios, store }) {
@@ -183,28 +183,6 @@ export default {
   },
   data() {
     return {
-      roles: [
-        {
-          label: '全部',
-          value: undefined
-        },
-        {
-          label: '拥有者',
-          value: 'owner'
-        },
-        {
-          label: '管理员',
-          value: 'administrator'
-        },
-        {
-          label: '成员',
-          value: 'member'
-        },
-        {
-          label: '访客',
-          value: 'visitor'
-        }
-      ],
       state: [
         {
           label: '全部',
@@ -235,7 +213,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      currentWorkspace: 'workspace/current'
+      currentWorkspace: 'workspace/current',
+      roles: 'workspace/roles'
     })
   },
   watch: {
@@ -244,6 +223,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      getWorkspaces: 'workspace/getWorkspaces'
+    }),
     async changePage(page) {
       const { meta, data } = await this.$axios.$get(
         this.currentWorkspace
@@ -259,6 +241,7 @@ export default {
       this.data = data
       this.meta = meta
     },
+    // 撤销邀请
     async cancelInvite(invite) {
       const currentWorkspace = this.currentWorkspace
       try {
@@ -271,6 +254,7 @@ export default {
         this.$error(`撤销失败: ${err.message}`)
       }
     },
+    // 处理邀请，是接受还是拒绝
     async handleInvite(invite, isAccept) {
       try {
         await this.$axios.$put(
@@ -281,6 +265,10 @@ export default {
         )
         this.$success('成功')
         this.changePage(0)
+
+        if (isAccept === true) {
+          this.getWorkspaces()
+        }
       } catch (err) {
         this.$error(`失败: ${err.message}`)
       }
