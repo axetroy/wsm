@@ -24,15 +24,52 @@
           <el-input v-model="form.username" />
         </el-form-item>
         <el-form-item
-          label="密码"
+          label="连接方式"
           :required="type === 'create'"
-          prop="password"
+          prop="passport"
         >
           <el-input
+            v-if="form.connect_type === 'password'"
+            placeholder="请输入连接密码"
+            v-model="form.passport"
             type="password"
-            autocomplete="new-password"
-            v-model="form.password"
-          />
+          >
+            <el-select
+              v-model="form.connect_type"
+              slot="prepend"
+              placeholder="请选择连接方式"
+              style="width: 90px"
+            >
+              <el-option
+                v-for="v of connectTypes"
+                :key="v.value"
+                :label="v.label"
+                :value="v.value"
+              />
+            </el-select>
+          </el-input>
+          <template v-else>
+            <el-select
+              v-model="form.connect_type"
+              placeholder="请选择连接方式"
+              style="width: 90px"
+            >
+              <el-option
+                v-for="v of connectTypes"
+                :key="v.value"
+                :label="v.label"
+                :value="v.value"
+              />
+            </el-select>
+
+            <el-input
+              type="textarea"
+              placeholder="请输入连接密钥"
+              :autosize="{ minRows: 5, maxRows: 10 }"
+              v-model="form.passport"
+              style="margin-top: 20px;"
+            />
+          </template>
         </el-form-item>
         <el-form-item label="描述" prop="remark">
           <el-input
@@ -65,7 +102,8 @@ export default {
       host: '',
       port: 22,
       username: '',
-      password: '',
+      connect_type: 'password',
+      passport: '',
       remark: ''
     }
 
@@ -86,6 +124,20 @@ export default {
       formName: 'form',
       formRules,
       form
+    }
+  },
+  data() {
+    return {
+      connectTypes: [
+        {
+          label: '密码',
+          value: 'password'
+        },
+        {
+          label: '密钥',
+          value: 'private_key'
+        }
+      ]
     }
   },
   computed: {
@@ -128,7 +180,6 @@ export default {
       const form = this.form
       form.port = +form.port
       const currentWorkspace = this.currentWorkspace
-      console.log('当前工作区', currentWorkspace)
       try {
         await this.$axios.$post(
           currentWorkspace ? `/team/_/${currentWorkspace}/host` : '/host',

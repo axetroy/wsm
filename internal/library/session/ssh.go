@@ -23,12 +23,13 @@ type Terminal struct {
 }
 
 type Config struct {
-	Username string
-	Host     string
-	Port     uint
-	Password string
-	Width    int // pty width
-	Height   int // pty height
+	Username   string
+	Host       string
+	Port       uint
+	Password   string // 用密码连接
+	PrivateKey string // 用私钥连接，如果设置了私钥，优先使用私钥连接
+	Width      int    // pty width
+	Height     int    // pty height
 }
 
 func (t *Terminal) SetCloseHandler(h func() error) {
@@ -96,14 +97,25 @@ func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) 
 }
 
 func NewTerminal(config Config) (*Terminal, error) {
+	var authMethods []ssh.AuthMethod
+
 	sshConfig := &ssh.ClientConfig{
-		User: config.Username,
-		Auth: []ssh.AuthMethod{
-			ssh.Password(config.Password),
-		},
+		User:            config.Username,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		BannerCallback:  ssh.BannerDisplayStderr(),
 	}
+
+	if config.PrivateKey != "" {
+		if pk, err := ssh.ParsePrivateKey([]byte(config.PrivateKey)); err != nil {
+			return nil, err
+		} else {
+			authMethods = append(authMethods, ssh.PublicKeys(pk))
+		}
+	} else {
+		authMethods = append(authMethods, ssh.Password(config.Password))
+	}
+
+	sshConfig.Auth = authMethods
 
 	addr := net.JoinHostPort(config.Host, strconv.Itoa(int(config.Port)))
 

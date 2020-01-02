@@ -16,12 +16,13 @@ import (
 )
 
 type UpdateHostParams struct {
-	Name     *string `json:"name"`
-	Host     *string `json:"host" valid:"host~请输入正确的服务器地址"`
-	Port     *uint   `json:"port" valid:"port~请输入正确的端口,range(1|65535)"`
-	Username *string `json:"username"`
-	Password *string `json:"password"`
-	Remark   *string `json:"remark"`
+	Name        *string             `json:"name"`
+	Host        *string             `json:"host" valid:"host~请输入正确的服务器地址"`
+	Port        *uint               `json:"port" valid:"port~请输入正确的端口,range(1|65535)"`
+	Username    *string             `json:"username"`
+	ConnectType *db.HostConnectType `json:"connect_type"`
+	Passport    *string             `json:"passport"`
+	Remark      *string             `json:"remark"`
 }
 
 func (s *Service) UpdateHostRouter(c *gin.Context) {
@@ -110,8 +111,22 @@ func (s *Service) UpdateHost(c controller.Context, hostID string, input UpdateHo
 		shouldUpdate = true
 	}
 
-	if input.Password != nil {
-		updateModel.Password = *input.Password
+	if input.ConnectType != nil {
+		switch *input.ConnectType {
+		case db.HostConnectTypePassword:
+			fallthrough
+		case db.HostConnectTypePrivateKey:
+			break
+		default:
+			err = exception.InvalidParams
+			return
+		}
+		updateModel.ConnectType = *input.ConnectType
+		shouldUpdate = true
+	}
+
+	if input.Passport != nil {
+		updateModel.Passport = *input.Passport
 		shouldUpdate = true
 	}
 
@@ -242,8 +257,8 @@ func (s *Service) UpdateHostByTeam(c controller.Context, teamID string, hostID s
 		shouldUpdate = true
 	}
 
-	if input.Password != nil {
-		updateModel.Password = *input.Password
+	if input.Passport != nil {
+		updateModel.Passport = *input.Passport
 		shouldUpdate = true
 	}
 

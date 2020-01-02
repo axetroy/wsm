@@ -22,12 +22,13 @@ type CreateHostParams struct {
 }
 
 type CreateHostCommonParams struct {
-	Name     string  `json:"name" valid:"required~请输入名称"`
-	Host     string  `json:"host" valid:"required~请输入地址,host~请输入正确的服务器地址"`
-	Port     uint    `json:"port" valid:"required~请输入端口,port~请输入正确的端口,range(1|65535)"`
-	Username string  `json:"username" valid:"required~请输入用户名"`
-	Password string  `json:"password" valid:"required~请输入密码"`
-	Remark   *string `json:"remark"`
+	Name        string             `json:"name" valid:"required~请输入名称"`
+	Host        string             `json:"host" valid:"required~请输入地址,host~请输入正确的服务器地址"`
+	Port        uint               `json:"port" valid:"required~请输入端口,port~请输入正确的端口,range(1|65535)"`
+	Username    string             `json:"username" valid:"required~请输入用户名"`
+	ConnectType db.HostConnectType `json:"connect_type" valid:"required~请选择服务器连接方式"` // 服务器的连接方式
+	Passport    string             `json:"passport" valid:"required~请输入连接口令"`        // 对应连接方式的口令，密码/私钥
+	Remark      *string            `json:"remark"`
 }
 
 func (s *Service) CreateHostCommon(c controller.Context, input CreateHostParams) (res schema.Response) {
@@ -64,18 +65,28 @@ func (s *Service) CreateHostCommon(c controller.Context, input CreateHostParams)
 		return
 	}
 
+	switch input.ConnectType {
+	case db.HostConnectTypePassword:
+		fallthrough
+	case db.HostConnectTypePrivateKey:
+		break
+	default:
+		err = exception.InvalidParams
+		return
+	}
+
 	tx = db.Db.Begin()
 
 	hostInfo := db.Host{
-		OwnerID:    input.OwnerId,
-		OwnerType:  input.OwnerType,
-		Name:       input.Name,
-		Host:       input.Host,
-		Port:       input.Port,
-		Username:   input.Username,
-		Password:   input.Password,
-		PrivateKey: "", // TODO: finish this
-		Remark:     input.Remark,
+		OwnerID:     input.OwnerId,
+		OwnerType:   input.OwnerType,
+		Name:        input.Name,
+		Host:        input.Host,
+		Port:        input.Port,
+		Username:    input.Username,
+		ConnectType: input.ConnectType,
+		Passport:    input.Passport,
+		Remark:      input.Remark,
 	}
 
 	if err = tx.Create(&hostInfo).Error; err != nil {

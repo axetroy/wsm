@@ -20,7 +20,7 @@ func TestCreateHost() (profile schema.ProfileWithToken, hostInfo schema.Host, er
 		Host:     "192.168.0.1",
 		Port:     22,
 		Username: "root",
-		Password: "password",
+		Passport: "password",
 		Remark:   &remark,
 	})
 

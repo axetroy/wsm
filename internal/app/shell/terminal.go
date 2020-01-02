@@ -125,21 +125,28 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		return
 	}
 
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	terminalConfig := session.Config{
+		Host:     hostInfo.Host,
+		Port:     hostInfo.Port,
+		Username: hostInfo.Username,
+		Width:    cols,
+		Height:   rows,
+	}
+
+	if hostInfo.ConnectType == db.HostConnectTypePassword {
+		terminalConfig.Password = hostInfo.Passport
+	} else {
+		terminalConfig.PrivateKey = hostInfo.Passport
+	}
+
+	terminal, err := session.NewTerminal(terminalConfig)
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	terminal, err := session.NewTerminal(session.Config{
-		Host:     hostInfo.Host,
-		Port:     hostInfo.Port,
-		Username: hostInfo.Username,
-		Password: hostInfo.Password,
-		Width:    cols,
-		Height:   rows,
-	})
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
@@ -252,7 +259,7 @@ func (s *Service) TestHostConnect(c controller.Context, hostID string) (res sche
 		Host:     hostInfo.Host,
 		Port:     hostInfo.Port,
 		Username: hostInfo.Username,
-		Password: hostInfo.Password,
+		Password: hostInfo.Passport,
 		Width:    80,
 		Height:   25,
 	})
