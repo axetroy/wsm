@@ -117,7 +117,7 @@ func NewTerminal(config Config) (*Terminal, error) {
 
 	sshConfig.Auth = authMethods
 
-	addr := net.JoinHostPort(config.Host, strconv.Itoa(int(config.Port)))
+	addr := net.JoinHostPort(config.Host, fmt.Sprintf("%d", config.Port))
 
 	client, err := ssh.Dial("tcp", addr, sshConfig)
 

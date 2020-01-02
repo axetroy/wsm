@@ -102,8 +102,10 @@ export default {
       username: [
         { required: true, message: '请输入连接服务器的用户名，例如 root' }
       ],
-      connect_type: [{ required: true, message: '请选择连接服务器的方式' }],
-      passport: [{ required: true, message: '请输入密码/私钥' }]
+      connect_type: [
+        { required: type === 'create', message: '请选择连接服务器的方式' }
+      ],
+      passport: [{ required: type === 'create', message: '请输入密码/私钥' }]
     }
 
     let form = {

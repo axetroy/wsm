@@ -139,17 +139,18 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		terminalConfig.PrivateKey = hostInfo.Passport
 	}
 
-	terminal, err := session.NewTerminal(terminalConfig)
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	terminal, err := session.NewTerminal(terminalConfig)
 
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		_ = conn.WriteMessage(websocket.BinaryMessage, []byte(err.Error()))
+		_ = conn.Close()
 		return
 	}
 
@@ -166,7 +167,8 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 	err = terminal.Connect(stream, stream, stream)
 
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		_ = conn.WriteMessage(websocket.BinaryMessage, []byte(err.Error()))
+		_ = conn.Close()
 		return
 	}
 }
