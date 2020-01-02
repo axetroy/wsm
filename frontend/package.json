@@ -11,7 +11,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxtjs/axios": "5.9.0",
+    "@nuxtjs/axios": "5.9.2",
     "cookie": "0.4.0",
     "date-fns": "2.8.1",
     "element-ui": "2.13.0",
