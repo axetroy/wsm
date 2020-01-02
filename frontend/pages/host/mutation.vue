@@ -95,7 +95,16 @@ export default {
     const currentWorkspace = store.getters['workspace/current']
     const type = query.id !== undefined ? 'update' : 'create'
 
-    const formRules = {}
+    const formRules = {
+      name: [{ required: true, message: '请输入服务器名称' }],
+      host: [{ required: true, message: '请输入服务器地址，例如 192.168.0.0' }],
+      port: [{ required: true, message: '请输入服务器的 SSH 端口，例如 22' }],
+      username: [
+        { required: true, message: '请输入连接服务器的用户名，例如 root' }
+      ],
+      connect_type: [{ required: true, message: '请选择连接服务器的方式' }],
+      passport: [{ required: true, message: '请输入密码/私钥' }]
+    }
 
     let form = {
       name: '',

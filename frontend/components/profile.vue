@@ -44,7 +44,7 @@
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
               >
-                <img v-if="user.avatar" :src="user.avatar" class="avatar" />
+                <img v-if="user && user.avatar" :src="user.avatar" class="avatar" />
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
               </el-upload>
             </el-form-item>
