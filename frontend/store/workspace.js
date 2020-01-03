@@ -73,7 +73,7 @@ export const actions = {
     store.commit('UPDATE_WORKSPACES', [defaultWorkspace].concat(workspaces))
   },
   async getCurrentTeamMemberProfile(store) {
-    const { profile } = await this.$axios.$get(
+    const { data: profile } = await this.$axios.$get(
       `/team/_/${store.getters.current}/profile`
     )
     store.commit('UPDATE_PROFILE', profile)

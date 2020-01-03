@@ -54,12 +54,12 @@ func (s *Service) TransferTeam(c controller.Context, teamID string, userID strin
 	}
 
 	// 更新团队 owner 信息
-	if err = tx.Where(db.Team{Id: teamID}).Update(db.Team{OwnerID: userID}).Error; err != nil {
+	if err = tx.Model(db.Team{}).Where(db.Team{Id: teamID}).Update(db.Team{OwnerID: userID}).Error; err != nil {
 		return
 	}
 
 	// 把旧的拥有者更改为普通成员
-	if err = tx.Where(db.TeamMember{UserID: c.Uid, Role: db.TeamRoleOwner}).Update(db.TeamMember{Role: db.TeamRoleMember}).Error; err != nil {
+	if err = tx.Model(db.TeamMember{}).Where(db.TeamMember{UserID: c.Uid, Role: db.TeamRoleOwner}).Update(db.TeamMember{Role: db.TeamRoleMember}).Error; err != nil {
 		return
 	}
 
@@ -81,7 +81,7 @@ func (s *Service) TransferTeam(c controller.Context, teamID string, userID strin
 	}
 
 	// 如果 新的拥有者 之前已经是团队成员，则更新身份信息
-	if err = tx.Where(db.TeamMember{TeamID: teamID, UserID: userID}).Update(db.TeamMember{Role: db.TeamRoleOwner}).Error; err != nil {
+	if err = tx.Model(db.TeamMember{}).Where(db.TeamMember{TeamID: teamID, UserID: userID}).Update(db.TeamMember{Role: db.TeamRoleOwner}).Error; err != nil {
 		return
 	}
 

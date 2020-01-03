@@ -38,10 +38,20 @@
             @change="onChangeWorkspace"
           >
             <el-option
-              v-for="item in workspaces"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
+              v-for="v in workspaces"
+              :key="v.id"
+              :label="
+                `${
+                  v.owner
+                    ? `[${
+                        v.owner.username === (user ? user.username : '')
+                          ? '当前帐号'
+                          : v.owner.username
+                      }]`
+                    : ''
+                } ${v.name}`
+              "
+              :value="v.id"
             >
             </el-option>
           </el-select>

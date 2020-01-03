@@ -1,102 +1,178 @@
 <template>
-  <div class="main">
+  <div id="team-page" class="main">
     <template v-if="currentWorkspace">
       <el-row :gutter="20">
-        <el-col :span="6">
-          <el-card>
-            团队名称:
-            <div>{{ stat.name }}</div>
-          </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card
-            >团队成员:
-            <div>{{ stat.member_num }}</div>
-          </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card
-            >团队服务器:
-            <div>{{ stat.host_num }}</div>
-          </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card>
-            创建日期:
-            <div>{{ stat.created_at | dateformat }}</div>
-          </el-card>
-        </el-col>
-      </el-row>
+        <el-col :span="8">
+          <el-row>
+            <el-col :span="24">
+              <el-card>
+                <div slot="header">
+                  <div>
+                    <i class="el-icon-s-home" />
+                    团队信息
+                  </div>
+                </div>
+                <el-row>
+                  <el-col class="mb20" :span="12">
+                    <label>
+                      <i class="el-icon-view" />
+                      团队名称:
+                    </label>
+                    <div>{{ stat.name }}</div>
+                  </el-col>
+                  <el-col class="mb20" :span="12">
+                    <label>
+                      <i class="el-icon-s-custom" />
+                      成员数量:
+                    </label>
+                    <div>{{ stat.member_num }}</div>
+                  </el-col>
+                  <el-col :span="12">
+                    <label>
+                      <i class="el-icon-copy-document" />
+                      团队服务器:
+                    </label>
+                    <div>{{ stat.host_num }}</div>
+                  </el-col>
+                  <el-col :span="12">
+                    <label>
+                      <i class="el-icon-time" />
+                      创建日期:
+                    </label>
+                    <div>{{ stat.created_at | dateformat }}</div>
+                  </el-col>
+                </el-row>
+              </el-card>
+            </el-col>
 
-      <el-card style="margin-top: 30px">
-        <div slot="header">
-          <h4>团队成员</h4>
-          <nuxt-link
-            v-if="
-              memberProfile &&
-                (memberProfile.role === 'owner' ||
-                  memberProfile.role === 'administrator')
-            "
-            :to="`/team/${currentWorkspace}/invite`"
+            <el-col :span="24" style="margin-top: 30px">
+              <el-card>
+                <div slot="header">
+                  <div>
+                    <i class="el-icon-user" />
+                    我的信息
+                  </div>
+                </div>
+                <el-row>
+                  <el-col :span="12">
+                    <label>
+                      <i class="el-icon-user" />
+                      我的身份:</label
+                    >
+                    <div>
+                      <span
+                        v-for="v in roles"
+                        :key="v.value"
+                        v-if="v.value === memberProfile.role"
+                      >
+                        {{ v.label }}
+                      </span>
+                    </div>
+                  </el-col>
+                  <el-col :span="12">
+                    <label>
+                      <i class="el-icon-time" />
+                      加入时间:
+                    </label>
+                    <div>{{ memberProfile.created_at | dateformat }}</div>
+                  </el-col>
+                </el-row>
+              </el-card>
+            </el-col>
+          </el-row>
+        </el-col>
+
+        <el-col :span="16">
+          <el-card
+            v-for="v of members"
+            :key="v.id"
+            style="margin-bottom: 20px;"
           >
-            <el-button type="primary" size="small" round>邀请成员 </el-button>
-          </nuxt-link>
-        </div>
+            <div slot="header">
+              <i class="el-icon-user" /> {{ v.username }} ({{ v.nickname }})
+            </div>
 
-        <el-table :data="members" border style="width: 100%">
-          <el-table-column prop="id" label="ID" />
-          <el-table-column prop="username" label="用户名" />
-          <el-table-column label="角色">
-            <template slot-scope="scope">
-              <span
-                v-for="v in roles"
-                :key="v.value"
-                v-if="v.value === scope.row.role"
-              >
-                {{ v.label }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column label="加入时间">
-            <template slot-scope="scope">
-              {{ scope.row.created_at | dateformat }}
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
+            <div class="meta-info">
+              <div>
+                于 {{ v.created_at | dateformat }} 加入团队, 成为
+                <span
+                  v-for="item in roles"
+                  :key="item.value"
+                  v-if="item.value === v.role"
+                  >{{ item.label }}
+                </span>
+              </div>
+            </div>
+            <div class="action-block">
               <el-popconfirm
                 v-if="
                   memberProfile &&
-                    memberProfile.id !== scope.row.id &&
+                    memberProfile.id !== v.id &&
                     memberProfile.role === 'owner'
                 "
                 title="你确定要踢出团队吗"
-                v-on="{ onConfirm: () => kickMemberFromTeam(scope.row) }"
+                v-on="{ onConfirm: () => kickMemberFromTeam(v) }"
               >
-                <el-button type="text" size="small" slot="reference">
+                <el-button type="primary" size="small" slot="reference">
                   踢出团队
                 </el-button>
               </el-popconfirm>
-            </template>
-          </el-table-column>
-        </el-table>
+              <el-dropdown
+                split-button
+                type="primary"
+                size="small"
+                v-if="
+                  memberProfile &&
+                    memberProfile.id !== v.id &&
+                    getRoles(v.role).length
+                "
+                @command="changeRole"
+              >
+                变更身份
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    v-for="r in getRoles(v.role)"
+                    :key="r.value"
+                    :command="{ user: v, role: r.value }"
+                  >
+                    {{ r.label }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              <el-popconfirm
+                v-if="
+                  memberProfile &&
+                    memberProfile.id !== v.id &&
+                    memberProfile.role === 'owner'
+                "
+                title="你确定要把团队转让给他吗？这个会把他升级为拥有者，而您变成团队成员"
+                v-on="{ onConfirm: () => transferTeam(v) }"
+              >
+                <el-button type="primary" size="small" slot="reference">
+                  转让给他
+                </el-button>
+              </el-popconfirm>
+            </div>
+          </el-card>
 
-        <div class="pagination">
-          <el-pagination
-            @current-change="changeTeamPage"
-            background
-            layout="prev, pager, next"
-            :page-size="meta.limit"
-            :total="meta.total"
-          >
-          </el-pagination>
-        </div>
-      </el-card>
+          <div class="pagination">
+            <el-pagination
+              @current-change="changeMemberPage"
+              background
+              layout="prev, pager, next"
+              :page-size="meta.limit"
+              :total="meta.total"
+              hide-on-single-page
+            >
+            </el-pagination>
+          </div>
+        </el-col>
+      </el-row>
     </template>
     <template v-else>
       <el-card>
         <div slot="header">
-          <h4>所属团队</h4>
+          <div>所属团队</div>
           <nuxt-link to="/team/mutation">
             <el-button type="primary" size="small" round>创建团队 </el-button>
           </nuxt-link>
@@ -181,6 +257,7 @@
             layout="prev, pager, next"
             :page-size="meta.limit"
             :total="meta.total"
+            hide-on-single-page
           >
           </el-pagination>
         </div>
@@ -269,6 +346,44 @@ export default {
       this.members = members
       this.meta = meta
     },
+    getRoles(role) {
+      if (!this.memberProfile) {
+        return []
+      }
+
+      switch (role) {
+        case 'owner':
+          return []
+        case 'administrator':
+          if (this.memberProfile.role !== 'owner') {
+            return []
+          }
+          break
+        case 'member':
+          if (
+            ['owner', 'administrator'].includes(this.memberProfile.role) ===
+            false
+          ) {
+            return []
+          }
+          break
+      }
+
+      const roles = this.roles.filter(v => !!v.value)
+
+      switch (this.memberProfile.role) {
+        case 'owner':
+          return roles.filter(v =>
+            ['administrator', 'member', 'visitor'].includes(v.value)
+          )
+        case 'administrator':
+          return roles.filter(v => ['member', 'visitor'].includes(v.value))
+        case 'member':
+          return roles.filter(v => ['visitor'].includes(v.value))
+        default:
+          return []
+      }
+    },
     // 解散团队
     async deleteTeam(team) {
       try {
@@ -294,17 +409,20 @@ export default {
       }
     },
     // 转让团队
-    async transferTeam(team) {
+    async transferTeam(user) {
+      const currentWorkspace = this.currentWorkspace
       try {
-        await this.$axios.$delete('/team/_/' + team.id + '/quit')
-
-        // get list
-        this.$success('退出成功')
-        this.changeTeamPage(0)
+        await this.$axios.$put(
+          '/team/_/' + currentWorkspace + '/transfer/' + user.id
+        )
+        this.$success('转让成功')
+        this.changeMemberPage(0)
+        this.getCurrentTeamMemberProfile()
       } catch (err) {
-        this.$error(`退出失败: ${err.message}`)
+        this.$error(`转让失败: ${err.message}`)
       }
     },
+    // 从团队中踢出成员
     async kickMemberFromTeam(member) {
       const currentWorkspace = this.currentWorkspace
       try {
@@ -318,7 +436,46 @@ export default {
       }
     },
     // 邀请成员
-    async inviteTeamMember(team) {}
+    async inviteTeamMember(team) {},
+    // 变更身份
+    async changeRole({ user, role }) {
+      const currentWorkspace = this.currentWorkspace
+      try {
+        await this.$axios.$put(`/team/_/${currentWorkspace}/role/${user.id}`, {
+          role
+        })
+        this.$success('变更成功')
+        this.changeMemberPage(0)
+      } catch (err) {
+        this.$error(`变更失败: ${err.message}`)
+      }
+    }
   }
 }
 </script>
+
+<style lang="less">
+#team-page {
+  .mb20 {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ebeef5;
+    padding-bottom: 20px;
+  }
+
+  .el-card__body {
+    label {
+      display: inline-block;
+      margin-bottom: 5px;
+    }
+  }
+
+  .meta-info {
+    padding-bottom: 20px;
+  }
+
+  .action-block {
+    padding-top: 20px;
+    border-top: 1px solid #ebeef5;
+  }
+}
+</style>

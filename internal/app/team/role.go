@@ -91,7 +91,7 @@ func (s *Service) UpdateMemberRole(c controller.Context, teamID string, userID s
 	}
 
 	// 更新组成员的角色
-	if err = tx.Where(db.TeamMember{TeamID: teamID, UserID: userID}).Update(&db.TeamMember{Role: input.Role}).Error; err != nil {
+	if err = tx.Model(db.TeamMember{}).Where(db.TeamMember{TeamID: teamID, UserID: userID}).Update(&db.TeamMember{Role: input.Role}).Error; err != nil {
 		return
 	}
 

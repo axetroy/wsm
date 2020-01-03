@@ -119,7 +119,7 @@ func init() {
 			teamRouter.DELETE("/_/:team_id/member/invite/_/:invite_id", team.Core.CancelInviteTeamRouter) // 团队管理者取消邀请
 			teamRouter.DELETE("/_/:team_id/member/_/:user_id", team.Core.KickOutByUIDRouter)              // 管理员/拥有者 把成员踢出团队
 			teamRouter.GET("/_/:team_id/member", team.Core.QueryTeamMembersRouter)                        // 获取团队成员列表
-			teamRouter.GET("/_/:team_id/transfer/:user_id", team.Core.TransferTeamRouter)                 // 转让团队
+			teamRouter.PUT("/_/:team_id/transfer/:user_id", team.Core.TransferTeamRouter)                 // 转让团队
 			teamRouter.DELETE("/_/:team_id", team.Core.DeleteTeamByIDRouter)                              // 解散团队, 只有拥有者才有权限删除
 			teamRouter.DELETE("/_/:team_id/quit", team.Core.QuitTeamRouter)                               // 团队成员退出团队(团队的拥有者无法退出)
 			teamRouter.PUT("/_/:team_id/role/:user_id", team.Core.UpdateMemberRoleRouter)                 // 更改团队成员的角色，只有拥有者和管理员可以操作
