@@ -8,7 +8,7 @@ require (
 	github.com/axetroy/mocker v1.1.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/fatih/color v1.7.0
+	github.com/fatih/color v1.8.0
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/gorilla/mux v1.7.3
