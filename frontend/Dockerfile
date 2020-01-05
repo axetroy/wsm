@@ -27,7 +27,6 @@ RUN yarn config set registry https://registry.npm.taobao.org && \
   npm cache clean --force
 
 COPY nuxt.config.js ./
-COPY .nuxt ./.nuxt
 COPY static ./static
 COPY --from=builder /app/.nuxt ./.nuxt
 
