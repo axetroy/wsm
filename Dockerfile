@@ -11,7 +11,7 @@ COPY ./cmd/user/main.go ./cmd/user/main.go
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -gcflags=-trimpath=$GOPATH -asmflags=-trimpath=$GOPATH -ldflags "-s -w" -o ./bin/wsm ./cmd/user/main.go
 
 # target
-FROM alpine:3.7
+FROM alpine:3.11
 
 WORKDIR /app
 COPY --from=builder /app/bin .
