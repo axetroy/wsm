@@ -1272,7 +1272,7 @@
   resolved "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@zeit/ncc@^0.21.0":
+"@zeit/ncc@0.21.0":
   version "0.21.0"
   resolved "https://registry.yarnpkg.com/@zeit/ncc/-/ncc-0.21.0.tgz#9516fc44ca81614c5b582d6e88542fdf37c401b6"
   integrity sha512-RUMdvVK/w78oo+yBjruZltt0kJXYar2un/1bYQ2LuHG7GmFVm+QjxzEmySwREctaJdEnBvlMdUNWd9hXHxEI3g==
@@ -5003,7 +5003,7 @@ number-is-nan@^1.0.0:
   resolved "https://registry.npmjs.org/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-nuxt-start@^2.11.0:
+nuxt-start@2.11.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/nuxt-start/-/nuxt-start-2.11.0.tgz#26546b867513ec6180353ac2393e221ce438fce8"
   integrity sha512-cUkAm84nUJT47MIarMS2dgrK4axPEF+QuNzApABztoozCv06zMfPR2U4vAL0IShLlai0WjP3U7B9goaPkPFDBg==
