@@ -1,72 +1,73 @@
 <template>
-  <div class="main">
-    <el-card shadow="never">
-      <div slot="header">
-        <h4>{{ type === 'create' ? '创建' : '修改' }}团队</h4>
-      </div>
-      <el-form
-        label-width="160px"
-        status-icon
-        :model="form"
-        :ref="formName"
-        :rules="formRules"
-      >
-        <el-form-item label="团队名称" required prop="name">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item v-if="type === 'create'" label="团队成员">
-          <el-autocomplete
-            v-model="form.username"
-            :fetch-suggestions="querySearchAsync"
-            placeholder="请输入用户名"
-            @select="handleSelect"
+  <el-dialog
+    :title="type === 'create' ? '创建团队' : '更新团队'"
+    :visible.sync="isShow"
+  >
+    <el-form
+      label-width="160px"
+      status-icon
+      :model="form"
+      :ref="formName"
+      :rules="formRules"
+    >
+      <el-form-item label="团队名称" required prop="name">
+        <el-input v-model="form.name" />
+      </el-form-item>
+      <el-form-item v-if="type === 'create'" label="团队成员">
+        <el-autocomplete
+          v-model="form.username"
+          :fetch-suggestions="querySearchAsync"
+          placeholder="请输入用户名"
+          @select="handleSelect"
+        >
+          <el-select
+            v-model="form.role"
+            slot="prepend"
+            placeholder="请选择"
+            style="width: 90px"
           >
-            <el-select
-              v-model="form.role"
-              slot="prepend"
-              placeholder="请选择"
-              style="width: 90px"
+            <el-option label="管理员" value="administrator" />
+            <el-option label="成员" value="member" />
+            <el-option label="访客" value="visitor" />
+          </el-select>
+        </el-autocomplete>
+        <div>
+          <el-tag
+            class="tag"
+            v-for="member in selectedMembers"
+            :key="member.id"
+            closable
+            type="success"
+            @close="removeMember(member)"
+          >
+            {{ member.username }} :
+            <span
+              v-for="v of roles"
+              :key="v.value"
+              v-if="member.role === v.value"
+              >{{ v.label }}</span
             >
-              <el-option label="管理员" value="administrator" />
-              <el-option label="成员" value="member" />
-              <el-option label="访客" value="visitor" />
-            </el-select>
-          </el-autocomplete>
-          <div>
-            <el-tag
-              class="tag"
-              v-for="member in selectedMembers"
-              :key="member.id"
-              closable
-              type="success"
-              @close="removeMember(member)"
-            >
-              {{ member.username }} :
-              <span
-                v-for="v of roles"
-                :key="v.value"
-                v-if="member.role === v.value"
-                >{{ v.label }}</span
-              >
-            </el-tag>
-          </div>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">提交</el-button>
-          <el-button @click="$router.go(-1)">取消</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-  </div>
+          </el-tag>
+        </div>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit()">提交</el-button>
+        <el-button @click="cancel()">取消</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  async asyncData({ $axios, query }) {
-    const type = query.id !== undefined ? 'update' : 'create'
-
+  props: {
+    visible: {
+      type: Boolean
+    }
+  },
+  data() {
     const formRules = {
       name: [{ required: true, message: '请输入团队名称' }]
     }
@@ -76,20 +77,21 @@ export default {
       role: 'member'
     }
 
-    if (type === 'update') {
-      const { data } = await $axios.$get('/team/_/' + query.id)
-      form = data
-      if (!form) {
-        return redirect('/404')
-      }
-    }
-
     return {
-      type,
+      type: 'create',
       formName: 'form',
-      formRules,
       form,
-      selectedMembers: []
+      formRules,
+      selectedMembers: [],
+      isShow: this.visible || false // 是否显示弹窗
+    }
+  },
+  watch: {
+    visible(val) {
+      this.isShow = val
+    },
+    isShow(val) {
+      this.$emit('update:visible', val)
     }
   },
   computed: {
@@ -178,6 +180,12 @@ export default {
     removeMember(member) {
       const index = this.selectedMembers.findIndex(v => v.id === member.id)
       this.selectedMembers.splice(index, 1)
+    },
+    cancel() {
+      this.isShow = false
+      this.selectedMembers = []
+      this.form.name = ''
+      this.$refs[this.formName].resetFields()
     }
   }
 }

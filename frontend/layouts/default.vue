@@ -10,18 +10,10 @@
           <i class="el-icon-s-promotion" />
           服务器管理
         </el-menu-item>
-        <el-submenu index="/team">
-          <template slot="title">
-            <i class="el-icon-location" />
-            <span>团队管理</span>
-          </template>
-          <el-menu-item index="/team"
-            >{{ currentWorkspace === undefined ? '我的团队' : '团队信息' }}
-          </el-menu-item>
-          <el-menu-item index="/team/invite"
-            >{{ currentWorkspace === undefined ? '邀请我的' : '团队邀请' }}
-          </el-menu-item>
-        </el-submenu>
+        <el-menu-item index="/team">
+          <i class="el-icon-s-opportunity" />
+          {{ currentWorkspace === undefined ? '我的团队' : '团队信息' }}
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -99,7 +91,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      user: 'user',
+      user: 'user/profile',
       hosts: 'console/hosts',
       workspaces: 'workspace/workspaces',
       currentWorkspace: 'workspace/current'

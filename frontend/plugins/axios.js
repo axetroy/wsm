@@ -1,11 +1,10 @@
-const CookieParse = require('cookie').parse
-const ClientCookie = require('js-cookie')
+import { parse as CookieParse } from 'cookie'
+import cookie from 'js-cookie'
 
 const TOKEN_KEY = 'Authorization'
 
 export default function({ $axios, redirect, req, res }) {
-  $axios.defaults.baseHost = '0.0.0.0:9000'
-  $axios.defaults.baseURL = `http://${$axios.defaults.baseHost}/v1/`
+  $axios.defaults.baseURL = `/v1`
   $axios.defaults.headers.post['Content-Type'] = 'application/json'
   $axios.defaults.headers.put['Content-Type'] = 'application/json'
 
@@ -14,7 +13,7 @@ export default function({ $axios, redirect, req, res }) {
       const tokenRaw =
         // @ts-ignore
         process.client
-          ? ClientCookie.get(TOKEN_KEY)
+          ? cookie.get(TOKEN_KEY)
           : CookieParse(req.headers.cookie || '')[TOKEN_KEY]
 
       return tokenRaw || ''
@@ -22,7 +21,7 @@ export default function({ $axios, redirect, req, res }) {
   }
 
   $axios.onRequest(config => {
-    console.log('Making request to ' + config.url)
+    console.log(`Making request to /v1/${config.url}`)
   })
 
   // Add a response interceptor
@@ -35,13 +34,13 @@ export default function({ $axios, redirect, req, res }) {
 
       const { status, message } = data
 
-      if (status != 1) {
+      if (status !== 1) {
         switch (status) {
           // TOKEN 无效
           case 999999:
             // @ts-ignore
             if (process.client) {
-              ClientCookie.remove(TOKEN_KEY)
+              cookie.remove(TOKEN_KEY)
             } else {
               res.setHeader(
                 'Set-Cookie',

@@ -20,3 +20,6 @@
 .DS_Store
 docker/volumes
 bin
+volumes
+*.log
+logs

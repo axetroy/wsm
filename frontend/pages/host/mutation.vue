@@ -1,9 +1,7 @@
 <template>
   <div class="main">
     <el-card shadow="never">
-      <div slot="header">
-        <h4>{{ type === 'create' ? '添加' : '修改' }}服务器</h4>
-      </div>
+      <div slot="header">{{ type === 'create' ? '添加' : '修改' }}服务器</div>
       <el-form
         label-width="160px"
         status-icon

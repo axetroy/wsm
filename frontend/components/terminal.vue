@@ -34,7 +34,7 @@ export default {
       ])
 
       const token = this.$axios.defaults.headers.common['Authorization']
-      const apiHost = this.$axios.defaults.baseHost
+      const apiHost = location.host
 
       const rows = 35
       const cols = parseInt(window.outerWidth / 9) - 1

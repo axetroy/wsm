@@ -1,22 +1,11 @@
 import cookie from 'js-cookie'
+import { parse as CookieParse } from 'cookie'
 
-const CookieParse = require('cookie').parse
+export const state = () => ({})
 
-export const state = () => ({
-  user: null
-})
+export const getters = {}
 
-export const getters = {
-  user(state) {
-    return state.user
-  }
-}
-
-export const mutations = {
-  SET_USER(state, user) {
-    state.user = user || null
-  }
-}
+export const mutations = {}
 
 export const actions = {
   // 初始化
@@ -30,27 +19,14 @@ export const actions = {
     const token = cookieMap[TOKEN_KEY]
     const workspace = cookieMap[WORKSPACE_KEY]
 
-    if (workspace) {
-      store.commit('workspace/SWITCH_WORKSPACE', workspace)
-    }
-
     if (token) {
-      await store.dispatch('getProfile', context)
+      await store.dispatch('user/getProfile', context)
     }
-  },
-  // 更新用户的资料
-  async getProfile(store) {
-    const { data: profile } = await this.$axios.$get('/user/profile')
-    store.commit('SET_USER', profile)
-    return profile
-  },
-  // 登录
-  async login(store, body) {
-    const { data: profile } = await this.$axios.$post('/auth/signin', body)
 
-    const { token } = profile
-    cookie.set('Authorization', token)
-    store.commit('SET_USER', profile)
-    return profile
+    if (workspace) {
+      store.dispatch('workspace/switchWorkspace', workspace)
+      await store.dispatch('workspace/getCurrentTeamMemberProfile')
+      await store.dispatch('workspace/getWorkspaces')
+    }
   }
 }

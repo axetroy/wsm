@@ -48,8 +48,9 @@ type TeamMemberInvitePure struct {
 
 type TeamMemberInvite struct {
 	TeamMemberInvitePure
-	User      ProfilePublic `json:"user"`
-	Team      TeamPure      `json:"team"`
+	Team      TeamPure      `json:"team"`    // 邀请的团队
+	User      ProfilePublic `json:"user"`    // 被邀请的用户
+	Invitor   ProfilePublic `json:"invitor"` // 邀请人
 	CreatedAt string        `json:"created_at"`
 	UpdatedAt string        `json:"updated_at"`
 }

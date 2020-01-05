@@ -144,7 +144,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      user: 'user'
+      user: 'user/profile'
     })
   },
   data() {
@@ -229,7 +229,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getProfile: 'getProfile'
+      getProfile: 'user/getProfile'
     }),
     handleClose() {
       this.$emit('update:visible', false)

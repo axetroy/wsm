@@ -4,6 +4,7 @@ export const state = () => ({
   workspaces: [], // 可用的工作区列表，没有翻页，所有的都在这里
   current: undefined, // 当前工作区 ID
   profile: undefined, // 我在该工作区中的成员身份
+  // 成员角色
   roles: [
     {
       label: '全部',
@@ -25,6 +26,33 @@ export const state = () => ({
       label: '访客',
       value: 'visitor'
     }
+  ],
+  // 邀请记录的状态
+  inviteState: [
+    {
+      label: '全部',
+      value: undefined
+    },
+    {
+      label: '未处理',
+      value: 'init'
+    },
+    {
+      label: '已接受',
+      value: 'accept'
+    },
+    {
+      label: '已拒绝',
+      value: 'refuse'
+    },
+    {
+      label: '已撤销',
+      value: 'cancel'
+    },
+    {
+      label: '已弃用',
+      value: 'deprecated'
+    }
   ]
 })
 
@@ -35,11 +63,17 @@ export const getters = {
   current(state) {
     return state.current
   },
+  team(state) {
+    return state.workspaces.find(v => v.id === state.current)
+  },
   profile(state) {
     return state.profile
   },
   roles(state) {
     return state.roles
+  },
+  inviteState(state) {
+    return state.inviteState
   }
 }
 
@@ -68,10 +102,17 @@ const defaultWorkspace = {
 }
 
 export const actions = {
+  // 获取所有工作区
   async getWorkspaces(store) {
     const { data: workspaces } = await this.$axios.$get('/team/all')
     store.commit('UPDATE_WORKSPACES', [defaultWorkspace].concat(workspaces))
   },
+  // 获取团队列表
+  async getTeams(store, params) {
+    const { data, meta } = await this.$axios.$get('/team', { params })
+    return { data, meta }
+  },
+  // 获取当前工作区下的我成员资料
   async getCurrentTeamMemberProfile(store) {
     const { data: profile } = await this.$axios.$get(
       `/team/_/${store.getters.current}/profile`
@@ -80,7 +121,34 @@ export const actions = {
 
     return profile
   },
+  // 切换工作区
   switchWorkspace(store, workspaceID) {
     store.commit('SWITCH_WORKSPACE', workspaceID)
+  },
+  // 获取当前工作区的邀请记录
+  async getCurrentTeamInvites({ state }, params = {}) {
+    const { data, meta } = await this.$axios.$get(
+      `/team/_/${state.current}/member/invite`,
+      {
+        params
+      }
+    )
+
+    return { data, meta }
+  },
+  // 获取当前工作区的统计信息
+  async getCurrentTeamStat({ state }) {
+    const { data } = await this.$axios.$get(`/team/_/${state.current}/stat`)
+
+    return data
+  },
+  // 获取当前工作区的成员列表
+  async getCurrentTeamMembers({ state }, params = {}) {
+    const {
+      data,
+      meta
+    } = await this.$axios.$get(`/team/_/${state.current}/member`, { params })
+
+    return { data, meta }
   }
 }

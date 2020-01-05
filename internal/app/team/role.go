@@ -2,6 +2,8 @@ package team
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
@@ -9,7 +11,6 @@ import (
 	"github.com/axetroy/wsm/internal/library/helper"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"net/http"
 )
 
 type UpdateMemberRoleParams struct {
@@ -81,7 +82,6 @@ func (s *Service) UpdateMemberRole(c controller.Context, teamID string, userID s
 	switch input.Role {
 	case db.TeamRoleOwner:
 		err = exception.NoPermission
-		break
 	case db.TeamRoleAdmin:
 		if operatorMemberInfo.Role != db.TeamRoleOwner {
 			err = exception.NoPermission

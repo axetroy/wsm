@@ -87,7 +87,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      login: 'login'
+      login: 'user/login'
     }),
     submitForm() {
       const form = this.loginForm

@@ -26,8 +26,6 @@ func Serve() error {
 		MaxHeaderBytes: 1 << 20, // 10M
 	}
 
-	log.Printf("Listen on:  %s\n", s.Addr)
-
 	go func() {
 		if config.User.TLS != nil {
 			TLSConfig := &tls.Config{
@@ -42,29 +40,33 @@ func Serve() error {
 				},
 			}
 
-			TLSProto := make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0)
+			TLSProto := make(map[string]func(*http.Server, *tls.Conn, http.Handler))
 
 			s.TLSConfig = TLSConfig
 			s.TLSNextProto = TLSProto
 
+			log.Printf("Listen on:  %s\n", s.Addr)
+
 			if err := s.ListenAndServeTLS(config.User.TLS.Cert, config.User.TLS.Key); err != nil {
-				log.Println(err)
+				log.Fatalln(err)
 			}
 		} else {
+			log.Printf("Listen on:  %s\n", s.Addr)
+
 			if err := s.ListenAndServe(); err != nil {
-				log.Println(err)
+				log.Fatalln(err)
 			}
 		}
 	}()
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	// kill (no param) default send syscall.SIGTERM
 	// kill -2 is syscall.SIGINT
 	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
 
-	signal.Notify(quit, os.Kill, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-quit
 
 	config.Common.Exiting = true

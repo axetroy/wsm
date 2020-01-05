@@ -46,7 +46,8 @@ import {
   TabPane,
   Loading,
   Popconfirm,
-  Autocomplete
+  Autocomplete,
+  Scrollbar
 } from 'element-ui'
 
 // message
@@ -106,6 +107,7 @@ Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Popconfirm)
 Vue.use(Autocomplete)
+Vue.use(Scrollbar)
 
 Vue.use(Loading.directive)
 Vue.prototype.$loading = Loading.service
