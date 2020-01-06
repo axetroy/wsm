@@ -3,7 +3,7 @@ FROM node:12.14.0-alpine AS builder
 
 WORKDIR /app
 
-ADD ./ .
+COPY ./ .
 
 RUN rm -rf ./.nuxt && \
   yarn config set registry https://registry.npm.taobao.org && \
