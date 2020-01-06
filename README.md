@@ -103,8 +103,6 @@ services:
   frontend:
     image: axetroy/wsm-frontend:latest
     restart: always
-    links:
-      - backend
     environment:
       - PORT=80
       - HOST=0.0.0.0
@@ -113,8 +111,6 @@ services:
   backend:
     image: axetroy/wsm-backend:latest
     restart: always
-    volumes:
-      - "./.env:/app/bin/.env"
     environment:
       - USER_HTTP_PORT=80
       - DB_HOST=192.168.3.15 # 数据库的IP地址
