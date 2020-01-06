@@ -159,7 +159,6 @@ export default {
   margin: 0 auto;
   transform: translateY(-50%);
   background-color: #fff;
-  padding: 8 32px 16px 32px;
 
   h3 {
     padding-top: 20px;
