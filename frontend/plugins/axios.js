@@ -1,27 +1,21 @@
-import { parse as CookieParse } from 'cookie'
-import cookie from 'js-cookie'
-
 const TOKEN_KEY = 'Authorization'
 
-export default function({ $axios, redirect, req, res }) {
+export default function({ store, $axios, redirect, req, res }) {
   $axios.defaults.baseURL = `/v1`
-  $axios.defaults.headers.post['Content-Type'] = 'application/json'
-  $axios.defaults.headers.put['Content-Type'] = 'application/json'
+
+  if (process.env.NODE_ENV !== 'production' && process.server) {
+    $axios.defaults.baseURL = 'http://0.0.0.0:9000/v1'
+  }
 
   $axios.defaults.headers.common = {
+    'Content-Type': 'application/json',
     get [TOKEN_KEY]() {
-      const tokenRaw =
-        // @ts-ignore
-        process.client
-          ? cookie.get(TOKEN_KEY)
-          : CookieParse(req.headers.cookie || '')[TOKEN_KEY]
-
-      return tokenRaw || ''
+      return store.getters['user/token']
     }
   }
 
   $axios.onRequest(config => {
-    console.log(`Making request to /v1/${config.url}`)
+    console.log(`Making request to /v1${config.url}`)
   })
 
   // Add a response interceptor
@@ -38,15 +32,16 @@ export default function({ $axios, redirect, req, res }) {
         switch (status) {
           // TOKEN 无效
           case 999999:
+            store.dispatch('user/logout')
             // @ts-ignore
-            if (process.client) {
-              cookie.remove(TOKEN_KEY)
-            } else {
-              res.setHeader(
-                'Set-Cookie',
-                `${TOKEN_KEY}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`
-              )
-            }
+            // if (process.client) {
+            //   cookie.remove(TOKEN_KEY)
+            // } else {
+            //   res.setHeader(
+            //     'Set-Cookie',
+            //     `${TOKEN_KEY}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`
+            //   )
+            // }
             redirect('/login')
             break
           default:

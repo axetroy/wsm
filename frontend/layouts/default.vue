@@ -74,7 +74,6 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ClientCookie from 'js-cookie'
 import Console from '../components/console'
 import Profile from '../components/profile'
 
@@ -105,7 +104,8 @@ export default {
   methods: {
     ...mapActions({
       getWorkspaces: 'workspace/getWorkspaces',
-      switchWorkspace: 'workspace/switchWorkspace'
+      switchWorkspace: 'workspace/switchWorkspace',
+      userLogout: 'user/logout'
     }),
     async fetchWorkspaces() {
       await this.getWorkspaces()
@@ -124,12 +124,8 @@ export default {
       }
     },
     logout() {
+      this.userLogout()
       this.$router.push({ name: 'login' })
-      this.$store.commit('SET_USER', null)
-      this.onChangeWorkspace(undefined)
-
-      ClientCookie.remove('Authorization')
-      ClientCookie.remove('workspace')
     },
     profile() {
       this.profileDialogVisible = true
