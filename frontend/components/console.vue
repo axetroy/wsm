@@ -76,7 +76,7 @@ export default {
   computed: {
     ...mapGetters({
       isShow: 'console/isShow',
-      currentHost: 'console/currentHost',
+      currentHostId: 'console/currentHostId',
       hosts: 'console/hosts'
     })
   },
@@ -86,7 +86,7 @@ export default {
         this.show()
       }
     },
-    currentHost(val) {
+    currentHostId(val) {
       this.activeName = val
       this.show()
     }

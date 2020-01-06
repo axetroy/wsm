@@ -1,6 +1,6 @@
 export const state = () => ({
   hosts: [], // 当前正在连接的服务器
-  currentHost: null, // 当前正在连接的服务器
+  currentHostId: null, // 当前正在连接的服务器
   isShow: false // 是否显示终端
 })
 
@@ -8,8 +8,8 @@ export const getters = {
   hosts(state) {
     return state.hosts
   },
-  currentHost(state) {
-    return state.currentHost
+  currentHostId(state) {
+    return state.currentHostId
   },
   isShow(state) {
     return state.isShow
@@ -31,26 +31,26 @@ export const mutations = {
     hosts.splice(index, 1)
 
     if (!hosts.length) {
-      state.currentHost = null
+      state.currentHostId = null
       state.isShow = false
       return
     }
 
-    // reset currentHost
+    // reset currentHostId
     const prevHost = state.hosts[index - 1]
     const nextHost = state.hosts[index + 1]
     if (nextHost) {
-      state.currentHost = nextHost.id
+      state.currentHostId = nextHost.id
     } else if (prevHost) {
-      state.currentHost = prevHost.id
+      state.currentHostId = prevHost.id
     } else {
-      state.currentHost = null
+      state.currentHostId = null
     }
 
     state.hosts = hosts
   },
   SET_CURRENT_HOST(state, host) {
-    state.currentHost = host.id
+    state.currentHostId = host.id
   },
   SET_CONSOLE_SHOW(state, isShow) {
     state.isShow = !!isShow
