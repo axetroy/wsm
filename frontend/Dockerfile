@@ -17,8 +17,6 @@ FROM node:12.14.0-alpine
 
 WORKDIR /app
 
-RUN mkdir -p /app
-
 COPY package.json yarn.lock ./
 
 RUN yarn config set registry https://registry.npm.taobao.org && \

@@ -39,7 +39,87 @@ $ npm run dev
 
 ## 部署
 
-TODO: 在往后会打包成 Docker 镜像进行部署
+部分部署分为两部分
+
+- 数据库
+- 程序
+
+### 数据库
+
+使用 docker-compose 部署数据库
+
+```yaml
+version: "3"
+services:
+  # 数据库
+  pg:
+    image: postgres:9.6.16-alpine
+    restart: always
+    volumes:
+      - "./volumes/pg:/var/lib/postgresql/data"
+    ports:
+      - 54321:5432 # 本机端口:容器端口
+    environment:
+      - POSTGRES_USER=terminal # 用户名
+      - POSTGRES_PASSWORD=terminal # 数据库密码
+      - POSTGRES_DB=terminal # 数据库名
+
+  # 缓存
+  redis:
+    image: redis:5.0.7-alpine
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - "./volumes/redis:/data"
+    environment:
+      - REDIS_PASSWORD=password
+    command: ["redis-server", "--requirepass", "password"]
+```
+
+### 程序
+
+部署应用程序，使用 `Nginx` + `前端镜像` + `后端镜像` 进行部署
+
+需要使用 [nginx.conf](nginx.conf) 文件和 [docker-compose.yml](docker-compose.yml) 文件
+
+```yaml
+version: "3"
+services:
+  # 网关
+  nginx:
+    image: nginx:1.17.6-alpine
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf # 映射 nginx 配置文件
+      - ./logs/nginx:/var/log/nginx # 日志文件
+    ports:
+      - 9000:80 # 本机端口:容器端口
+    links:
+      - frontend
+      - backend
+
+  # 前端
+  frontend:
+    image: axetroy/wsm-frontend:latest
+    restart: always
+    links:
+      - backend
+    environment:
+      - PORT=80
+      - HOST=0.0.0.0
+
+  # 后端接口
+  backend:
+    image: axetroy/wsm-backend:latest
+    restart: always
+    volumes:
+      - "./.env:/app/bin/.env"
+    environment:
+      - USER_HTTP_PORT=80
+      - DB_HOST=192.168.3.15 # 数据库的IP地址
+      - DB_PORT=54321 # 数据库的端口
+```
 
 ## 技术栈
 
@@ -51,6 +131,7 @@ TODO: 在往后会打包成 Docker 镜像进行部署
 - [ ] 一次性分享终端
 - [ ] 终端操作记录
 - [ ] 操作记录回放
+- [ ] 多个服务器
 
 ## 许可协议
 
