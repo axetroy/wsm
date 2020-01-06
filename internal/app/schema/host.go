@@ -7,6 +7,7 @@ type HostPure struct {
 	Id          string             `json:"id"`
 	Name        string             `json:"name"`
 	OwnerID     string             `json:"owner_id"`
+	OwnerType   db.HostOwnerType   `json:"owner_type"`
 	Host        string             `json:"host"`
 	Port        uint               `json:"port"`
 	Username    string             `json:"username"`

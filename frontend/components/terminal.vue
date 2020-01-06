@@ -1,8 +1,10 @@
 <template>
-  <div ref="container"></div>
+  <div style="height: 100%;" ref="container"></div>
 </template>
 
 <script>
+import 'xterm/css/xterm.css'
+
 export default {
   data() {
     return {
@@ -12,9 +14,36 @@ export default {
     }
   },
   props: {
-    host: Object,
-    default() {
-      return null
+    host: {
+      type: Object
+    },
+    rows: {
+      type: Number,
+      default() {
+        return 0
+      }
+    },
+    cols: {
+      type: Number,
+      default() {
+        return 0
+      }
+    }
+  },
+  computed: {
+    _cols() {
+      if (this.cols <= 0) {
+        return parseInt(window.innerWidth / 9 + '')
+      }
+      return this.cols || 80
+    },
+    _rows() {
+      // auto rows
+      if (this.rows <= 0) {
+        return parseInt(window.innerHeight / 17 + '')
+      }
+
+      return this.row || 35
     }
   },
   methods: {
@@ -36,8 +65,8 @@ export default {
       const token = this.$axios.defaults.headers.common['Authorization']
       const apiHost = location.host
 
-      const rows = 35
-      const cols = parseInt(window.outerWidth / 9) - 1
+      const rows = this._rows
+      const cols = this._cols
 
       // Open the websocket connection to the backend
       const protocol = location.protocol === 'https:' ? 'wss://' : 'ws://'

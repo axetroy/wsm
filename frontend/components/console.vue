@@ -49,7 +49,12 @@
           :key="v.id"
           @click="toggle"
         >
-          <terminal class="terminal" :ref="'terminal-' + v.id" :host="v" />
+          <terminal
+            rows="35"
+            class="terminal"
+            :ref="'terminal-' + v.id"
+            :host="v"
+          />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -59,7 +64,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Terminal from './terminal'
-import 'xterm/css/xterm.css'
 
 export default {
   components: {

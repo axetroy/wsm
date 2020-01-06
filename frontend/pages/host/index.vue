@@ -37,6 +37,19 @@
             <el-button type="text" size="small" @click="test(scope.row)">
               测试
             </el-button>
+            <a
+              target="_blank"
+              :href="
+                '/tty/' +
+                  scope.row.id +
+                  (currentWorkspace ? '?team_id=' + currentWorkspace : '')
+              "
+            >
+              <el-button type="text" size="small">
+                新窗口连接
+              </el-button>
+            </a>
+
             <el-button type="text" size="small" @click="connect(scope.row)">
               连接
             </el-button>
