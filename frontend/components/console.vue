@@ -50,7 +50,7 @@
           @click="toggle"
         >
           <terminal
-            rows="35"
+            :rows="35"
             class="terminal"
             :ref="'terminal-' + v.id"
             :host="v"
