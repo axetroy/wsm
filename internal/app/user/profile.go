@@ -7,7 +7,6 @@ import (
 
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
-	"github.com/axetroy/wsm/internal/app/middleware"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
@@ -24,22 +23,7 @@ type UpdateProfileParams struct {
 }
 
 func (u *Service) GetProfileRouter(c *gin.Context) {
-	var (
-		err error
-		res = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	res = u.GetProfile(controller.Context{
-		Uid: c.GetString(middleware.ContextUidField),
-	})
+	c.JSON(http.StatusOK, u.GetProfile(controller.NewContextFromGinContext(c)))
 }
 
 func (u *Service) UpdateProfileRouter(c *gin.Context) {
@@ -69,7 +53,6 @@ func (u *Service) GetProfile(c controller.Context) (res schema.Response) {
 	var (
 		err  error
 		data schema.Profile
-		tx   *gorm.DB
 	)
 
 	defer func() {
@@ -84,22 +67,12 @@ func (u *Service) GetProfile(c controller.Context) (res schema.Response) {
 			}
 		}
 
-		if tx != nil {
-			if err != nil {
-				_ = tx.Rollback().Error
-			} else {
-				err = tx.Commit().Error
-			}
-		}
-
 		helper.Response(&res, data, nil, err)
 	}()
 
-	tx = db.Db.Begin()
-
 	userInfo := db.User{Id: c.Uid}
 
-	if err = tx.Where(&userInfo).Last(&userInfo).Error; err != nil {
+	if err = db.Db.Where(&userInfo).Last(&userInfo).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = exception.UserNotExist
 		}

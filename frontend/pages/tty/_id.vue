@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 import Terminal from '~/components/terminal'
 
 export default {
@@ -47,11 +46,6 @@ export default {
         team: undefined
       }
     }
-  },
-  methods: {
-    ...mapActions({
-      fetchTeamHostById: 'team/fetchTeamHostById'
-    })
   }
 }
 </script>

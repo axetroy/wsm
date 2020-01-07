@@ -14,7 +14,6 @@ type Terminal struct {
 	client       *ssh.Client
 	session      *ssh.Session
 	config       Config
-	exitMsg      string
 	stdout       io.Reader
 	stdin        io.Writer
 	stderr       io.Reader
@@ -60,13 +59,6 @@ func (t *Terminal) Close() (err error) {
 
 func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) error {
 	var err error
-	defer func() {
-		if t.exitMsg == "" {
-			// _, _ = fmt.Fprintln(stdout, "the connection was closed on the remote side on ", time.Now().Format(time.RFC822))
-		} else {
-			_, _ = fmt.Fprintln(stdout, t.exitMsg)
-		}
-	}()
 
 	termType := os.Getenv("TERM")
 
@@ -80,7 +72,7 @@ func (t *Terminal) Connect(stdin io.Reader, stdout io.Writer, stderr io.Writer) 
 
 	t.session.Stdin = stdin
 	t.session.Stderr = stderr
-	t.session.Stdout = stderr
+	t.session.Stdout = stdout
 
 	if err = t.session.Shell(); err != nil {
 		return err
