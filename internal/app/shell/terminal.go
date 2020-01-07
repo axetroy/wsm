@@ -2,6 +2,7 @@ package shell
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -130,15 +131,42 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		return
 	}
 
+	connectedAt := time.Now()
+
+	stream := NewWebSocketSteam(conn)
+
 	terminal.SetCloseHandler(func() error {
+		// 记录用户的操作
+		recorders := stream.GetRecorder()
+
+		if len(recorders) != 0 {
+			recorderStr := make([]string, 0)
+
+			for _, r := range recorders {
+				t := r.Time.Format("2006-01-02 15:04:05.000")
+				str := string(r.Data)
+				recorderStr = append(recorderStr, fmt.Sprintf("[%d %s] %s", r.Type, t, str))
+			}
+
+			record := db.HostConnectionRecord{
+				UserID:    ctx.Uid,
+				HostID:    hostID,
+				Records:   recorderStr,
+				CreatedAt: connectedAt,
+			}
+
+			if err := db.Db.Create(&record).Error; err != nil {
+				fmt.Println(err)
+				fmt.Println("写入操作日志失败")
+			}
+		}
+
 		return conn.Close()
 	})
 
 	conn.SetCloseHandler(func(code int, text string) error {
 		return terminal.Close()
 	})
-
-	stream := NewWebSocketSteam(conn)
 
 	err = terminal.Connect(stream, stream, stream)
 
@@ -159,7 +187,7 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 			}
 
 			// 如果有 10 分钟没有数据流动，则断开连接
-			if time.Now().Unix()-stream.UpdatedAt.Unix() > 60 {
+			if time.Now().Unix()-stream.UpdatedAt.Unix() > 60*10 {
 				_ = conn.WriteMessage(websocket.BinaryMessage, []byte("检测到终端闲置，已断开连接..."))
 				_ = conn.Close()
 				_ = timer.Stop()
