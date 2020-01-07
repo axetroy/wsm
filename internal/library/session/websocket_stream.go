@@ -1,21 +1,14 @@
-package shell
+package session
 
 import (
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-type DataType int
-
-const (
-	DataTypeInput  DataType = 0 // 数据的输入
-	DataTypeOutput DataType = 1 // 数据的输出
-)
-
 // 数据的时间线
-type Timeline struct {
-	Type DataType  `json:"type"` // 输入/输出
+type timeline struct {
 	Time time.Time `json:"time"` // 时间戳
 	Data []byte    `json:"data"` // 数据
 }
@@ -25,30 +18,29 @@ func NewWebSocketSteam(connection *websocket.Conn) *WebsocketStream {
 		conn:        connection,
 		messageType: websocket.BinaryMessage,
 		UpdatedAt:   time.Now(),
-		recorder:    make([]*Timeline, 0),
+		recorder:    make([]*timeline, 0),
 	}
 }
 
 type WebsocketStream struct {
+	lock        sync.RWMutex
 	conn        *websocket.Conn
 	messageType int
 	UpdatedAt   time.Time // 最新的更新时间
-	recorder    []*Timeline
+	recorder    []*timeline
 }
 
 func (r *WebsocketStream) Read(p []byte) (n int, err error) {
 	t, message, err := r.conn.ReadMessage()
 
+	copy(p, message)
+
+	r.lock.Lock()
+
+	defer r.lock.Unlock()
+
 	r.UpdatedAt = time.Now() // 更新时间
 	r.messageType = t
-
-	r.recorder = append(r.recorder, &Timeline{
-		Type: DataTypeInput,
-		Time: r.UpdatedAt,
-		Data: message,
-	})
-
-	copy(p, message)
 
 	n = len(message)
 
@@ -56,13 +48,19 @@ func (r *WebsocketStream) Read(p []byte) (n int, err error) {
 }
 
 func (r *WebsocketStream) Write(p []byte) (n int, err error) {
+	r.lock.Lock()
+
+	var data = make([]byte, len(p))
+
+	copy(data, p)
+
+	defer r.lock.Unlock()
 	err = r.conn.WriteMessage(r.messageType, p)
 
 	r.UpdatedAt = time.Now() // 更新时间
-	r.recorder = append(r.recorder, &Timeline{
-		Type: DataTypeOutput,
+	r.recorder = append(r.recorder, &timeline{
 		Time: r.UpdatedAt,
-		Data: p,
+		Data: data,
 	})
 
 	n = len(p)
@@ -70,6 +68,6 @@ func (r *WebsocketStream) Write(p []byte) (n int, err error) {
 	return
 }
 
-func (r *WebsocketStream) GetRecorder() []*Timeline {
+func (r *WebsocketStream) GetRecorder() []*timeline {
 	return r.recorder
 }

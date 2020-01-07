@@ -24,10 +24,11 @@ func init() {
 }
 
 type HostConnectionRecord struct {
+	// TODO: 支持外键
 	Id      string         `gorm:"primary_key;not null;unique;index;type:varchar(32);" json:"id"` // 随机生成的主键
 	HostID  string         `gorm:"not null;index;type:varchar(32);" json:"host_id"`               // 服务器 ID
 	UserID  string         `gorm:"not null;index;type:varchar(32);" json:"user_id"`               // 操作者的 ID
-	Records pq.StringArray `gorm:"not null;type:varchar(1024)[]" json:"records"`                  // 操作记录
+	Records pq.StringArray `gorm:"not null;type:varchar(txt)[]" json:"records"`                   // 操作记录
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

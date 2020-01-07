@@ -8,28 +8,30 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf # 映射 nginx 配置文件
       - ./logs/nginx:/var/log/nginx # 日志文件
     ports:
-      - 9000:80 # 宿主端口:容器端口
+      - 8000:80 # 宿主端口:容器端口
     links:
       - frontend
       - backend
 
   # 前端
   frontend:
-    image: axetroy/wsm-frontend:1.0.0
+    image: axetroy/wsm-frontend:latest
     restart: always
     links:
       - backend
     environment:
+      - NODE_ENV=production
       - PORT=80
       - HOST=0.0.0.0
+      - API_URL=http://192.168.1.29:9000
 
   # 后端接口
   backend:
-    image: axetroy/wsm-backend:1.0.0
+    image: axetroy/wsm-backend:latest
     restart: always
     volumes:
       - "./.env:/app/bin/.env"
     environment:
-      - USER_HTTP_PORT=80
-      - DB_HOST=192.168.3.15 # 改成机器的 IP 或者域名
+      - USER_HTTP_PORT=9000
+      - DB_HOST=192.168.1.29 # 改成机器的 IP 或者域名
       - DB_PORT=54321

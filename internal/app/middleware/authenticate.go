@@ -35,7 +35,6 @@ func Authenticate(isAdmin bool) gin.HandlerFunc {
 
 		if s, isExist := c.GetQuery(token.AuthField); isExist == true {
 			tokenString = s
-			return
 		} else {
 			tokenString = c.GetHeader(token.AuthField)
 

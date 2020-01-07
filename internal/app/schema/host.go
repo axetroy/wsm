@@ -1,6 +1,9 @@
 package schema
 
-import "github.com/axetroy/wsm/internal/app/db"
+import (
+	"github.com/axetroy/wsm/internal/app/db"
+	"time"
+)
 
 // 服务器的相关信息
 type HostPure struct {
@@ -19,4 +22,13 @@ type Host struct {
 	HostPure
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
+}
+
+type HostConnectionRecord struct {
+	ID        string    `json:"id"`
+	UserID    string    `json:"user_id"`
+	HostID    string    `json:"host_id"`
+	Records   []string  `json:"records"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

@@ -68,6 +68,7 @@ func init() {
 			hostRouter := v1.Group("/host")
 			hostRouter.GET("", userAuthMiddleware, host.Core.QueryMyOperationalServerRouter)                                                  // 获取我可以操作的服务器信息列表
 			hostRouter.POST("", userAuthMiddleware, host.Core.CreateHostByUserRouter)                                                         // 创建服务器
+			hostRouter.GET("/connection/:record_id", userAuthMiddleware, host.Core.QueryHostConnectionRecordRouter)                           // 获取服务器连接记录详情
 			hostRouter.PUT("/_/:host_id", userAuthMiddleware, host.Core.UpdateHostRouter)                                                     // 更新服务器
 			hostRouter.GET("/_/:host_id", userAuthMiddleware, host.Core.QueryMyHostByIDRouter)                                                // 获取服务器信息
 			hostRouter.DELETE("/_/:host_id", userAuthMiddleware, host.Core.DeleteHostByIDRouter)                                              // 删除服务器
@@ -79,6 +80,7 @@ func init() {
 		// shell 类
 		{
 			shellRouter := v1.Group("/shell")
+			shellRouter.Use(userAuthMiddleware)
 			shellRouter.GET("/connect/:host_id", userAuthMiddleware, shell.Core.StartTerminalRouter) // 开启终端，连接 websocket
 			shellRouter.GET("/test/:host_id", userAuthMiddleware, shell.Core.TestHostConnectRouter)  // 测试服务器是否可连接
 			shellRouter.POST("/test", userAuthMiddleware, shell.Core.TestPublicServerRouter)         // 测试服务器是否可连接，给定服务器的相关信息即可，无需登陆验证

@@ -1,6 +1,7 @@
 package shell
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"net/http"
@@ -133,9 +134,16 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 
 	connectedAt := time.Now()
 
-	stream := NewWebSocketSteam(conn)
+	stream := session.NewWebSocketSteam(conn)
+
+	addingRecord := false
 
 	terminal.SetCloseHandler(func() error {
+		if addingRecord == true {
+			return nil
+		}
+
+		addingRecord = true
 		// 记录用户的操作
 		recorders := stream.GetRecorder()
 
@@ -144,8 +152,8 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 
 			for _, r := range recorders {
 				t := r.Time.Format("2006-01-02 15:04:05.000")
-				str := string(r.Data)
-				recorderStr = append(recorderStr, fmt.Sprintf("[%d %s] %s", r.Type, t, str))
+				str := base64.StdEncoding.EncodeToString(r.Data)
+				recorderStr = append(recorderStr, fmt.Sprintf("(%s) %s", t, str))
 			}
 
 			record := db.HostConnectionRecord{
@@ -155,9 +163,12 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 				CreatedAt: connectedAt,
 			}
 
+			// TODO: 如果服务器进程退出，则来不及写入数据
 			if err := db.Db.Create(&record).Error; err != nil {
 				fmt.Println(err)
 				fmt.Println("写入操作日志失败")
+			} else {
+				fmt.Println("写入记录成功...")
 			}
 		}
 
@@ -178,7 +189,7 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 
 	go func() {
 		for {
-			timer := time.NewTimer(5 * time.Second) // -- A
+			timer := time.NewTimer(5 * time.Second)
 			<-timer.C
 
 			if terminal.IsClosed() {
