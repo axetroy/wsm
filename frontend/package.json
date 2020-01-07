@@ -5,7 +5,7 @@
   "author": "axetroy",
   "private": true,
   "scripts": {
-    "dev": "HOST=0.0.0.0 nuxt",
+    "dev": "PORT=3000 HOST=0.0.0.0 API_URL=http://0.0.0.0:9000 nuxt",
     "build": "nuxt build && npm run minify && npm run build:clean",
     "minify": "ncc build ./.nuxt/dist/server/server.js -o ./out --minify && mv ./out/index.js ./.nuxt/dist/server/server.js",
     "build:clean": "node ./scripts/clean-build.js",

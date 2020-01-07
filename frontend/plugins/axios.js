@@ -1,7 +1,9 @@
 const TOKEN_KEY = 'Authorization'
 
 export default function({ store, $axios, redirect, req, res }) {
-  $axios.defaults.baseURL = `/v1`
+  $axios.defaults.baseURL = process.client
+    ? `/v1`
+    : `http://0.0.0.0:${process.env.PORT}/v1`
 
   $axios.defaults.headers.common = {
     'Content-Type': 'application/json',
