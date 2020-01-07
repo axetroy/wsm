@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
@@ -15,31 +16,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/jinzhu/gorm"
 )
-
-type WebsocketStream struct {
-	conn        *websocket.Conn
-	messageType int
-}
-
-func (r WebsocketStream) Read(p []byte) (n int, err error) {
-	t, message, err := r.conn.ReadMessage()
-
-	r.messageType = t
-
-	copy(p, message)
-
-	n = len(message)
-
-	return
-}
-
-func (r WebsocketStream) Write(p []byte) (n int, err error) {
-	err = r.conn.WriteMessage(r.messageType, p)
-
-	n = len(p)
-
-	return
-}
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -162,7 +138,7 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		return terminal.Close()
 	})
 
-	stream := WebsocketStream{conn: conn, messageType: websocket.BinaryMessage}
+	stream := NewWebSocketSteam(conn)
 
 	err = terminal.Connect(stream, stream, stream)
 
@@ -171,6 +147,26 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 		_ = conn.Close()
 		return
 	}
+
+	go func() {
+		for {
+			timer := time.NewTimer(5 * time.Second) // -- A
+			<-timer.C
+
+			if terminal.IsClosed() {
+				_ = timer.Stop()
+				break
+			}
+
+			// 如果有 10 分钟没有数据流动，则断开连接
+			if time.Now().Unix()-stream.UpdatedAt.Unix() > 60 {
+				_ = conn.WriteMessage(websocket.BinaryMessage, []byte("检测到终端闲置，已断开连接..."))
+				_ = conn.Close()
+				_ = timer.Stop()
+				break
+			}
+		}
+	}()
 }
 
 // 测试一个服务器是否可连接

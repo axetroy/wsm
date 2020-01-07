@@ -35,8 +35,13 @@ func (t *Terminal) SetCloseHandler(h func() error) {
 	t.closeHandler = h
 }
 
+// 终端是否已断臂
+func (t *Terminal) IsClosed() bool {
+	return t.closed
+}
+
 func (t *Terminal) Close() (err error) {
-	if t.closed {
+	if t.IsClosed() {
 		return nil
 	}
 	defer func() {

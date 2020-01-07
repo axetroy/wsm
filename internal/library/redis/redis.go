@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	Client          *redis.Client // 默认的redis存储
-	ClientOAuthCode *redis.Client // 存储 oAuth2 对应的激活码
-	Config          = config.Redis
+	ClientConnection *redis.Client // 存储 对应的 SSH 连接∏
+	ClientOAuthCode  *redis.Client // 存储 oAuth2 对应的激活码
+	Config           = config.Redis
 )
 
 func init() {
@@ -19,10 +19,10 @@ func init() {
 	)
 
 	// 初始化DB连接
-	Client = redis.NewClient(&redis.Options{
+	ClientConnection = redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: password,
-		DB:       0, // use default DB
+		DB:       1,
 	})
 
 	ClientOAuthCode = redis.NewClient(&redis.Options{

@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import 'xterm/css/xterm.css'
 
 export default {
@@ -31,6 +32,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      API_HOST: 'API_HOST'
+    }),
     _cols() {
       if (this.cols <= 0) {
         return parseInt(window.innerWidth / 9 + '')
@@ -63,14 +67,13 @@ export default {
       ])
 
       const token = this.$axios.defaults.headers.common['Authorization']
-      const apiHost = location.host
+      const apiHost = this.API_HOST.replace(/^http/, 'ws')
 
       const rows = this._rows
       const cols = this._cols
 
       // Open the websocket connection to the backend
-      const protocol = location.protocol === 'https:' ? 'wss://' : 'ws://'
-      const socketUrl = `${protocol}${apiHost}/v1/shell/connect/${host.id}?Authorization=${token}&cols=${cols}&rows=${rows}`
+      const socketUrl = `${apiHost}/v1/shell/connect/${host.id}?Authorization=${token}&cols=${cols}&rows=${rows}`
 
       const socket = new WebSocket(socketUrl)
 
