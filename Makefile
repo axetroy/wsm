@@ -12,7 +12,7 @@ build-docker:
 	make build-docker-frontend
 
 build-docker-backend:
-	docker build --tag axetroy/wsm-backend:1.0.0 ./
+	docker build --tag axetroy/wsm-backend:latest ./
 
 build-docker-frontend:
-	docker build --tag axetroy/wsm-frontend:1.0.0 ./frontend
+	docker build --tag axetroy/wsm-frontend:latest ./frontend

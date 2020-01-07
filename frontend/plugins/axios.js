@@ -1,10 +1,6 @@
 const TOKEN_KEY = 'Authorization'
 
 export default function({ store, $axios, redirect, req, res }) {
-  $axios.defaults.baseURL = process.client
-    ? `/v1`
-    : `http://0.0.0.0:${process.env.PORT}/v1`
-
   $axios.defaults.headers.common = {
     'Content-Type': 'application/json',
     get [TOKEN_KEY]() {
@@ -13,6 +9,7 @@ export default function({ store, $axios, redirect, req, res }) {
   }
 
   $axios.onRequest(config => {
+    config.baseURL = store.getters.API_HOST + '/v1'
     console.log(`Making request to /v1${config.url}`)
   })
 

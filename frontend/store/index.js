@@ -1,10 +1,20 @@
 import { parse as cookieParse } from 'cookie'
 
-export const state = () => ({})
+export const state = () => ({
+  API_HOST: 'http://localhost:80'
+})
 
-export const getters = {}
+export const getters = {
+  API_HOST(state) {
+    return state.API_HOST
+  }
+}
 
-export const mutations = {}
+export const mutations = {
+  SET_API_HOST(state, host) {
+    state.API_HOST = host
+  }
+}
 
 export const actions = {
   // 初始化
@@ -16,6 +26,12 @@ export const actions = {
 
     const token = cookieMap[TOKEN_KEY]
     const workspace = cookieMap[WORKSPACE_KEY]
+
+    const apiHost = process.env.API_HOST
+
+    if (apiHost) {
+      store.commit('SET_API_HOST', apiHost)
+    }
 
     if (token) {
       store.dispatch('user/setToken', token)
