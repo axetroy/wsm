@@ -1,4 +1,4 @@
-# cloud.google.com/go v0.37.4
+# cloud.google.com/go v0.30.0
 cloud.google.com/go/compute/metadata
 # github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
 github.com/asaskevich/govalidator
@@ -48,7 +48,7 @@ github.com/gorilla/securecookie
 github.com/gorilla/sessions
 # github.com/gorilla/websocket v1.4.1
 github.com/gorilla/websocket
-# github.com/jinzhu/gorm v1.9.11
+# github.com/jinzhu/gorm v1.9.12
 github.com/jinzhu/gorm
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
@@ -105,7 +105,7 @@ golang.org/x/crypto/ssh
 # golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
-# golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
+# golang.org/x/oauth2 v0.0.0-20180620175406-ef147856a6dd
 golang.org/x/oauth2
 golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
