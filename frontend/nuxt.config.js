@@ -40,7 +40,7 @@ export default {
     proxy: true // Can be also an object with default options
   },
   proxy: {
-    '/v1': 'http://0.0.0.0:9000'
+    '/v1': process.env.API_URL || 'http://0.0.0.0:9000'
   },
   /*
    ** Build configuration

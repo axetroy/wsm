@@ -3,10 +3,6 @@ const TOKEN_KEY = 'Authorization'
 export default function({ store, $axios, redirect, req, res }) {
   $axios.defaults.baseURL = `/v1`
 
-  if (process.env.NODE_ENV !== 'production' && process.server) {
-    $axios.defaults.baseURL = 'http://0.0.0.0:9000/v1'
-  }
-
   $axios.defaults.headers.common = {
     'Content-Type': 'application/json',
     get [TOKEN_KEY]() {
