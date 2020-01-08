@@ -127,6 +127,12 @@ export default {
         })
         await sleep(record.duration)
       }
+
+      await new Promise(resolve => {
+        term.write('======= close =======', () => {
+          resolve()
+        })
+      })
     },
     dispose() {
       this.conn && this.conn.close()

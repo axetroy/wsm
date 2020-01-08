@@ -1,84 +1,131 @@
 <template>
-  <div class="main">
-    <el-card shadow="never">
-      <div slot="header">
-        {{ currentWorkspace ? '团队' : '我' }}的服务器列表
-        <nuxt-link
-          v-if="
-            currentWorkspace
-              ? memberProfile.role === 'owner' ||
-                memberProfile.role === 'administrator'
-              : true
-          "
-          to="/host/mutation"
-          ><el-button type="primary" size="small" round
-            >新增</el-button
-          ></nuxt-link
-        >
-      </div>
+  <div id="host-page">
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <div style="margin-bottom: 20px;" v-if="editable">
+          <nuxt-link to="/host/mutation">
+            <el-button type="primary" size="small">添加服务器 </el-button>
+          </nuxt-link>
+        </div>
 
-      <el-table :data="data" border style="width: 100%">
-        <el-table-column prop="name" label="名称" width="180">
-        </el-table-column>
-        <el-table-column prop="host" label="服务器" width="180">
-        </el-table-column>
-        <el-table-column prop="port" label="端口" width="180">
-        </el-table-column>
-        <el-table-column prop="username" label="用户名" width="180">
-        </el-table-column>
-        <el-table-column prop="remark" label="备注"> </el-table-column>
-        <el-table-column label="创建时间">
-          <template slot-scope="scope">
-            {{ scope.row.created_at | dateformat }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="text" size="small" @click="test(scope.row)">
-              测试
-            </el-button>
-            <a
-              target="_blank"
-              :href="
-                '/tty/' +
-                  scope.row.id +
-                  (currentWorkspace ? '?team_id=' + currentWorkspace : '')
-              "
-            >
-              <el-button type="text" size="small">
-                新窗口连接
-              </el-button>
-            </a>
-
-            <el-button type="text" size="small" @click="connect(scope.row)">
-              连接
-            </el-button>
-            <nuxt-link :to="'/host/mutation?id=' + scope.row.id">
-              <el-button type="text" size="small">编辑</el-button>
-            </nuxt-link>
-            <el-popconfirm
-              title="你确定要删除这个服务器吗? 该操作不可恢复"
-              v-on="{ onConfirm: () => deleteHost(scope.row) }"
-            >
-              <el-button type="text" size="small" slot="reference">
-                删除
-              </el-button>
-            </el-popconfirm>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div class="pagination">
         <el-pagination
+          class="text-center"
+          style="margin-bottom: 20px;"
           @current-change="changePage"
           background
           layout="prev, pager, next"
           :page-size="meta.limit"
           :total="meta.total"
-        >
-        </el-pagination>
-      </div>
-    </el-card>
+          hide-on-single-page
+        />
+
+        <el-scrollbar v-if="data.length" style="height: 580px;" :native="false">
+          <el-card v-for="v of data" :key="v.id" style="margin-bottom: 20px;">
+            <div slot="header" class="host-header">
+              <i class="el-icon-s-promotion" />
+              {{ v.name }}
+            </div>
+
+            <div class="meta-info">
+              {{ v.remark || '赶紧给它备注一下吧' }}
+            </div>
+            <div class="action-block">
+              <el-dropdown
+                split-button
+                type="primary"
+                size="small"
+                @click="connect(v)"
+              >
+                连接
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="test(v)"
+                    >测试连接
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <a
+                      style="text-decoration: none;color: inherit;"
+                      target="_blank"
+                      :href="
+                        '/tty/' +
+                          v.id +
+                          (currentWorkspace
+                            ? '?team_id=' + currentWorkspace
+                            : '')
+                      "
+                    >
+                      新窗口连接
+                    </a>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+
+              <el-popconfirm
+                v-if="editable"
+                title="你确定要删除这个服务器吗? 该操作不可恢复"
+                v-on="{ onConfirm: () => deleteHost(v) }"
+              >
+                <el-button type="danger" size="small" slot="reference">
+                  删除
+                </el-button>
+              </el-popconfirm>
+              <nuxt-link :to="'/host/mutation?id=' + v.id" v-if="editable">
+                <el-button type="warning" size="small">修改</el-button>
+              </nuxt-link>
+            </div>
+          </el-card>
+        </el-scrollbar>
+        <div v-else>
+          暂无服务器，请管理员先添加服务器
+        </div>
+      </el-col>
+
+      <el-col :span="12">
+        <el-tabs v-model="hostTab">
+          <el-tab-pane label="连接记录" name="connection">
+            <el-pagination
+              class="text-center"
+              style="margin-bottom: 20px;"
+              @current-change="changeConnectionPage"
+              background
+              layout="prev, pager, next"
+              :page-size="connectionsMeta.limit"
+              :total="connectionsMeta.total"
+              hide-on-single-page
+            />
+            <el-scrollbar
+              v-if="connections.length"
+              style="height: 580px;"
+              :native="false"
+            >
+              <el-card
+                v-for="v of connections"
+                :key="v.id"
+                style="margin-bottom: 20px;"
+              >
+                <div slot="header">
+                  <i class="el-icon-user" />
+                  {{ v.user.username }} ({{ v.user.nickname }})
+                </div>
+
+                <div class="meta-info"></div>
+                于 {{ v.created_at | dateformat }} 连接服务器 {{ v.host.name }}
+                <div class="action-block">
+                  <a :href="`/replay/${v.id}`" target="_blank">
+                    <el-button type="primary" size="small">
+                      <i class="el-icon-video-play" />
+                      重放记录
+                    </el-button>
+                  </a>
+                </div>
+              </el-card>
+            </el-scrollbar>
+            <div v-else>
+              暂无连接记录
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -90,33 +137,60 @@ export default {
     const currentWorkspace = store.getters['workspace/current']
 
     if (currentWorkspace) {
-      const [{ meta, data }, { data: memberProfile }] = await Promise.all([
+      const [
+        { meta, data },
+        { data: memberProfile },
+        { data: connections, meta: connectionsMeta }
+      ] = await Promise.all([
         $axios.$get(`/team/_/${currentWorkspace}/host`),
-        $axios.$get(`/team/_/${currentWorkspace}/profile`)
+        $axios.$get(`/team/_/${currentWorkspace}/profile`),
+        $axios.$get(`/team/_/${currentWorkspace}/connection`)
       ])
 
       return {
         data,
         meta,
-        memberProfile
+        memberProfile,
+        connections,
+        connectionsMeta
       }
     } else {
-      const { meta, data } = await $axios.$get('/host')
+      const [
+        { meta, data },
+        { data: connections, meta: connectionsMeta }
+      ] = await Promise.all([
+        $axios.$get('/host'),
+        $axios.$get(`/host/connection`)
+      ])
 
       return {
         data,
         meta,
-        memberProfile: {}
+        memberProfile: {},
+        connections,
+        connectionsMeta
       }
     }
   },
   data() {
-    return {}
+    return {
+      hostTab: 'connection',
+      data: [],
+      meta: {},
+      connections: [],
+      connectionsMeta: {}
+    }
   },
   computed: {
     ...mapGetters({
       currentWorkspace: 'workspace/current'
-    })
+    }),
+    editable() {
+      return this.currentWorkspace
+        ? this.memberProfile.role === 'owner' ||
+            this.memberProfile.role === 'administrator'
+        : true
+    }
   },
   watch: {
     currentWorkspace(currentWorkspace) {
@@ -130,6 +204,8 @@ export default {
       } else {
         this.changePage(0)
       }
+
+      this.changeConnectionPage(0)
     }
   },
   methods: {
@@ -152,6 +228,21 @@ export default {
 
       this.data = data
       this.meta = meta
+    },
+    async changeConnectionPage(page) {
+      const { meta, data } = await this.$axios.$get(
+        this.currentWorkspace
+          ? `/team/_/${this.currentWorkspace}/connection`
+          : '/host/connection',
+        {
+          params: {
+            page
+          }
+        }
+      )
+
+      this.connections = data
+      this.connectionsMeta = meta
     },
     async deleteHost(host) {
       const currentWorkspace = this.currentWorkspace
@@ -198,3 +289,36 @@ export default {
   }
 }
 </script>
+
+<style lang="less">
+#host-page {
+  .mb20 {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ebeef5;
+    // padding-bottom: 20px;
+  }
+
+  .el-card__header {
+    &.active {
+      background: #419dfb;
+      color: #fff;
+    }
+  }
+
+  .el-card__body {
+    label {
+      display: inline-block;
+      margin-bottom: 5px;
+    }
+  }
+
+  .meta-info {
+    color: #adadad;
+  }
+
+  .action-block {
+    padding-top: 20px;
+    /*border-top: 1px solid #ebeef5;*/
+  }
+}
+</style>

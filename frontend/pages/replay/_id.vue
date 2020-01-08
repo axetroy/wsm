@@ -24,8 +24,6 @@ export default {
       '/host/connection/' + hostConnectionRecordId
     )
 
-    console.log(data)
-
     return {
       record: data
     }

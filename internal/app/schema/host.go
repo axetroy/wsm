@@ -2,7 +2,6 @@ package schema
 
 import (
 	"github.com/axetroy/wsm/internal/app/db"
-	"time"
 )
 
 // 服务器的相关信息
@@ -24,11 +23,17 @@ type Host struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+type HostConnectionRecordPure struct {
+	ID      string        `json:"id"`
+	UserID  string        `json:"user_id"`
+	User    ProfilePublic `json:"user"`
+	HostID  string        `json:"host_id"`
+	Host    HostPure      `json:"host"`
+	Records []string      `json:"records"`
+}
+
 type HostConnectionRecord struct {
-	ID        string    `json:"id"`
-	UserID    string    `json:"user_id"`
-	HostID    string    `json:"host_id"`
-	Records   []string  `json:"records"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	HostConnectionRecordPure
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }

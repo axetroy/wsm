@@ -2,7 +2,6 @@ package host
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"net/http"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -10,6 +9,7 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
@@ -55,11 +55,20 @@ func (s *Service) DeleteHostByID(c controller.Context, hostID string) (res schem
 		HostID: hostID,
 	}
 
+	hostConnectionInfo := db.HostConnectionRecord{HostID: hostID}
+
+	// 删除服务器
 	if err := tx.Where(&hostInfo).Delete(db.Host{}).Error; err != nil {
 		return
 	}
 
+	// 删除服务器信息
 	if err := tx.Where(&hostRecordInfo).Delete(db.HostRecord{}).Error; err != nil {
+		return
+	}
+
+	// 删除服务器的连接记录
+	if err := tx.Where(&hostConnectionInfo).Delete(db.HostConnectionRecord{}).Error; err != nil {
 		return
 	}
 
@@ -136,7 +145,13 @@ func (s *Service) DeleteHostByTeam(c controller.Context, teamID string, hostID s
 		OwnerType: db.HostOwnerTypeTeam,
 	}
 
+	// 删除服务器
 	if err := tx.Where(&hostInfo).Delete(db.Host{}).Error; err != nil {
+		return
+	}
+
+	// 删除服务器的连接记录
+	if err := tx.Where(&db.HostConnectionRecord{HostID: hostID}).Delete(db.HostConnectionRecord{}).Error; err != nil {
 		return
 	}
 

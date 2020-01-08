@@ -66,24 +66,27 @@ func init() {
 		// 服务器管理
 		{
 			hostRouter := v1.Group("/host")
-			hostRouter.GET("", userAuthMiddleware, host.Core.QueryMyOperationalServerRouter)                                                  // 获取我可以操作的服务器信息列表
-			hostRouter.POST("", userAuthMiddleware, host.Core.CreateHostByUserRouter)                                                         // 创建服务器
-			hostRouter.GET("/connection/:record_id", userAuthMiddleware, host.Core.QueryHostConnectionRecordRouter)                           // 获取服务器连接记录详情
-			hostRouter.PUT("/_/:host_id", userAuthMiddleware, host.Core.UpdateHostRouter)                                                     // 更新服务器
-			hostRouter.GET("/_/:host_id", userAuthMiddleware, host.Core.QueryMyHostByIDRouter)                                                // 获取服务器信息
-			hostRouter.DELETE("/_/:host_id", userAuthMiddleware, host.Core.DeleteHostByIDRouter)                                              // 删除服务器
-			hostRouter.PUT("/_/:host_id/transfer/:user_id", userAuthMiddleware, host.Core.TransferHostRouter)                                 // 转让服务器
-			hostRouter.POST("/_/:host_id/collaborator/_/:collaborator_uid", userAuthMiddleware, host.Core.AddCollaboratorToHostRouter)        // 添加协作者
-			hostRouter.DELETE("/_/:host_id/collaborator/_/:collaborator_uid", userAuthMiddleware, host.Core.RemoveCollaboratorFromHostRouter) // 删除协作者
+			hostRouter.Use(userAuthMiddleware)
+			hostRouter.GET("", host.Core.QueryMyOperationalServerRouter)                                                  // 获取我可以操作的服务器信息列表
+			hostRouter.POST("", host.Core.CreateHostByUserRouter)                                                         // 创建服务器
+			hostRouter.GET("/connection", host.Core.QueryHostConnectionRecordListRouter)                                  // 获取所有服务器的连接记录
+			hostRouter.GET("/connection/:record_id", host.Core.QueryHostConnectionRecordRouter)                           // 获取服务器连接记录详情
+			hostRouter.PUT("/_/:host_id", host.Core.UpdateHostRouter)                                                     // 更新服务器
+			hostRouter.GET("/_/:host_id", host.Core.QueryMyHostByIDRouter)                                                // 获取服务器信息
+			hostRouter.GET("/_/:host_id/connection", host.Core.QueryHostConnectionRecordListRouter)                       // 获取某个服务器的连接记录
+			hostRouter.DELETE("/_/:host_id", host.Core.DeleteHostByIDRouter)                                              // 删除服务器
+			hostRouter.PUT("/_/:host_id/transfer/:user_id", host.Core.TransferHostRouter)                                 // 转让服务器
+			hostRouter.POST("/_/:host_id/collaborator/_/:collaborator_uid", host.Core.AddCollaboratorToHostRouter)        // 添加协作者
+			hostRouter.DELETE("/_/:host_id/collaborator/_/:collaborator_uid", host.Core.RemoveCollaboratorFromHostRouter) // 删除协作者
 		}
 
 		// shell 类
 		{
 			shellRouter := v1.Group("/shell")
 			shellRouter.Use(userAuthMiddleware)
-			shellRouter.GET("/connect/:host_id", userAuthMiddleware, shell.Core.StartTerminalRouter) // 开启终端，连接 websocket
-			shellRouter.GET("/test/:host_id", userAuthMiddleware, shell.Core.TestHostConnectRouter)  // 测试服务器是否可连接
-			shellRouter.POST("/test", userAuthMiddleware, shell.Core.TestPublicServerRouter)         // 测试服务器是否可连接，给定服务器的相关信息即可，无需登陆验证
+			shellRouter.GET("/connect/:host_id", shell.Core.StartTerminalRouter) // 开启终端，连接 websocket
+			shellRouter.GET("/test/:host_id", shell.Core.TestHostConnectRouter)  // 测试服务器是否可连接
+			shellRouter.POST("/test", shell.Core.TestPublicServerRouter)         // 测试服务器是否可连接，给定服务器的相关信息即可，无需登陆验证
 		}
 
 		// oAuth2 认证
@@ -114,6 +117,7 @@ func init() {
 			teamRouter.GET("/_/:team_id", team.Core.QueryMyTeamRouter)                                    // 获取我的团队信息, 只有加入团队才能调用
 			teamRouter.PUT("/_/:team_id", team.Core.UpdateTeamRouter)                                     // 更新团队, 只有管理员或者拥有者才能更新
 			teamRouter.GET("/_/:team_id/stat", team.Core.StatTeamRouter)                                  // 获取团队的统计信息
+			teamRouter.GET("/_/:team_id/connection", host.Core.QueryTeamHostConnectionRecordListRouter)   // 获取团队的服务器连接记录
 			teamRouter.GET("/_/:team_id/profile", team.Core.GetMyProfileRouter)                           // 获取我在团队中的信息
 			teamRouter.GET("/_/:team_id/member/invite", team.Core.GetTeamInviteRecordRouter)              // 获取发出去的团队邀请
 			teamRouter.POST("/_/:team_id/member/invite", team.Core.InviteTeamRouter)                      // 邀请成员加入团队
