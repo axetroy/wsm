@@ -325,7 +325,7 @@
             class="mb20"
             size="small"
             type="primary"
-            @click="showTeamMutationDialog=true"
+            @click="showTeamMutationDialog = true"
             >创建团队</el-button
           >
 
@@ -619,7 +619,7 @@ export default {
 
         // get list
         this.$success('解散成功')
-        this.changeTeamPage(0)
+        this.switchWorkspace(undefined)
       } catch (err) {
         this.$error(`解散失败: ${err.message}`)
       }
@@ -631,7 +631,7 @@ export default {
 
         // get list
         this.$success('退出成功')
-        this.changeTeamPage(0)
+        this.switchWorkspace(undefined)
       } catch (err) {
         this.$error(`退出失败: ${err.message}`)
       }
