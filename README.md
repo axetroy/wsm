@@ -1,18 +1,21 @@
+<div align="center">
+
+## Web Server Manager
+
 ![License](https://img.shields.io/github/license/axetroy/wsm.svg)
 ![Repo Size](https://img.shields.io/github/repo-size/axetroy/wsm.svg)
 
-Backend: [![Build Status](https://github.com/axetroy/wsm/workflows/backen/badge.svg)](https://github.com/axetroy/wsm/actions)
+[![Build Status](https://github.com/axetroy/wsm/workflows/backen/badge.svg)](https://github.com/axetroy/wsm/actions)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/axetroy/wsm-backend)](https://hub.docker.com/r/axetroy/wsm-backend/builds)
 [![Coverage Status](https://coveralls.io/repos/github/axetroy/wsm/badge.svg?branch=master)](https://coveralls.io/github/axetroy/wsm?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/axetroy/wsm)](https://goreportcard.com/report/github.com/axetroy/wsm)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/axetroy/wsm)
 
-Frontend:
 [![Build Status](https://github.com/axetroy/wsm/workflows/frontend/badge.svg)](https://github.com/axetroy/wsm/actions)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/axetroy/wsm-frontend)](https://hub.docker.com/r/axetroy/wsm-frontend/builds)
 [![DeepScan grade](https://deepscan.io/api/teams/6484/projects/8581/branches/105883/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=6484&pid=8581&bid=105883)
 
-## Web Server Manager
+</div>
 
 通过 Web 来管理远端服务器
 
