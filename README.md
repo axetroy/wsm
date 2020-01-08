@@ -17,6 +17,7 @@
 
 </div>
 
+<div align="center">
 通过 Web 来管理远端服务器
 
 管理员邀请成员加入团队，管理服务器。
@@ -25,7 +26,9 @@
 
 成员在上面的每一步操作，都会被完成的记录下来，并且支持回放功能，再也摔不了锅
 
-# 特性
+</div>
+
+<h3 align="center">特性</h3>
 
 - [x] 用户无需 密码/私钥 即可连接服务器
 - [x] Web 登录终端
@@ -35,7 +38,9 @@
 - [ ] 分享一次性终端，可以匿名连接，终端断开不能在链接
 - [x] 支持 Docker Compose 一键部署
 
-## 使用
+使用技术 Golang + Node.js + Nuxt.js 构建
+
+<h2 align="center">如何使用使用</h3>
 
 ```shell
 $ git clone https://github.com/axetroy/wsm.git $GOPATH/src/github.com/axetroy/wsm
@@ -56,7 +61,7 @@ $ yarn
 $ npm run dev
 ```
 
-## 部署
+<h2 align="center">部署</h2>
 
 部分部署分为两部分
 
@@ -136,11 +141,6 @@ services:
       - DB_PORT=54321 # 数据库的端口
 ```
 
-## 技术栈
-
-- Golang
-- Node.js + Nuxt
-
-## 许可协议
+<h2 align="center">许可协议</h2>
 
 [Apache License 2.0](LICENSE)
