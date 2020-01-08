@@ -39,24 +39,40 @@
 - [x] 支持团队管理终端，可分配不同的角色到不同的团队
 - [x] 操作记录回放，每一次连接终端，都会记录完整的操作，支持回放
 - [ ] 分享一次性终端，可以匿名连接，终端断开不能在链接
-- [x] 支持 Docker Compose 一键部署
+- [x] 支持 Docker 一键部署
 
 使用技术 Golang + Node.js + Nuxt.js 构建，前后端分离
 
-<h2 align="center">如何使用</h3>
+<h2 align="center">如何本地开发</h3>
+
+首先确保你已安装
+
+- Golang@1.13.x
+- Node.js@12.x.x
+- Docker
+- Docker Compose
+
+1. 克隆项目
 
 ```shell
 $ git clone https://github.com/axetroy/wsm.git $GOPATH/src/github.com/axetroy/wsm
 $ cd $GOPATH/src/github.com/axetroy/wsm
 ```
 
-### 启动后端 API
+2. 启动数据库依赖(Postgres/Redis)
+
+```shell
+$ cd ./docker
+$ docker-compose up -d
+```
+
+3. 启动后端 API
 
 ```shell
 $ go run cmd/user/main.go start
 ```
 
-### 启动前端页面
+4. 启动前端页面
 
 ```shell
 $ cd ./frontend
@@ -64,7 +80,7 @@ $ yarn
 $ npm run dev
 ```
 
-<h2 align="center">部署</h2>
+<h2 align="center">如何部署</h2>
 
 部分部署分为两部分
 
