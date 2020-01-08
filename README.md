@@ -65,7 +65,7 @@ $ cd $GOPATH/src/github.com/axetroy/wsm
 
 ```shell
 $ cd ./docker
-$ docker-compose up -d
+$ docker-compose up
 ```
 
 3. 启动后端 API
@@ -82,12 +82,14 @@ $ yarn
 $ npm run dev
 ```
 
+到这里就已经启动完毕，打开浏览器 `http://localhosst:3000`
+
 <h2 align="center">如何部署</h2>
 
-部分部署分为两部分
+部署分为两部分
 
 - 数据库
-- 程序
+- 前端 + 后端
 
 ### 数据库
 
@@ -122,7 +124,7 @@ services:
     command: ["redis-server", "--requirepass", "password"]
 ```
 
-### 程序
+### 前端 + 后端
 
 部署应用程序，使用 `Nginx` + `前端镜像` + `后端镜像` 进行部署
 
