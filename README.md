@@ -20,11 +20,13 @@
 <div align="center">
 通过 Web 来管理远端服务器
 
-管理员邀请成员加入团队，管理服务器。
+创建团队，邀请你的小伙伴加入，管理你的服务器
 
 成员无需关心服务器的`地址/帐号/密码/密钥`等敏感信息，即可连接服务器进行操作
 
-成员在上面的每一步操作，都会被完成的记录下来，并且支持回放功能，再也摔不了锅
+你在终端的每一步操作，都会被完整地记录下来，并且支持回放功能
+
+> 有内鬼，终止交易
 
 </div>
 
@@ -38,9 +40,9 @@
 - [ ] 分享一次性终端，可以匿名连接，终端断开不能在链接
 - [x] 支持 Docker Compose 一键部署
 
-使用技术 Golang + Node.js + Nuxt.js 构建
+使用技术 Golang + Node.js + Nuxt.js 构建，前后端分离
 
-<h2 align="center">如何使用使用</h3>
+<h2 align="center">如何使用</h3>
 
 ```shell
 $ git clone https://github.com/axetroy/wsm.git $GOPATH/src/github.com/axetroy/wsm
