@@ -3,7 +3,7 @@ module github.com/axetroy/wsm
 go 1.13
 
 require (
-	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
+	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/axetroy/go-fs v1.0.0
 	github.com/axetroy/mocker v1.1.0
 	github.com/bwmarrin/snowflake v0.3.0
