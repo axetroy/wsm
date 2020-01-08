@@ -30,6 +30,9 @@
 
 </div>
 
+![](screenshot/1.png =250x250)
+![](screenshot/2.png =250x250)
+
 <h3 align="center">特性</h3>
 
 - [x] 用户无需 密码/私钥 即可连接服务器
