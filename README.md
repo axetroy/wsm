@@ -30,8 +30,8 @@
 
 </div>
 
-![](screenshot/1.png =250x250)
-![](screenshot/2.png =250x250)
+<img src="screenshot/1.png" width="100%"/>
+<img src="screenshot/2.png" width="100%"/>
 
 <h3 align="center">特性</h3>
 
