@@ -209,7 +209,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      currentWorkspace: 'workspace/current'
+      currentWorkspace: 'workspace/current',
+      onHostOpen: 'console/onOpen',
+      onHostClose: 'console/onClose'
     }),
     editable() {
       return this.currentWorkspace
@@ -232,6 +234,12 @@ export default {
       }
 
       this.changeConnectionPage(0)
+    },
+    onHostOpen() {
+      console.log('监听到终端打开...')
+    },
+    onHostClose() {
+      this.changeConnectionPage(this.connectionsMeta.page)
     }
   },
   methods: {

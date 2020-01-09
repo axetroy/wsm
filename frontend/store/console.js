@@ -1,7 +1,9 @@
 export const state = () => ({
   hosts: [], // 当前正在连接的服务器
   currentHostId: null, // 当前正在连接的服务器
-  isShow: false // 是否显示终端
+  isShow: false, // 是否显示终端
+  onOpen: undefined, // 终端打开事件
+  onClose: undefined // 终端关闭事件
 })
 
 export const getters = {
@@ -13,6 +15,12 @@ export const getters = {
   },
   isShow(state) {
     return state.isShow
+  },
+  onOpen(state) {
+    return state.onOpen
+  },
+  onClose(state) {
+    return state.onClose
   }
 }
 
@@ -23,6 +31,7 @@ export const mutations = {
       return
     }
     state.hosts = state.hosts.concat(host)
+    state.onOpen = Math.random() // 触发事件
   },
   REMOVE_HOST(state, hostID) {
     const hosts = state.hosts
@@ -33,6 +42,7 @@ export const mutations = {
     if (!hosts.length) {
       state.currentHostId = null
       state.isShow = false
+      state.onClose = Math.random() // 触发事件
       return
     }
 
@@ -48,6 +58,8 @@ export const mutations = {
     }
 
     state.hosts = hosts
+
+    state.onClose = Math.random() // 触发事件
   },
   SET_CURRENT_HOST(state, host) {
     state.currentHostId = host.id
