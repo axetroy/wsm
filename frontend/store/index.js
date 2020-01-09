@@ -38,12 +38,19 @@ export const actions = {
       await store.dispatch('user/getProfile')
     }
 
+    // 如果有设置工作区，则请求
     if (workspace) {
       store.dispatch('workspace/switchWorkspace', workspace)
-      await Promise.all([
-        store.dispatch('workspace/getCurrentTeamMemberProfile'),
-        store.dispatch('workspace/getWorkspaces')
-      ])
+
+      try {
+        await Promise.all([
+          store.dispatch('workspace/getCurrentTeamMemberProfile'),
+          store.dispatch('workspace/getWorkspaces')
+        ])
+      } catch (err) {
+        // 如果请求工作区失败，那么暂且切换为本用户的工作区
+        store.dispatch('workspace/switchWorkspace', undefined)
+      }
     }
   }
 }
