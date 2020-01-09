@@ -22,5 +22,5 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v1.22.2 // indirect
 	github.com/urfave/cli/v2 v2.1.1
-	golang.org/x/crypto v0.0.0-20200108215511-5d647ca15757
+	golang.org/x/crypto v0.0.0-20200109152110-61a87790db17
 )
