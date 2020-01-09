@@ -92,6 +92,12 @@
               :total="connectionsMeta.total"
               hide-on-single-page
             />
+
+            <connection-replay-dialog
+              :visible.sync="showReplayDialog"
+              :connection.sync="connection"
+            />
+
             <el-scrollbar
               v-if="connections.length"
               style="height: 580px;"
@@ -110,12 +116,26 @@
                 <div class="meta-info"></div>
                 于 {{ v.created_at | dateformat }} 连接服务器 {{ v.host.name }}
                 <div class="action-block">
-                  <a :href="`/replay/${v.id}`" target="_blank">
-                    <el-button type="primary" size="small">
-                      <i class="el-icon-video-play" />
-                      重放记录
-                    </el-button>
-                  </a>
+                  <el-dropdown
+                    split-button
+                    type="primary"
+                    size="small"
+                    @click="showConnectionRecord(v)"
+                  >
+                    <i class="el-icon-video-play" />
+                    重放记录
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item>
+                        <a
+                          style="text-decoration: none;color: inherit;"
+                          target="_blank"
+                          :href="`/replay/${v.id}`"
+                        >
+                          新窗口打开
+                        </a>
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
                 </div>
               </el-card>
             </el-scrollbar>
@@ -131,8 +151,12 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import ConnectionReplayDialog from '~/components/connection_re_play_dialog'
 
 export default {
+  components: {
+    'connection-replay-dialog': ConnectionReplayDialog
+  },
   async asyncData({ $axios, store }) {
     const currentWorkspace = store.getters['workspace/current']
 
@@ -178,7 +202,9 @@ export default {
       data: [],
       meta: {},
       connections: [],
-      connectionsMeta: {}
+      connectionsMeta: {},
+      showReplayDialog: false,
+      connection: undefined
     }
   },
   computed: {
@@ -285,6 +311,10 @@ export default {
         this.$error(err.message)
         return false
       }
+    },
+    showConnectionRecord(v) {
+      this.connection = v
+      this.showReplayDialog = true
     }
   }
 }
