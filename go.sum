@@ -12,6 +12,8 @@ github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRF
 github.com/apache/thrift v0.12.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
 github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a h1:idn718Q4B6AGu/h5Sxe66HYVdqdGu2l9Iebqhi/AEoA=
 github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
+github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 h1:zV3ejI06GQ59hwDQAvmK1qxOQGB3WuVTRoY0okPTAv0=
+github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496/go.mod h1:oGkLhpf+kjZl6xBf758TQhh5XrAeiJv/7FRz/2spLIg=
 github.com/axetroy/go-fs v1.0.0 h1:un0mpbpYjOQirgdlKlZlzTjF30DZwYwK+ObWMxubAXA=
 github.com/axetroy/go-fs v1.0.0/go.mod h1:Z4DMBpJRluxG178MMNZvixPIL2+j6nh+tBX0nGQeFDY=
 github.com/axetroy/mocker v1.1.0 h1:RF0u9igoWMHRns2wbboAcm7Vu9ncczco2w7Jxy6AxOE=
