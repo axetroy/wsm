@@ -30,8 +30,7 @@
 
 </div>
 
-<img src="screenshot/1.png" width="100%" alt=""/>
-<img src="screenshot/2.png" width="100%" alt=""/>
+<img src="screenshot/1.gif" width="100%" alt=""/>
 
 <h3 align="center">特性</h3>
 
