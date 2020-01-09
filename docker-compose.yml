@@ -2,7 +2,7 @@ version: '3'
 services:
   # 网关
   nginx:
-    image: nginx:1.17.6-alpine
+    image: nginx:1.17.7-alpine
     restart: always
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf # 映射 nginx 配置文件
