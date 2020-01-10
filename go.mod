@@ -15,12 +15,12 @@ require (
 	github.com/gorilla/websocket v1.4.1
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
-	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.3.0
 	github.com/markbates/goth v1.60.0
 	github.com/mitchellh/mapstructure v1.1.2
+	github.com/onsi/ginkgo v1.11.0 // indirect
+	github.com/onsi/gomega v1.8.1 // indirect
 	github.com/stretchr/testify v1.4.0
-	github.com/urfave/cli v1.22.2 // indirect
 	github.com/urfave/cli/v2 v2.1.1
 	golang.org/x/crypto v0.0.0-20200109152110-61a87790db17
 )
