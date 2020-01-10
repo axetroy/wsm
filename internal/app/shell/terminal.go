@@ -158,6 +158,7 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 
 			record := db.HostConnectionRecord{
 				UserID:    ctx.Uid,
+				Ip:        ctx.Ip,
 				HostID:    hostID,
 				Records:   recorderStr,
 				CreatedAt: connectedAt,
