@@ -138,8 +138,8 @@ services:
     image: nginx:1.17.7-alpine
     restart: always
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf # 映射 nginx 配置文件
-      - ./logs/nginx:/var/log/nginx # 日志文件
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./logs/nginx:/var/log/nginx
     ports:
       - 8000:80 # 宿主端口:容器端口
     links:
@@ -156,7 +156,7 @@ services:
       - NODE_ENV=production
       - PORT=80
       - HOST=0.0.0.0
-      - API_HOST=http://192.168.1.29:9000
+      - API_HOST=http://192.168.1.29:9000 # 请求接口的域名, 请自行更改
 
   # 后端接口
   backend:
@@ -168,8 +168,8 @@ services:
       - 9000:9000
     environment:
       - USER_HTTP_PORT=9000
-      - DB_HOST=192.168.1.29 # 改成机器的 IP 或者域名
-      - DB_PORT=54321
+      - DB_HOST=192.168.1.29 # 要连接的数据库 IP，请自行更改
+      - DB_PORT=54321 # 要连接的数据库端口
 ```
 
 <h2 align="center">许可协议</h2>
