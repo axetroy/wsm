@@ -135,13 +135,13 @@ version: "3"
 services:
   # 网关
   nginx:
-    image: nginx:1.17.6-alpine
+    image: nginx:1.17.7-alpine
     restart: always
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf # 映射 nginx 配置文件
       - ./logs/nginx:/var/log/nginx # 日志文件
     ports:
-      - 9000:80 # 本机端口:容器端口
+      - 8000:80 # 宿主端口:容器端口
     links:
       - frontend
       - backend
@@ -150,18 +150,26 @@ services:
   frontend:
     image: axetroy/wsm-frontend:latest
     restart: always
+    links:
+      - backend
     environment:
+      - NODE_ENV=production
       - PORT=80
       - HOST=0.0.0.0
+      - API_HOST=http://192.168.1.29:9000
 
   # 后端接口
   backend:
     image: axetroy/wsm-backend:latest
     restart: always
+    volumes:
+      - "./.env:/app/bin/.env"
+    ports:
+      - 9000:9000
     environment:
-      - USER_HTTP_PORT=80
-      - DB_HOST=192.168.3.15 # 数据库的IP地址
-      - DB_PORT=54321 # 数据库的端口
+      - USER_HTTP_PORT=9000
+      - DB_HOST=192.168.1.29 # 改成机器的 IP 或者域名
+      - DB_PORT=54321
 ```
 
 <h2 align="center">许可协议</h2>

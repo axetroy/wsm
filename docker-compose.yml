@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   # 网关
   nginx:
@@ -23,7 +23,7 @@ services:
       - NODE_ENV=production
       - PORT=80
       - HOST=0.0.0.0
-      - API_URL=http://192.168.1.29:9000
+      - API_HOST=http://192.168.1.29:9000
 
   # 后端接口
   backend:
@@ -31,6 +31,8 @@ services:
     restart: always
     volumes:
       - "./.env:/app/bin/.env"
+    ports:
+      - 9000:9000
     environment:
       - USER_HTTP_PORT=9000
       - DB_HOST=192.168.1.29 # 改成机器的 IP 或者域名
