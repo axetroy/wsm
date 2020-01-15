@@ -1,3 +1,4 @@
+// Copyright 2020 Axetroy. All rights reserved. Apache License 2.0.
 package db
 
 import (
@@ -62,4 +63,8 @@ func (t *TeamMember) BeforeCreate(scope *gorm.Scope) error {
 // 检查是否是可用的角色
 func (t *TeamMember) AvailableRole() bool {
 	return t.Role == TeamRoleOwner || t.Role == TeamRoleAdmin || t.Role == TeamRoleMember || t.Role == TeamRoleVisitor
+}
+
+func (t *TeamMember) IsAdmin() bool {
+	return t.Role == TeamRoleOwner || t.Role == TeamRoleAdmin
 }

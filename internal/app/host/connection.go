@@ -1,3 +1,4 @@
+// Copyright 2020 Axetroy. All rights reserved. Apache License 2.0.
 package host
 
 import (
@@ -20,7 +21,6 @@ type queryListRecord struct {
 	HostID *string `json:"host_id" form:"host_id"` // 指定获取某个服务器的连接记录
 }
 
-// TODO: 校验身份
 // 获取连接记录详情
 func (s *Service) QueryHostConnectionRecord(c controller.Context, recordId string) (res schema.Response) {
 	var (
@@ -47,11 +47,39 @@ func (s *Service) QueryHostConnectionRecord(c controller.Context, recordId strin
 		Id: recordId,
 	}
 
-	if err = db.Db.Model(&connectionInfo).Where(&connectionInfo).First(&connectionInfo).Error; err != nil {
+	if err = db.Db.Model(&connectionInfo).Where(&connectionInfo).Preload("Host").First(&connectionInfo).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = exception.NoData
 		}
 		return
+	}
+
+	// 如果是用户持有的记录
+	if connectionInfo.Host.OwnerType == db.HostOwnerTypeUser {
+		if connectionInfo.UserID != c.Uid && connectionInfo.Host.OwnerID != c.Uid {
+			err = exception.NoPermission
+			return
+		}
+	} else if connectionInfo.Host.OwnerType == db.HostOwnerTypeTeam {
+		// 如果是团队持有的记录
+		memberInfo := db.TeamMember{
+			UserID: c.Uid,
+		}
+
+		if err = db.Db.Where(&memberInfo).First(&memberInfo).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				err = exception.NoPermission
+			}
+			return
+		}
+
+		// 如果不是自己的连接
+		if connectionInfo.UserID != c.Uid {
+			if memberInfo.IsAdmin() == false {
+				err = exception.NoPermission
+				return
+			}
+		}
 	}
 
 	if err = mapstructure.Decode(connectionInfo, &data.HostConnectionRecordPure); err != nil {
@@ -67,7 +95,6 @@ func (s *Service) QueryHostConnectionRecordRouter(c *gin.Context) {
 	c.JSON(http.StatusOK, s.QueryHostConnectionRecord(controller.NewContextFromGinContext(c), c.Param("record_id")))
 }
 
-// TODO: 校验身份
 // 获取连接记录列表
 func (s *Service) QueryHostConnectionRecordList(c controller.Context, input queryListRecord) (res schema.Response) {
 	var (
@@ -167,7 +194,6 @@ func (s *Service) QueryHostConnectionRecordListRouter(c *gin.Context) {
 	res = s.QueryHostConnectionRecordList(controller.NewContextFromGinContext(c), input)
 }
 
-// TODO: 校验身份
 // 获取团队的服务器连接记录列表
 func (s *Service) QueryTeamHostConnectionRecordList(c controller.Context, teamID string, input queryListRecord) (res schema.Response) {
 	var (
@@ -195,6 +221,18 @@ func (s *Service) QueryTeamHostConnectionRecordList(c controller.Context, teamID
 
 	query := input.Query
 
+	query.Normalize()
+
+	memberInfo := db.TeamMember{
+		UserID: c.Uid,
+	}
+
+	if err = db.Db.Where(&memberInfo).First(&memberInfo).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = exception.NoPermission
+		}
+	}
+
 	teamOwnHosts := make([]db.Host, 0)
 
 	if err := db.Db.Where(&db.Host{
@@ -215,8 +253,6 @@ func (s *Service) QueryTeamHostConnectionRecordList(c controller.Context, teamID
 	if input.HostID != nil {
 		filter.HostID = *input.HostID
 	}
-
-	query.Normalize()
 
 	if err = db.Db.Where("host_id IN (?)", hostIDs).Where(&filter).Find(&list).Count(&total).Error; err != nil {
 		return
