@@ -13,11 +13,11 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxtjs/axios": "5.9.2",
+    "@nuxtjs/axios": "5.9.3",
     "nuxt-start": "2.11.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-optional-chaining": "7.7.5",
+    "@babel/plugin-proposal-optional-chaining": "7.8.3",
     "@zeit/ncc": "0.21.0",
     "cookie": "0.4.0",
     "date-fns": "2.9.0",
