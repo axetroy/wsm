@@ -3,7 +3,6 @@ package team
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -11,46 +10,34 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
 
-type InviteTeamParams struct {
-	Members []Member `json:"members" valid:"required~请添加成员列表"` // 组成员的 ID 列表
+type inviteMember struct {
+	ID   string      `json:"id"`
+	Role db.TeamRole `json:"role"`
 }
 
-type InviteResoleParams struct {
+type queryInviteList struct {
+	schema.Query
+}
+
+type inviteTeamParams struct {
+	Members []inviteMember `json:"members" valid:"required~请添加成员列表"` // 组成员的 ID 列表
+}
+
+type inviteResoleParams struct {
 	State db.InviteState `json:"state" valid:"required~请输入要更改的状态"`
 }
 
-func (s *Service) InviteTeamRouter(c *gin.Context) {
+// 邀请加入团队
+func InviteTeam(c *controller.Context) (res schema.Response) {
 	var (
-		input InviteTeamParams
-		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.InviteTeam(controller.NewContextFromGinContext(c), c.Param("team_id"), input)
-}
-
-func (s *Service) InviteTeam(c controller.Context, teamID string, input InviteTeamParams) (res schema.Response) {
-	var (
-		err error
-		tx  *gorm.DB
+		err    error
+		teamID = c.GetParam("team_id")
+		input  inviteTeamParams
+		tx     *gorm.DB
 	)
 
 	defer func() {
@@ -165,34 +152,14 @@ func (s *Service) InviteTeam(c controller.Context, teamID string, input InviteTe
 	return
 }
 
-func (s *Service) ResolveInviteTeamRouter(c *gin.Context) {
-	var (
-		input InviteResoleParams
-		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.ResolveInviteTeam(controller.NewContextFromGinContext(c), c.Param("team_id"), c.Param("invite_id"), input)
-}
-
 // 受邀者 接受/拒绝 团队邀请
-func (s *Service) ResolveInviteTeam(c controller.Context, teamID string, inviteID string, input InviteResoleParams) (res schema.Response) {
+func ResolveInviteTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err error
-		tx  *gorm.DB
+		err      error
+		teamID   = c.GetParam("team_id")
+		inviteID = c.GetParam("invite_id")
+		input    inviteResoleParams
+		tx       *gorm.DB
 	)
 
 	defer func() {
@@ -277,10 +244,12 @@ func (s *Service) ResolveInviteTeam(c controller.Context, teamID string, inviteI
 }
 
 // 团队管理者取消邀请
-func (s *Service) CancelInviteTeam(c controller.Context, teamID string, inviteID string) (res schema.Response) {
+func CancelInviteTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err error
-		tx  *gorm.DB
+		err      error
+		teamID   = c.GetParam("team_id")
+		inviteID = c.GetParam("invite_id")
+		tx       *gorm.DB
 	)
 
 	defer func() {
@@ -343,18 +312,16 @@ func (s *Service) CancelInviteTeam(c controller.Context, teamID string, inviteID
 	return
 }
 
-func (s *Service) CancelInviteTeamRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.CancelInviteTeam(controller.NewContextFromGinContext(c), c.Param("team_id"), c.Param("invite_id")))
-}
-
-// 获取当前团队的邀请记录
-func (s *Service) GetTeamInviteRecord(c controller.Context, teamID string, input QueryList) (res schema.Response) {
+// 获取团队的邀请记录
+func GetTeamInviteList(c *controller.Context) (res schema.Response) {
 	var (
-		err   error
-		data  = make([]schema.TeamMemberInvite, 0) // 输出到外部的结果
-		list  = make([]db.TeamMemberInvite, 0)     // 数据库查询出来的原始结果
-		total int64
-		meta  = &schema.Meta{}
+		err    error
+		teamID = c.GetParam("team_id")
+		input  queryInviteList
+		data   = make([]schema.TeamMemberInvite, 0) // 输出到外部的结果
+		list   = make([]db.TeamMemberInvite, 0)     // 数据库查询出来的原始结果
+		total  int64
+		meta   = &schema.Meta{}
 	)
 
 	defer func() {
@@ -371,6 +338,10 @@ func (s *Service) GetTeamInviteRecord(c controller.Context, teamID string, input
 
 		helper.Response(&res, data, meta, err)
 	}()
+
+	if err = c.ShouldBindQuery(&input); err != nil {
+		return
+	}
 
 	memberInfo := db.TeamMember{
 		TeamID: teamID,
@@ -436,37 +407,16 @@ func (s *Service) GetTeamInviteRecord(c controller.Context, teamID string, input
 	return
 }
 
-func (s *Service) GetTeamInviteRecordRouter(c *gin.Context) {
-	var (
-		err   error
-		res   = schema.Response{}
-		input QueryList
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindQuery(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.GetTeamInviteRecord(controller.NewContextFromGinContext(c), c.Param("team_id"), input)
-}
-
 // 获取我的受邀列表
-func (s *Service) GetMyInvitedRecord(c controller.Context, teamID string, input QueryList) (res schema.Response) {
+func GetMyInvitedList(c *controller.Context) (res schema.Response) {
 	var (
-		err   error
-		data  = make([]schema.TeamMemberInvite, 0) // 输出到外部的结果
-		list  = make([]db.TeamMemberInvite, 0)     // 数据库查询出来的原始结果
-		total int64
-		meta  = &schema.Meta{}
+		err    error
+		teamID = c.GetParam("team_id")
+		input  queryInviteList
+		data   = make([]schema.TeamMemberInvite, 0) // 输出到外部的结果
+		list   = make([]db.TeamMemberInvite, 0)     // 数据库查询出来的原始结果
+		total  int64
+		meta   = &schema.Meta{}
 	)
 
 	defer func() {
@@ -483,6 +433,10 @@ func (s *Service) GetMyInvitedRecord(c controller.Context, teamID string, input 
 
 		helper.Response(&res, data, meta, err)
 	}()
+
+	if err = c.ShouldBindQuery(&input); err != nil {
+		return
+	}
 
 	query := input.Query
 
@@ -543,27 +497,4 @@ func (s *Service) GetMyInvitedRecord(c controller.Context, teamID string, input 
 	meta.Sort = query.Sort
 
 	return
-}
-
-func (s *Service) GetMyInvitedRecordRouter(c *gin.Context) {
-	var (
-		err   error
-		res   = schema.Response{}
-		input QueryList
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindQuery(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.GetMyInvitedRecord(controller.NewContextFromGinContext(c), c.Param("team_id"), input)
 }

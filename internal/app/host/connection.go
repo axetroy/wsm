@@ -3,7 +3,6 @@ package host
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -11,7 +10,6 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
@@ -22,10 +20,11 @@ type queryListRecord struct {
 }
 
 // 获取连接记录详情
-func (s *Service) QueryHostConnectionRecord(c controller.Context, recordId string) (res schema.Response) {
+func GetHostConnectionRecordDetailByUser(c *controller.Context) (res schema.Response) {
 	var (
-		err  error
-		data = schema.HostConnectionRecord{}
+		err      error
+		recordId = c.GetParam("record_id")
+		data     = schema.HostConnectionRecord{}
 	)
 
 	defer func() {
@@ -91,18 +90,16 @@ func (s *Service) QueryHostConnectionRecord(c controller.Context, recordId strin
 	return
 }
 
-func (s *Service) QueryHostConnectionRecordRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.QueryHostConnectionRecord(controller.NewContextFromGinContext(c), c.Param("record_id")))
-}
-
-// 获取连接记录列表
-func (s *Service) QueryHostConnectionRecordList(c controller.Context, input queryListRecord) (res schema.Response) {
+// 获取个人服务器的连接记录
+func GetHostConnectionRecordListByUser(c *controller.Context) (res schema.Response) {
 	var (
-		err   error
-		data  = make([]schema.HostConnectionRecord, 0) // 输出到外部的结果
-		list  = make([]db.HostConnectionRecord, 0)     // 数据库查询出来的原始结果
-		total int64
-		meta  = &schema.Meta{}
+		err    error
+		hostID = c.GetParam("host_id")
+		input  queryListRecord
+		data   = make([]schema.HostConnectionRecord, 0) // 输出到外部的结果
+		list   = make([]db.HostConnectionRecord, 0)     // 数据库查询出来的原始结果
+		total  int64
+		meta   = &schema.Meta{}
 	)
 
 	defer func() {
@@ -119,6 +116,20 @@ func (s *Service) QueryHostConnectionRecordList(c controller.Context, input quer
 
 		helper.Response(&res, data, meta, err)
 	}()
+
+	if err = c.ShouldBindQuery(&input); err != nil {
+		err = exception.InvalidParams
+		return
+	}
+
+	if hostID == "" {
+		c := c.GetQuery("host_id")
+		input.HostID = &c
+	}
+
+	if hostID != "" {
+		input.HostID = &hostID
+	}
 
 	query := input.Query
 
@@ -165,43 +176,17 @@ func (s *Service) QueryHostConnectionRecordList(c controller.Context, input quer
 	return
 }
 
-func (s *Service) QueryHostConnectionRecordListRouter(c *gin.Context) {
+// 获取团队服务器服务器的连接记录
+func GetHostConnectionRecordListByTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err   error
-		res   = schema.Response{}
-		input queryListRecord
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindQuery(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	hostID := c.Param("host_id")
-
-	if hostID != "" {
-		input.HostID = &hostID
-	}
-
-	res = s.QueryHostConnectionRecordList(controller.NewContextFromGinContext(c), input)
-}
-
-// 获取团队的服务器连接记录列表
-func (s *Service) QueryTeamHostConnectionRecordList(c controller.Context, teamID string, input queryListRecord) (res schema.Response) {
-	var (
-		err   error
-		data  = make([]schema.HostConnectionRecord, 0) // 输出到外部的结果
-		list  = make([]db.HostConnectionRecord, 0)     // 数据库查询出来的原始结果
-		total int64
-		meta  = &schema.Meta{}
+		err    error
+		teamID = c.GetParam("team_id")
+		hostID = c.GetQuery("host_id")
+		input  queryListRecord
+		data   = make([]schema.HostConnectionRecord, 0) // 输出到外部的结果
+		list   = make([]db.HostConnectionRecord, 0)     // 数据库查询出来的原始结果
+		total  int64
+		meta   = &schema.Meta{}
 	)
 
 	defer func() {
@@ -218,6 +203,15 @@ func (s *Service) QueryTeamHostConnectionRecordList(c controller.Context, teamID
 
 		helper.Response(&res, data, meta, err)
 	}()
+
+	if err = c.ShouldBindQuery(&input); err != nil {
+		err = exception.InvalidParams
+		return
+	}
+
+	if hostID != "" {
+		input.HostID = &hostID
+	}
 
 	query := input.Query
 
@@ -285,33 +279,4 @@ func (s *Service) QueryTeamHostConnectionRecordList(c controller.Context, teamID
 	meta.Sort = query.Sort
 
 	return
-}
-
-func (s *Service) QueryTeamHostConnectionRecordListRouter(c *gin.Context) {
-	var (
-		err   error
-		res   = schema.Response{}
-		input queryListRecord
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindQuery(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	hostID := c.Param("host_id")
-
-	if hostID != "" {
-		input.HostID = &hostID
-	}
-
-	res = s.QueryTeamHostConnectionRecordList(controller.NewContextFromGinContext(c), c.Param("team_id"), input)
 }

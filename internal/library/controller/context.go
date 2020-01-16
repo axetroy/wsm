@@ -35,6 +35,20 @@ func (c *Context) Validator(input interface{}) error {
 	return nil
 }
 
+func (c *Context) ShouldBindQuery(input interface{}) error {
+	if err := c.ctx.ShouldBindQuery(input); err != nil {
+		return err
+	}
+
+	if isValid, err := govalidator.ValidateStruct(input); err != nil {
+		return exception.New(err.Error(), exception.InvalidParams.Code())
+	} else if !isValid {
+		return exception.InvalidParams
+	}
+
+	return nil
+}
+
 func (c *Context) response(data interface{}) {
 	c.ctx.JSON(http.StatusOK, data)
 }

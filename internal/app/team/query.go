@@ -2,7 +2,6 @@ package team
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -10,19 +9,19 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
 
-type QueryList struct {
+type queryList struct {
 	schema.Query
 }
 
-func (s *Service) QueryMyTeam(c controller.Context, teamID string) (res schema.Response) {
+func GetTeamDetail(c *controller.Context) (res schema.Response) {
 	var (
-		err  error
-		data = schema.Team{}
+		err    error
+		teamID = c.GetParam("team_id")
+		data   = schema.Team{}
 	)
 
 	defer func() {
@@ -62,13 +61,10 @@ func (s *Service) QueryMyTeam(c controller.Context, teamID string) (res schema.R
 	return
 }
 
-func (s *Service) QueryMyTeamRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.QueryMyTeam(controller.NewContextFromGinContext(c), c.Param("team_id")))
-}
-
-func (s *Service) QueryMyTeams(c controller.Context, input QueryList) (res schema.Response) {
+func GetTeamList(c *controller.Context) (res schema.Response) {
 	var (
 		err   error
+		input queryList
 		data  = make([]schema.TeamWithMember, 0) // 输出到外部的结果
 		list  = make([]db.TeamMember, 0)         // 数据库查询出来的原始结果
 		total int64
@@ -89,6 +85,10 @@ func (s *Service) QueryMyTeams(c controller.Context, input QueryList) (res schem
 
 		helper.Response(&res, data, meta, err)
 	}()
+
+	if err = c.ShouldBindQuery(&input); err != nil {
+		return
+	}
 
 	query := input.Query
 
@@ -130,32 +130,10 @@ func (s *Service) QueryMyTeams(c controller.Context, input QueryList) (res schem
 	return
 }
 
-func (s *Service) QueryMyTeamsRouter(c *gin.Context) {
+func GetAllTeamList(c *controller.Context) (res schema.Response) {
 	var (
 		err   error
-		res   = schema.Response{}
-		input QueryList
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindQuery(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.QueryMyTeams(controller.NewContextFromGinContext(c), input)
-}
-
-func (s *Service) GetAllTeams(c controller.Context, input QueryList) (res schema.Response) {
-	var (
-		err   error
+		input queryList
 		data  = make([]schema.TeamWithMember, 0) // 输出到外部的结果
 		list  = make([]db.TeamMember, 0)         // 数据库查询出来的原始结果
 		total int64
@@ -176,6 +154,10 @@ func (s *Service) GetAllTeams(c controller.Context, input QueryList) (res schema
 
 		helper.Response(&res, data, meta, err)
 	}()
+
+	if err = c.ShouldBindQuery(&input); err != nil {
+		return
+	}
 
 	query := input.Query
 
@@ -215,27 +197,4 @@ func (s *Service) GetAllTeams(c controller.Context, input QueryList) (res schema
 	meta.Sort = query.Sort
 
 	return
-}
-
-func (s *Service) GetAllTeamsRouter(c *gin.Context) {
-	var (
-		err   error
-		res   = schema.Response{}
-		input QueryList
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindQuery(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.GetAllTeams(controller.NewContextFromGinContext(c), input)
 }

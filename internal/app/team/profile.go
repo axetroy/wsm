@@ -2,22 +2,22 @@ package team
 
 import (
 	"errors"
+	"time"
+
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
-	"net/http"
-	"time"
 )
 
-func (s *Service) GetMyProfile(c controller.Context, teamID string) (res schema.Response) {
+func GetMyProfileOfTeam(c *controller.Context) (res schema.Response) {
 	var (
-		data schema.TeamMember
-		err  error
+		err    error
+		teamID = c.GetParam("team_id")
+		data   schema.TeamMember
 	)
 
 	defer func() {
@@ -52,8 +52,4 @@ func (s *Service) GetMyProfile(c controller.Context, teamID string) (res schema.
 	data.CreatedAt = teamMemberInfo.CreatedAt.Format(time.RFC3339Nano)
 
 	return
-}
-
-func (s *Service) GetMyProfileRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.GetMyProfile(controller.NewContextFromGinContext(c), c.Param("team_id")))
 }

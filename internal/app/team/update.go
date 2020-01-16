@@ -2,7 +2,6 @@ package team
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -10,44 +9,20 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
 
-type UpdateTeamParams struct {
+type updateTeamParams struct {
 	Name   *string `json:"name"`
 	Remark *string `json:"remark"`
 }
 
-func (s *Service) UpdateTeamRouter(c *gin.Context) {
-	var (
-		input UpdateTeamParams
-		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	teamID := c.Param("team_id")
-
-	res = s.UpdateTeam(controller.NewContextFromGinContext(c), teamID, input)
-}
-
-func (s *Service) UpdateTeam(c controller.Context, teamID string, input UpdateTeamParams) (res schema.Response) {
+func UpdateTeam(c *controller.Context) (res schema.Response) {
 	var (
 		err          error
+		teamID       = c.GetParam("team_id")
+		input        updateTeamParams
 		data         schema.Team
 		tx           *gorm.DB
 		shouldUpdate bool

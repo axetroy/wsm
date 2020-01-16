@@ -2,7 +2,6 @@ package team
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -10,15 +9,15 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
 
-func (s *Service) StatTeam(c controller.Context, teamID string) (res schema.Response) {
+func StatTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err  error
-		data = schema.TeamStat{}
+		err    error
+		teamID = c.GetParam("team_id")
+		data   = schema.TeamStat{}
 	)
 
 	defer func() {
@@ -68,8 +67,4 @@ func (s *Service) StatTeam(c controller.Context, teamID string) (res schema.Resp
 	}
 
 	return
-}
-
-func (s *Service) StatTeamRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.StatTeam(controller.NewContextFromGinContext(c), c.Param("team_id")))
 }

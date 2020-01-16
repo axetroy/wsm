@@ -2,7 +2,6 @@ package team
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -10,15 +9,9 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
-
-type Member struct {
-	ID   string      `json:"id"`
-	Role db.TeamRole `json:"role"`
-}
 
 type CreateTeamParams struct {
 	Name    string   `json:"name" valid:"required~请输入名称"` // 团队名称
@@ -26,34 +19,12 @@ type CreateTeamParams struct {
 	Remark  *string  `json:"remark"`                      // 备注
 }
 
-func (s *Service) CreateTeamRouter(c *gin.Context) {
+func CreateTeam(c *controller.Context) (res schema.Response) {
 	var (
-		input CreateTeamParams
 		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.CreateTeam(controller.NewContextFromGinContext(c), input)
-}
-
-func (s *Service) CreateTeam(c controller.Context, input CreateTeamParams) (res schema.Response) {
-	var (
-		err  error
-		data schema.Team
-		tx   *gorm.DB
+		input CreateTeamParams
+		data  schema.Team
+		tx    *gorm.DB
 	)
 
 	defer func() {

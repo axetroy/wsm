@@ -8,27 +8,14 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
-func (s *Service) TransferHostRouter(c *gin.Context) {
-	var (
-		err error
-		res = schema.Response{}
-	)
-
-	defer helper.Response(&res, nil, nil, err)
-
-	hostID := c.Param("host_id")
-	userID := c.Param("user_id")
-
-	res = s.TransferHost(controller.NewContextFromGinContext(c), hostID, userID)
-}
-
-func (s *Service) TransferHost(c controller.Context, hostID string, userID string) (res schema.Response) {
+func TransferHost(c *controller.Context) (res schema.Response) {
 	var (
 		err          error
+		hostID       = c.GetParam("host_id")
+		userID       = c.GetParam("user_id")
 		tx           *gorm.DB
 		shouldUpdate bool
 	)

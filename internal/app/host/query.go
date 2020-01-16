@@ -2,7 +2,6 @@ package host
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -10,19 +9,20 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
 
-type QueryList struct {
+type queryList struct {
 	schema.Query
 }
 
-func (s *Service) QueryMyHostByID(c controller.Context, hostID string) (res schema.Response) {
+// 获取我的服务器详情
+func GetHostDetailByIdForUser(c *controller.Context) (res schema.Response) {
 	var (
-		err  error
-		data = schema.Host{}
+		err    error
+		hostID = c.GetParam("host_id")
+		data   = schema.Host{}
 	)
 
 	defer func() {
@@ -62,13 +62,11 @@ func (s *Service) QueryMyHostByID(c controller.Context, hostID string) (res sche
 	return
 }
 
-func (s *Service) QueryMyHostByIDRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.QueryMyHostByID(controller.NewContextFromGinContext(c), c.Param("host_id")))
-}
-
-func (s *Service) QueryMyOperationalServer(c controller.Context, input QueryList) (res schema.Response) {
+// 获取我可操作的服务器列表
+func GetMyOperationalHostForUser(c *controller.Context) (res schema.Response) {
 	var (
 		err   error
+		input queryList
 		data  = make([]schema.Host, 0)   // 输出到外部的结果
 		list  = make([]db.HostRecord, 0) // 数据库查询出来的原始结果
 		total int64
@@ -89,6 +87,10 @@ func (s *Service) QueryMyOperationalServer(c controller.Context, input QueryList
 
 		helper.Response(&res, data, meta, err)
 	}()
+
+	if err = c.ShouldBindQuery(&input); err != nil {
+		return
+	}
 
 	query := input.Query
 
@@ -125,33 +127,13 @@ func (s *Service) QueryMyOperationalServer(c controller.Context, input QueryList
 	return
 }
 
-func (s *Service) QueryMyOperationalServerRouter(c *gin.Context) {
+// 获取团队服务器详情
+func GetHostDetailByIdForTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err   error
-		res   = schema.Response{}
-		input QueryList
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindQuery(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.QueryMyOperationalServer(controller.NewContextFromGinContext(c), input)
-}
-
-func (s *Service) QueryMyHostByTeam(c controller.Context, teamID string, hostID string) (res schema.Response) {
-	var (
-		err  error
-		data = schema.Host{}
+		err    error
+		teamID = c.GetParam("team_id")
+		hostID = c.GetParam("host_id")
+		data   = schema.Host{}
 	)
 
 	defer func() {
@@ -200,18 +182,16 @@ func (s *Service) QueryMyHostByTeam(c controller.Context, teamID string, hostID 
 	return
 }
 
-func (s *Service) QueryMyHostByTeamRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.QueryMyHostByTeam(controller.NewContextFromGinContext(c), c.Param("team_id"), c.Param("host_id")))
-}
-
-// 获取一个团队可操作的服务器列表
-func (s *Service) QueryHostsByTeam(c controller.Context, teamID string, input QueryList) (res schema.Response) {
+// 获取团队可操作的服务器列表
+func GetMyOperationalHostForTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err   error
-		data  = make([]schema.Host, 0) // 输出到外部的结果
-		list  = make([]db.Host, 0)     // 数据库查询出来的原始结果
-		total int64
-		meta  = &schema.Meta{}
+		err    error
+		teamID = c.GetParam("team_id")
+		input  queryList
+		data   = make([]schema.Host, 0) // 输出到外部的结果
+		list   = make([]db.Host, 0)     // 数据库查询出来的原始结果
+		total  int64
+		meta   = &schema.Meta{}
 	)
 
 	defer func() {
@@ -228,6 +208,10 @@ func (s *Service) QueryHostsByTeam(c controller.Context, teamID string, input Qu
 
 		helper.Response(&res, data, meta, err)
 	}()
+
+	if err = c.ShouldBindQuery(&input); err != nil {
+		return
+	}
 
 	query := input.Query
 
@@ -275,27 +259,4 @@ func (s *Service) QueryHostsByTeam(c controller.Context, teamID string, input Qu
 	meta.Sort = query.Sort
 
 	return
-}
-
-func (s *Service) QueryHostByTeamRouter(c *gin.Context) {
-	var (
-		err   error
-		res   = schema.Response{}
-		input QueryList
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindQuery(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.QueryHostsByTeam(controller.NewContextFromGinContext(c), c.Param("team_id"), input)
 }

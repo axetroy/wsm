@@ -8,27 +8,14 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
-func (s *Service) AddCollaboratorToHostRouter(c *gin.Context) {
-	var (
-		err error
-		res = schema.Response{}
-	)
-
-	defer helper.Response(&res, nil, nil, err)
-
-	hostID := c.Param("host_id")
-	userID := c.Param("collaborator_uid")
-
-	res = s.AddCollaboratorToHost(controller.NewContextFromGinContext(c), hostID, userID)
-}
-
-func (s *Service) AddCollaboratorToHost(c controller.Context, hostID string, userID string) (res schema.Response) {
+func AddCollaboratorToHost(c *controller.Context) (res schema.Response) {
 	var (
 		err          error
+		hostID       = c.GetParam("host_id")
+		userID       = c.GetParam("collaborator_uid")
 		tx           *gorm.DB
 		shouldUpdate bool
 	)

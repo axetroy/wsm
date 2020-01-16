@@ -2,21 +2,21 @@ package team
 
 import (
 	"errors"
-	"net/http"
 
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
-func (s *Service) KickOutByUID(c controller.Context, teamID string, UserID string) (res schema.Response) {
+func KickUserOutOfTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err error
-		tx  *gorm.DB
+		err    error
+		teamID = c.GetParam("team_id")
+		UserID = c.GetParam("user_id")
+		tx     *gorm.DB
 	)
 
 	defer func() {
@@ -102,21 +102,4 @@ func (s *Service) KickOutByUID(c controller.Context, teamID string, UserID strin
 	}
 
 	return
-}
-
-func (s *Service) KickOutByUIDRouter(c *gin.Context) {
-	var (
-		err error
-		res = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	res = s.KickOutByUID(controller.NewContextFromGinContext(c), c.Param("team_id"), c.Param("user_id"))
 }

@@ -2,7 +2,6 @@ package host
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -10,7 +9,6 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
@@ -31,7 +29,7 @@ type CreateHostCommonParams struct {
 	Remark      *string            `json:"remark"`
 }
 
-func (s *Service) CreateHostCommon(c controller.Context, input CreateHostParams) (res schema.Response) {
+func CreateHostCommon(c *controller.Context, input CreateHostParams) (res schema.Response) {
 	var (
 		err  error
 		data schema.Host
@@ -135,66 +133,36 @@ func (s *Service) CreateHostCommon(c controller.Context, input CreateHostParams)
 	return
 }
 
-func (s *Service) CreateHostByUser(c controller.Context, input CreateHostCommonParams) (res schema.Response) {
-	return s.CreateHostCommon(c, CreateHostParams{
+func CreateHostByUser(c *controller.Context) (res schema.Response) {
+	var (
+		input CreateHostCommonParams
+	)
+
+	if err := c.Validator(&input); err != nil {
+		res.Message = err.Error()
+		return
+	}
+
+	return CreateHostCommon(c, CreateHostParams{
 		OwnerId:                c.Uid,
 		OwnerType:              db.HostOwnerTypeUser,
 		CreateHostCommonParams: input,
 	})
 }
 
-func (s *Service) CreateHostByTeam(c controller.Context, teamID string, input CreateHostCommonParams) (res schema.Response) {
-	return s.CreateHostCommon(c, CreateHostParams{
-		OwnerId:                teamID,
+func CreateHostByTeam(c *controller.Context) (res schema.Response) {
+	var (
+		input CreateHostCommonParams
+	)
+
+	if err := c.Validator(&input); err != nil {
+		res.Message = err.Error()
+		return
+	}
+
+	return CreateHostCommon(c, CreateHostParams{
+		OwnerId:                c.GetParam("team_id"),
 		OwnerType:              db.HostOwnerTypeTeam,
 		CreateHostCommonParams: input,
 	})
-}
-
-func (s *Service) CreateHostByUserRouter(c *gin.Context) {
-	var (
-		input CreateHostCommonParams
-		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.CreateHostByUser(controller.NewContextFromGinContext(c), input)
-}
-
-func (s *Service) CreateHostByTeamRouter(c *gin.Context) {
-	var (
-		input CreateHostCommonParams
-		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	teamID := c.Param("team_id")
-
-	res = s.CreateHostByTeam(controller.NewContextFromGinContext(c), teamID, input)
 }

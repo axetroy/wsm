@@ -2,7 +2,6 @@ package host
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -10,7 +9,6 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
@@ -25,34 +23,11 @@ type UpdateHostParams struct {
 	Remark      *string             `json:"remark"`
 }
 
-func (s *Service) UpdateHostRouter(c *gin.Context) {
-	var (
-		input UpdateHostParams
-		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	hostID := c.Param("host_id")
-
-	res = s.UpdateHost(controller.NewContextFromGinContext(c), hostID, input)
-}
-
-func (s *Service) UpdateHost(c controller.Context, hostID string, input UpdateHostParams) (res schema.Response) {
+func UpdateHostForUser(c *controller.Context) (res schema.Response) {
 	var (
 		err          error
+		hostID       = c.GetParam("host_id")
+		input        UpdateHostParams
 		data         schema.Host
 		tx           *gorm.DB
 		shouldUpdate bool
@@ -154,35 +129,12 @@ func (s *Service) UpdateHost(c controller.Context, hostID string, input UpdateHo
 	return
 }
 
-func (s *Service) UpdateHostByTeamRouter(c *gin.Context) {
-	var (
-		input UpdateHostParams
-		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	teamID := c.Param("team_id")
-	hostID := c.Param("host_id")
-
-	res = s.UpdateHostByTeam(controller.NewContextFromGinContext(c), teamID, hostID, input)
-}
-
-func (s *Service) UpdateHostByTeam(c controller.Context, teamID string, hostID string, input UpdateHostParams) (res schema.Response) {
+func UpdateHostForTeam(c *controller.Context) (res schema.Response) {
 	var (
 		err          error
+		hostID       = c.GetParam("host_id")
+		teamID       = c.GetParam("team_id")
+		input        UpdateHostParams
 		data         schema.Host
 		tx           *gorm.DB
 		shouldUpdate bool

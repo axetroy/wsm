@@ -26,7 +26,7 @@ var upgrader = websocket.Upgrader{
 }
 
 // 连接 WebSocket
-func (s *Service) StartTerminalRouter(c *gin.Context) {
+func StartTerminalRouter(c *gin.Context) {
 	var (
 		hostID = c.Param("host_id")
 		rows   = 25
@@ -210,9 +210,10 @@ func (s *Service) StartTerminalRouter(c *gin.Context) {
 }
 
 // 测试一个服务器是否可连接
-func (s *Service) TestHostConnect(c controller.Context, hostID string) (res schema.Response) {
+func TestHostConnect(c *controller.Context) (res schema.Response) {
 	var (
 		err      error
+		hostID   = c.GetParam("host_id")
 		data     bool
 		terminal *session.Terminal
 	)
@@ -307,8 +308,4 @@ func (s *Service) TestHostConnect(c controller.Context, hostID string) (res sche
 	}
 
 	return
-}
-
-func (s *Service) TestHostConnectRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, s.TestHostConnect(controller.NewContextFromGinContext(c), c.Param("host_id")))
 }

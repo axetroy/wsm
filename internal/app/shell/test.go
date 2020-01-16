@@ -2,13 +2,12 @@ package shell
 
 import (
 	"errors"
+
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
 	"github.com/axetroy/wsm/internal/library/session"
-	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type TestPublicServerParams struct {
@@ -18,33 +17,11 @@ type TestPublicServerParams struct {
 	Password string `json:"password" valid:"required~请输入密码"`
 }
 
-func (s *Service) TestPublicServerRouter(c *gin.Context) {
+func TestPublicServer(c *controller.Context) (res schema.Response) {
 	var (
-		input TestPublicServerParams
 		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = s.TestPublicServer(controller.NewContextFromGinContext(c), input)
-}
-
-func (s *Service) TestPublicServer(c controller.Context, input TestPublicServerParams) (res schema.Response) {
-	var (
-		err  error
-		data bool
+		input TestPublicServerParams
+		data  bool
 	)
 
 	defer func() {

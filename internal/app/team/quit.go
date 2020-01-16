@@ -7,15 +7,14 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"net/http"
 )
 
-func (s *Service) QuitTeam(c controller.Context, teamID string) (res schema.Response) {
+func QuitTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err error
-		tx  *gorm.DB
+		err    error
+		teamID = c.GetParam("team_id")
+		tx     *gorm.DB
 	)
 
 	defer func() {
@@ -65,23 +64,4 @@ func (s *Service) QuitTeam(c controller.Context, teamID string) (res schema.Resp
 	}
 
 	return
-}
-
-func (s *Service) QuitTeamRouter(c *gin.Context) {
-	var (
-		err error
-		res = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	teamID := c.Param("team_id")
-
-	res = s.QuitTeam(controller.NewContextFromGinContext(c), teamID)
 }

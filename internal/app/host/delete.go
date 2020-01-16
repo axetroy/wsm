@@ -2,22 +2,20 @@ package host
 
 import (
 	"errors"
-	"net/http"
-
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
-// 删除服务器，该操作不可恢复
-func (s *Service) DeleteHostByID(c controller.Context, hostID string) (res schema.Response) {
+// 用户个人删除服务器
+func DeleteHostByIdForUser(c *controller.Context) (res schema.Response) {
 	var (
-		err error
-		tx  *gorm.DB
+		err    error
+		tx     *gorm.DB
+		hostID = c.GetParam("host_id")
 	)
 
 	defer func() {
@@ -75,27 +73,12 @@ func (s *Service) DeleteHostByID(c controller.Context, hostID string) (res schem
 	return
 }
 
-func (s *Service) DeleteHostByIDRouter(c *gin.Context) {
+func DeleteHostByIdForTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err error
-		res = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	res = s.DeleteHostByID(controller.NewContextFromGinContext(c), c.Param("host_id"))
-}
-
-func (s *Service) DeleteHostByTeam(c controller.Context, teamID string, hostID string) (res schema.Response) {
-	var (
-		err error
-		tx  *gorm.DB
+		err    error
+		hostID = c.GetParam("host_id")
+		teamID = c.GetParam("team_id")
+		tx     *gorm.DB
 	)
 
 	defer func() {
@@ -156,21 +139,4 @@ func (s *Service) DeleteHostByTeam(c controller.Context, teamID string, hostID s
 	}
 
 	return
-}
-
-func (s *Service) DeleteHostByTeamRouter(c *gin.Context) {
-	var (
-		err error
-		res = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	res = s.DeleteHostByTeam(controller.NewContextFromGinContext(c), c.Param("team_id"), c.Param("host_id"))
 }

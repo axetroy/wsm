@@ -2,20 +2,21 @@ package team
 
 import (
 	"errors"
+
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"net/http"
 )
 
-func (s *Service) TransferTeam(c controller.Context, teamID string, userID string) (res schema.Response) {
+func TransferTeam(c *controller.Context) (res schema.Response) {
 	var (
-		err error
-		tx  *gorm.DB
+		err    error
+		teamID = c.GetParam("team_id")
+		userID = c.GetParam("user_id")
+		tx     *gorm.DB
 	)
 
 	defer func() {
@@ -86,24 +87,4 @@ func (s *Service) TransferTeam(c controller.Context, teamID string, userID strin
 	}
 
 	return
-}
-
-func (s *Service) TransferTeamRouter(c *gin.Context) {
-	var (
-		err error
-		res = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	teamID := c.Param("team_id")
-	userID := c.Param("user_id")
-
-	res = s.TransferTeam(controller.NewContextFromGinContext(c), teamID, userID)
 }
