@@ -167,10 +167,13 @@ services:
     ports:
       - 9000:9000
     environment:
-      - USER_HTTP_PORT=9000
+      - PORT=9000
       - DB_HOST=192.168.1.29 # 要连接的数据库 IP，请自行更改
       - DB_PORT=54321 # 要连接的数据库端口
 ```
+
+后端接口部分全部由环境变量进行配置，可用的配置选项参考 [.env](.env)
+
 
 <h2 align="center">许可协议</h2>
 

@@ -20,12 +20,11 @@ type user struct {
 var User user
 
 func init() {
-	User.Port = dotenv.GetByDefault("USER_HTTP_PORT", "8080")
-	User.Domain = dotenv.GetByDefault("USER_HTTP_DOMAIN", "localhost")
-	User.Secret = dotenv.GetByDefault("USER_TOKEN_SECRET_KEY", "user")
+	User.Port = dotenv.GetByDefault("PORT", "8080")
+	User.Secret = dotenv.GetByDefault("SECRET_KEY", "user")
 
-	TlsCert := dotenv.GetByDefault("USER_TLS_CERT", "")
-	TlsKey := dotenv.GetByDefault("USER_TLS_KEY", "")
+	TlsCert := dotenv.GetByDefault("TLS_CERT", "")
+	TlsKey := dotenv.GetByDefault("TLS_KEY", "")
 
 	if TlsCert != "" && TlsKey != "" {
 		User.TLS = &TLS{
