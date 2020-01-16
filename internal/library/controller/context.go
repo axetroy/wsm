@@ -19,14 +19,15 @@ type Context struct {
 	Ip        string `json:"ip"`         // IP地址
 }
 
-type Controller func(c *Context) schema.Response
+type controllerFunc func(c *Context) schema.Response
 
-func (c *Context) Validator(input interface{}) error {
-	if err := c.ctx.ShouldBindJSON(&input); err != nil {
+// 校验 body 中的 JSON 字段
+func (c *Context) ShouldBindJSON(inputPointer interface{}) error {
+	if err := c.ctx.ShouldBindJSON(inputPointer); err != nil {
 		return exception.InvalidParams
 	}
 
-	if isValid, err := govalidator.ValidateStruct(input); err != nil {
+	if isValid, err := govalidator.ValidateStruct(inputPointer); err != nil {
 		return exception.New(err.Error(), exception.InvalidParams.Code())
 	} else if !isValid {
 		return exception.InvalidParams
@@ -35,12 +36,13 @@ func (c *Context) Validator(input interface{}) error {
 	return nil
 }
 
-func (c *Context) ShouldBindQuery(input interface{}) error {
-	if err := c.ctx.ShouldBindQuery(input); err != nil {
+// 校验 url 中的 query
+func (c *Context) ShouldBindQuery(inputPointer interface{}) error {
+	if err := c.ctx.ShouldBindQuery(inputPointer); err != nil {
 		return err
 	}
 
-	if isValid, err := govalidator.ValidateStruct(input); err != nil {
+	if isValid, err := govalidator.ValidateStruct(inputPointer); err != nil {
 		return exception.New(err.Error(), exception.InvalidParams.Code())
 	} else if !isValid {
 		return exception.InvalidParams
@@ -69,7 +71,7 @@ func (c *Context) GetQuery(key string) string {
 	return c.ctx.Query(key)
 }
 
-func NewContextFromGinContext(c *gin.Context) Context {
+func NewContext(c *gin.Context) Context {
 	return Context{
 		ctx:       c,
 		Uid:       c.GetString(middleware.ContextUidField),
@@ -78,9 +80,9 @@ func NewContextFromGinContext(c *gin.Context) Context {
 	}
 }
 
-func Router(ctrl Controller) func(c *gin.Context) {
+func Router(ctrl controllerFunc) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		ctx := NewContextFromGinContext(c)
+		ctx := NewContext(c)
 
 		ctx.response(ctrl(&ctx))
 	}

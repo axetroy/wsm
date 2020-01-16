@@ -60,7 +60,7 @@ func CreateHostCommon(c *controller.Context, input CreateHostParams) (res schema
 		helper.Response(&res, data, nil, err)
 	}()
 
-	if err = c.Validator(input); err != nil {
+	if err = c.ShouldBindJSON(&input); err != nil {
 		return
 	}
 
@@ -139,7 +139,7 @@ func CreateHostByUser(c *controller.Context) (res schema.Response) {
 		input CreateHostCommonParams
 	)
 
-	if err := c.Validator(&input); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
 		res.Message = err.Error()
 		return
 	}
@@ -156,7 +156,7 @@ func CreateHostByTeam(c *controller.Context) (res schema.Response) {
 		input CreateHostCommonParams
 	)
 
-	if err := c.Validator(&input); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
 		res.Message = err.Error()
 		return
 	}

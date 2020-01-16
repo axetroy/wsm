@@ -53,7 +53,7 @@ func SignUpWithUsername(c *controller.Context) (res schema.Response) {
 		helper.Response(&res, data, nil, err)
 	}()
 
-	if err = c.Validator(&input); err != nil {
+	if err = c.ShouldBindJSON(&input); err != nil {
 		return
 	}
 

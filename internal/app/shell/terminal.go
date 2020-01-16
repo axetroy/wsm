@@ -58,7 +58,7 @@ func StartTerminalRouter(c *gin.Context) {
 		}
 	}
 
-	ctx := controller.NewContextFromGinContext(c)
+	ctx := controller.NewContext(c)
 
 	hostInfo := db.Host{Id: hostID}
 
