@@ -68,14 +68,12 @@ func CreateTeam(c *controller.Context) (res schema.Response) {
 		return
 	}
 
-	memberInfo := db.TeamMember{
+	// 创建 Member
+	if err = tx.Create(&db.TeamMember{
 		TeamID: teamInfo.Id,
 		UserID: c.Uid,
 		Role:   db.TeamRoleOwner,
-	}
-
-	// 创建 Member
-	if err = tx.Create(&memberInfo).Error; err != nil {
+	}).Error; err != nil {
 		return
 	}
 
@@ -87,9 +85,15 @@ func CreateTeam(c *controller.Context) (res schema.Response) {
 				continue
 			}
 
+			// 不能邀请自己
+			if memberID == c.Uid {
+				continue
+			}
+
 			memberMap[memberID] = "1"
 			userInfo := db.User{}
 
+			// 确保用户存在
 			if err = tx.Where(&db.User{Id: memberID}).First(&userInfo).Error; err != nil {
 				if err == gorm.ErrRecordNotFound {
 					err = exception.UserNotExist
@@ -97,11 +101,12 @@ func CreateTeam(c *controller.Context) (res schema.Response) {
 				return
 			}
 
-			// 创建 Member
-			if err = tx.Create(&db.TeamMember{
-				TeamID: teamInfo.Id,
-				UserID: memberID,
-				Role:   db.TeamRoleMember,
+			// 创建邀请记录
+			if err = tx.Create(&db.TeamMemberInvite{
+				InvitorID: c.Uid,
+				TeamID:    teamInfo.Id,
+				UserID:    memberID,
+				Role:      db.TeamRoleMember,
 			}).Error; err != nil {
 				return
 			}
