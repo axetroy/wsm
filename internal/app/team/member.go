@@ -15,18 +15,18 @@ import (
 
 type queryMemberList struct {
 	schema.Query
-	TeamID *string      `json:"team_id"` // 根据团队ID获取成员列表
-	Role   *db.TeamRole `json:"role"`    // 按角色来筛选
+	Role *db.TeamRole `json:"role"` // 按角色来筛选
 }
 
 func GetTeamMembers(c *controller.Context) (res schema.Response) {
 	var (
-		err   error
-		input queryMemberList
-		data  = make([]schema.TeamMember, 0) // 输出到外部的结果
-		list  = make([]db.TeamMember, 0)     // 数据库查询出来的原始结果
-		total int64
-		meta  = &schema.Meta{}
+		err    error
+		teamID = c.GetParam("team_id")
+		input  queryMemberList
+		data   = make([]schema.TeamMember, 0) // 输出到外部的结果
+		list   = make([]db.TeamMember, 0)     // 数据库查询出来的原始结果
+		total  int64
+		meta   = &schema.Meta{}
 	)
 
 	defer func() {
@@ -52,10 +52,8 @@ func GetTeamMembers(c *controller.Context) (res schema.Response) {
 
 	query.Normalize()
 
-	filter := db.TeamMember{}
-
-	if input.TeamID != nil {
-		filter.TeamID = *input.TeamID
+	filter := db.TeamMember{
+		TeamID: teamID,
 	}
 
 	if input.Role != nil {
