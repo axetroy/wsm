@@ -79,6 +79,7 @@ import Console from '../components/console'
 import Profile from '../components/profile'
 
 export default {
+  middleware: ['auth'],
   components: {
     Console,
     Profile
