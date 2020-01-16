@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0.
+
 # Reference:
 # https://github.com/golang/go/blob/master/src/go/build/syslist.go
 os_archs=(

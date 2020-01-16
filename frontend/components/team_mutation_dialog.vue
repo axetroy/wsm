@@ -1,3 +1,4 @@
+<!-- Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0. -->
 <template>
   <el-dialog
     :title="type === 'create' ? '创建团队' : '更新团队'"

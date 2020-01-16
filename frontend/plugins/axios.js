@@ -1,3 +1,4 @@
+// Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0.
 const TOKEN_KEY = 'Authorization'
 
 export default function({ store, $axios, redirect, req, res }) {

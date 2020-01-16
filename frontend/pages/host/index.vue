@@ -1,3 +1,4 @@
+<!-- Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0. -->
 <template>
   <div id="host-page">
     <el-row :gutter="20">

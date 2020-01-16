@@ -1,3 +1,4 @@
+// Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0.
 export const state = () => ({
   hosts: [], // 当前正在连接的服务器
   currentHostId: null, // 当前正在连接的服务器

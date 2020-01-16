@@ -1,3 +1,4 @@
+// Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0.
 import { parse as cookieParse } from 'cookie'
 
 export const state = () => ({

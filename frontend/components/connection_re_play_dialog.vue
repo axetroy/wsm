@@ -1,3 +1,4 @@
+<!-- Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0. -->
 <template>
   <el-dialog title="终端回放" :visible.sync="isShow" width="1255px">
     <replayer

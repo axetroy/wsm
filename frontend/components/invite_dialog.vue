@@ -1,3 +1,4 @@
+<!-- Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0. -->
 <template>
   <el-dialog title="邀请成员加入" :visible.sync="isShow">
     <el-form
