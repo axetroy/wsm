@@ -5,10 +5,12 @@ import (
 	"errors"
 	"time"
 
+	"github.com/axetroy/wsm/internal/app/config"
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
+	"github.com/axetroy/wsm/internal/library/crypto"
 	"github.com/axetroy/wsm/internal/library/helper"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
@@ -102,7 +104,8 @@ func UpdateHostForUser(c *controller.Context) (res schema.Response) {
 	}
 
 	if input.Passport != nil {
-		updateModel.Passport = *input.Passport
+		hostPassport := crypto.EncryptHostPassport(*input.Passport, config.Common.Secret)
+		updateModel.Passport = hostPassport
 		shouldUpdate = true
 	}
 
@@ -211,7 +214,8 @@ func UpdateHostForTeam(c *controller.Context) (res schema.Response) {
 	}
 
 	if input.Passport != nil {
-		updateModel.Passport = *input.Passport
+		hostPassport := crypto.EncryptHostPassport(*input.Passport, config.Common.Secret)
+		updateModel.Passport = hostPassport
 		shouldUpdate = true
 	}
 

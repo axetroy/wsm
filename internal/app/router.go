@@ -86,7 +86,7 @@ func init() {
 		{
 			shellRouter := v1.Group("/shell")
 			shellRouter.Use(userAuthMiddleware)
-			shellRouter.GET("/connect/:host_id", shell.StartTerminalRouter)             // 开启终端，连接 websocket
+			shellRouter.GET("/connect/:host_id", shell.Connect)                         // 开启终端，连接 websocket
 			shellRouter.GET("/test/:host_id", controller.Router(shell.TestHostConnect)) // 测试服务器是否可连接
 			shellRouter.POST("/test", controller.Router(shell.TestPublicServer))        // 测试服务器是否可连接，给定服务器的相关信息即可，无需登陆验证
 		}

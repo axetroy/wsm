@@ -53,6 +53,8 @@ func GetHostConnectionRecordDetailByUser(c *controller.Context) (res schema.Resp
 		return
 	}
 
+	// 开始校验权限
+
 	// 如果是用户持有的记录
 	if connectionInfo.Host.OwnerType == db.HostOwnerTypeUser {
 		if connectionInfo.UserID != c.Uid && connectionInfo.Host.OwnerID != c.Uid {
@@ -79,6 +81,9 @@ func GetHostConnectionRecordDetailByUser(c *controller.Context) (res schema.Resp
 				return
 			}
 		}
+	} else {
+		err = exception.NoPermission
+		return
 	}
 
 	if err = mapstructure.Decode(connectionInfo, &data.HostConnectionRecordPure); err != nil {

@@ -140,6 +140,7 @@ func NewTerminal(config Config) (*Terminal, error) {
 
 // 测试服务器是否可用
 func Test(config Config) bool {
+
 	sshConfig := &ssh.ClientConfig{
 		User: config.Username,
 		Auth: []ssh.AuthMethod{

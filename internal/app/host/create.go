@@ -5,22 +5,18 @@ import (
 	"errors"
 	"time"
 
+	"github.com/axetroy/wsm/internal/app/config"
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
+	"github.com/axetroy/wsm/internal/library/crypto"
 	"github.com/axetroy/wsm/internal/library/helper"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
 
-type CreateHostParams struct {
-	OwnerId   string           `json:"owner_id" valid:"请输入拥有者的ID，可以是用户 ID，可以是组织ID"`
-	OwnerType db.HostOwnerType `json:"owner_type" valid:"required~请输入拥有者的类型"`
-	CreateHostCommonParams
-}
-
-type CreateHostCommonParams struct {
+type createHostParams struct {
 	Name        string             `json:"name" valid:"required~请输入名称"`
 	Host        string             `json:"host" valid:"required~请输入地址,host~请输入正确的服务器地址"`
 	Port        uint               `json:"port" valid:"required~请输入端口,port~请输入正确的端口,range(1|65535)"`
@@ -30,11 +26,13 @@ type CreateHostCommonParams struct {
 	Remark      *string            `json:"remark"`
 }
 
-func CreateHostCommon(c *controller.Context, input CreateHostParams) (res schema.Response) {
+func CreateHostByUser(c *controller.Context) (res schema.Response) {
 	var (
-		err  error
-		data schema.Host
-		tx   *gorm.DB
+		err     error
+		input   createHostParams
+		ownerID = c.Uid
+		data    schema.Host
+		tx      *gorm.DB
 	)
 
 	defer func() {
@@ -76,15 +74,17 @@ func CreateHostCommon(c *controller.Context, input CreateHostParams) (res schema
 
 	tx = db.Db.Begin()
 
+	hostPassport := crypto.EncryptHostPassport(input.Passport, config.Common.Secret)
+
 	hostInfo := db.Host{
-		OwnerID:     input.OwnerId,
-		OwnerType:   input.OwnerType,
+		OwnerID:     ownerID,
+		OwnerType:   db.HostOwnerTypeTeam,
 		Name:        input.Name,
 		Host:        input.Host,
 		Port:        input.Port,
 		Username:    input.Username,
 		ConnectType: input.ConnectType,
-		Passport:    input.Passport,
+		Passport:    hostPassport,
 		Remark:      input.Remark,
 	}
 
@@ -92,35 +92,7 @@ func CreateHostCommon(c *controller.Context, input CreateHostParams) (res schema
 		return
 	}
 
-	switch input.OwnerType {
-	// 如果是用户个人创建的服务器，则写入记录
-	case db.HostOwnerTypeUser:
-		if err = tx.Create(&db.HostRecord{UserID: input.OwnerId, HostID: hostInfo.Id, Type: db.HostRecordTypeOwner}).Error; err != nil {
-			return
-		}
-		break
-	// 如果是组织，则看看是否有权限
-	case db.HostOwnerTypeTeam:
-		teamMemberInfo := db.TeamMember{
-			TeamID: input.OwnerId,
-			UserID: c.Uid,
-		}
-		if err = tx.Where(&teamMemberInfo).First(&teamMemberInfo).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				err = exception.NoPermission
-			}
-			return
-		}
-
-		// 校验是否拥有权限
-		if teamMemberInfo.Role != db.TeamRoleAdmin && teamMemberInfo.Role != db.TeamRoleOwner {
-			err = exception.NoPermission
-			return
-		}
-
-		break
-	default:
-		err = exception.Unknown
+	if err = tx.Create(&db.HostRecord{UserID: ownerID, HostID: hostInfo.Id, Type: db.HostRecordTypeOwner}).Error; err != nil {
 		return
 	}
 
@@ -134,36 +106,96 @@ func CreateHostCommon(c *controller.Context, input CreateHostParams) (res schema
 	return
 }
 
-func CreateHostByUser(c *controller.Context) (res schema.Response) {
-	var (
-		input CreateHostCommonParams
-	)
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		res.Message = err.Error()
-		return
-	}
-
-	return CreateHostCommon(c, CreateHostParams{
-		OwnerId:                c.Uid,
-		OwnerType:              db.HostOwnerTypeUser,
-		CreateHostCommonParams: input,
-	})
-}
-
 func CreateHostByTeam(c *controller.Context) (res schema.Response) {
 	var (
-		input CreateHostCommonParams
+		err     error
+		input   createHostParams
+		ownerID = c.GetParam("team_id")
+		data    schema.Host
+		tx      *gorm.DB
 	)
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		res.Message = err.Error()
+	defer func() {
+		if r := recover(); r != nil {
+			switch t := r.(type) {
+			case string:
+				err = errors.New(t)
+			case error:
+				err = t
+			default:
+				err = exception.Unknown
+			}
+		}
+
+		if tx != nil {
+			if err != nil {
+				_ = tx.Rollback().Error
+			} else {
+				err = tx.Commit().Error
+			}
+		}
+
+		helper.Response(&res, data, nil, err)
+	}()
+
+	if err = c.ShouldBindJSON(&input); err != nil {
 		return
 	}
 
-	return CreateHostCommon(c, CreateHostParams{
-		OwnerId:                c.GetParam("team_id"),
-		OwnerType:              db.HostOwnerTypeTeam,
-		CreateHostCommonParams: input,
-	})
+	switch input.ConnectType {
+	case db.HostConnectTypePassword:
+		fallthrough
+	case db.HostConnectTypePrivateKey:
+		break
+	default:
+		err = exception.InvalidParams
+		return
+	}
+
+	tx = db.Db.Begin()
+
+	hostPassport := crypto.EncryptHostPassport(input.Passport, config.Common.Secret)
+
+	hostInfo := db.Host{
+		OwnerID:     ownerID,
+		OwnerType:   db.HostOwnerTypeTeam,
+		Name:        input.Name,
+		Host:        input.Host,
+		Port:        input.Port,
+		Username:    input.Username,
+		ConnectType: input.ConnectType,
+		Passport:    hostPassport,
+		Remark:      input.Remark,
+	}
+
+	if err = tx.Create(&hostInfo).Error; err != nil {
+		return
+	}
+
+	// 如果是组织，则看看是否有权限
+	teamMemberInfo := db.TeamMember{
+		TeamID: ownerID,
+		UserID: c.Uid,
+	}
+	if err = tx.Where(&teamMemberInfo).First(&teamMemberInfo).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = exception.NoPermission
+		}
+		return
+	}
+
+	// 校验是否拥有权限
+	if teamMemberInfo.Role != db.TeamRoleAdmin && teamMemberInfo.Role != db.TeamRoleOwner {
+		err = exception.NoPermission
+		return
+	}
+
+	if err = mapstructure.Decode(hostInfo, &data.HostPure); err != nil {
+		return
+	}
+
+	data.CreatedAt = hostInfo.CreatedAt.Format(time.RFC3339Nano)
+	data.UpdatedAt = hostInfo.UpdatedAt.Format(time.RFC3339Nano)
+
+	return
 }

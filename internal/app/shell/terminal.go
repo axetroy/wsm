@@ -3,17 +3,16 @@ package shell
 
 import (
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/axetroy/wsm/internal/app/config"
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
-	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
-	"github.com/axetroy/wsm/internal/library/helper"
+	"github.com/axetroy/wsm/internal/library/crypto"
 	"github.com/axetroy/wsm/internal/library/session"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -27,7 +26,7 @@ var upgrader = websocket.Upgrader{
 }
 
 // 连接 WebSocket
-func StartTerminalRouter(c *gin.Context) {
+func Connect(c *gin.Context) {
 	var (
 		hostID = c.Param("host_id")
 		rows   = 25
@@ -112,10 +111,12 @@ func StartTerminalRouter(c *gin.Context) {
 		Height:   rows,
 	}
 
+	passport := crypto.DecryptHostPassport(hostInfo.Passport, config.Common.Secret)
+
 	if hostInfo.ConnectType == db.HostConnectTypePassword {
-		terminalConfig.Password = hostInfo.Passport
+		terminalConfig.Password = passport
 	} else {
-		terminalConfig.PrivateKey = hostInfo.Passport
+		terminalConfig.PrivateKey = passport
 	}
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -208,105 +209,4 @@ func StartTerminalRouter(c *gin.Context) {
 			}
 		}
 	}()
-}
-
-// 测试一个服务器是否可连接
-func TestHostConnect(c *controller.Context) (res schema.Response) {
-	var (
-		err      error
-		hostID   = c.GetParam("host_id")
-		data     bool
-		terminal *session.Terminal
-	)
-
-	defer func() {
-		if r := recover(); r != nil {
-			switch t := r.(type) {
-			case string:
-				err = errors.New(t)
-			case error:
-				err = t
-			default:
-				err = exception.Unknown
-			}
-		}
-
-		if terminal != nil {
-			if terminalCloseErr := terminal.Close(); terminalCloseErr != nil {
-				if err == nil {
-					err = terminalCloseErr
-				}
-			}
-		}
-
-		if err == nil {
-			data = true
-		}
-
-		helper.Response(&res, data, nil, err)
-	}()
-
-	hostInfo := db.Host{
-		Id: hostID,
-	}
-
-	if err = db.Db.Where(&hostInfo).First(&hostInfo).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = exception.NoData
-		}
-		return
-	}
-
-	if hostInfo.OwnerType == db.HostOwnerTypeUser {
-		// 如果是用户个人持有
-		hostRecordInfo := db.HostRecord{
-			HostID: hostID,
-			UserID: c.Uid,
-		}
-		if err = db.Db.Where(&hostRecordInfo).First(&hostRecordInfo).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				err = exception.NoPermission
-			}
-			return
-		}
-
-		if hostRecordInfo.Type != db.HostRecordTypeOwner && hostRecordInfo.Type != db.HostRecordTypeCollaborator {
-			err = exception.NoPermission
-			return
-		}
-
-	} else if hostInfo.OwnerType == db.HostOwnerTypeTeam {
-		// 如果是团队持有
-		memberInfo := db.TeamMember{
-			TeamID: hostInfo.OwnerID,
-			UserID: c.Uid,
-		}
-
-		if err = db.Db.Where(&memberInfo).First(&memberInfo).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				err = exception.NoPermission
-			}
-			return
-		}
-
-		if memberInfo.Role == db.TeamRoleVisitor {
-			err = exception.NoPermission
-			return
-		}
-	}
-
-	terminal, err = session.NewTerminal(session.Config{
-		Host:     hostInfo.Host,
-		Port:     hostInfo.Port,
-		Username: hostInfo.Username,
-		Password: hostInfo.Passport,
-		Width:    80,
-		Height:   25,
-	})
-
-	if err != nil {
-		return
-	}
-
-	return
 }

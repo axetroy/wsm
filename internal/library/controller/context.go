@@ -24,11 +24,11 @@ type controllerFunc func(c *Context) schema.Response
 // 校验 body 中的 JSON 字段
 func (c *Context) ShouldBindJSON(inputPointer interface{}) error {
 	if err := c.ctx.ShouldBindJSON(inputPointer); err != nil {
-		return exception.InvalidParams
+		return exception.InvalidParams.New(err.Error())
 	}
 
 	if isValid, err := govalidator.ValidateStruct(inputPointer); err != nil {
-		return exception.New(err.Error(), exception.InvalidParams.Code())
+		return exception.InvalidParams.New(err.Error())
 	} else if !isValid {
 		return exception.InvalidParams
 	}
