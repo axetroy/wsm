@@ -49,7 +49,7 @@ func SearchUser(c *controller.Context) (res schema.Response) {
 		helper.Response(&res, data, nil, err)
 	}()
 
-	if err = c.ShouldBindJSON(&input); err != nil {
+	if err = c.ShouldBindQuery(&input); err != nil {
 		return
 	}
 
