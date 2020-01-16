@@ -545,6 +545,7 @@ export default {
     ...mapActions({
       getCurrentTeamMemberProfile: 'workspace/getCurrentTeamMemberProfile',
       getTeams: 'workspace/getTeams',
+      getWorkspaces: 'workspace/getWorkspaces',
       getCurrentTeamInvites: 'workspace/getCurrentTeamInvites',
       getCurrentTeamMembers: 'workspace/getCurrentTeamMembers',
       getCurrentTeamStat: 'workspace/getCurrentTeamStat',
@@ -618,9 +619,11 @@ export default {
       try {
         await this.$axios.$delete('/team/_/' + team.id)
 
-        // get list
+        // 更新工作区
+
         this.$success('解散成功')
         this.switchWorkspace(undefined)
+        this.getWorkspaces()
       } catch (err) {
         this.$error(`解散失败: ${err.message}`)
       }
@@ -633,6 +636,7 @@ export default {
         // get list
         this.$success('退出成功')
         this.switchWorkspace(undefined)
+        this.getWorkspaces()
       } catch (err) {
         this.$error(`退出失败: ${err.message}`)
       }
@@ -664,8 +668,6 @@ export default {
         this.$error(`踢出失败: ${err.message}`)
       }
     },
-    // 邀请成员
-    async inviteTeamMember(team) {},
     // 变更身份
     async changeRole({ user, role }) {
       const currentWorkspace = this.currentWorkspace
