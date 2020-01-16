@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/axetroy/wsm/internal/app/config"
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
@@ -93,7 +94,7 @@ func LoginWithUsername(c *controller.Context) (res schema.Response) {
 	data.UpdatedAt = userInfo.UpdatedAt.Format(time.RFC3339Nano)
 
 	// generate token
-	if t, er := token.Generate(userInfo.Id, false); er != nil {
+	if t, er := token.Generate(config.Http.Secret, userInfo.Id); er != nil {
 		err = er
 		return
 	} else {

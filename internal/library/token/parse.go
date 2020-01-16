@@ -10,17 +10,10 @@ import (
 )
 
 // parse jwt token
-func Parse(tokenString string, isAdmin bool) (claims Claims, err error) {
+func Parse(secret, tokenString string) (claims Claims, err error) {
 	var (
 		token *jwt.Token
-		key   string
 	)
-
-	if isAdmin {
-		key = adminSecreteKey
-	} else {
-		key = userSecreteKey
-	}
 
 	if strings.HasPrefix(tokenString, Prefix+" ") == false {
 		err = exception.InvalidAuth
@@ -37,7 +30,7 @@ func Parse(tokenString string, isAdmin bool) (claims Claims, err error) {
 	c := ClaimsInternal{}
 
 	if token, err = jwt.ParseWithClaims(tokenString, &c, func(token *jwt.Token) (interface{}, error) {
-		return []byte(key), nil
+		return []byte(secret), nil
 	}); err != nil {
 		if strings.HasPrefix(err.Error(), "token is expired by") {
 			err = exception.TokenExpired

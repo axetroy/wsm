@@ -2,10 +2,11 @@
 package middleware
 
 import (
-	schema2 "github.com/axetroy/wsm/internal/app/schema"
 	"net/http"
 
+	"github.com/axetroy/wsm/internal/app/config"
 	"github.com/axetroy/wsm/internal/app/exception"
+	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/token"
 	"github.com/gin-gonic/gin"
 )
@@ -20,11 +21,11 @@ func Authenticate(isAdmin bool) gin.HandlerFunc {
 		var (
 			err         error
 			tokenString string
-			status      = schema2.StatusFail
+			status      = schema.StatusFail
 		)
 		defer func() {
 			if err != nil {
-				c.JSON(http.StatusOK, schema2.Response{
+				c.JSON(http.StatusOK, schema.Response{
 					Status:  status,
 					Message: err.Error(),
 					Data:    nil,
@@ -49,7 +50,7 @@ func Authenticate(isAdmin bool) gin.HandlerFunc {
 			}
 		}
 
-		if claims, er := token.Parse(tokenString, isAdmin); er != nil {
+		if claims, er := token.Parse(config.Http.Secret, tokenString); er != nil {
 			err = er
 			status = exception.InvalidToken.Code()
 			return

@@ -15,7 +15,7 @@ type common struct {
 	MachineId int64  `json:"machine_id"` // 机器 ID, 用于分布式生成 ID，每个节点的 ID 都应该不一样，并且最大值为 1024
 	Mode      string `json:"mode"`       // 运行模式, 开发模式还是生产模式
 	Exiting   bool   `json:"exiting"`    // 进程是否出于正在退出的状态，用户优雅的退出进程
-	Secret    string `json:"secret"`     // 加密密钥
+	Secret    string `json:"secret"`     // 加密密钥，用于加密密码
 }
 
 var Common *common

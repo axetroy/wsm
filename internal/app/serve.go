@@ -16,7 +16,7 @@ import (
 )
 
 func Serve() error {
-	port := config.User.Port
+	port := config.Http.Port
 
 	s := &http.Server{
 		Addr:           ":" + port,
@@ -27,7 +27,7 @@ func Serve() error {
 	}
 
 	go func() {
-		if config.User.TLS != nil {
+		if config.Http.TLS != nil {
 			TLSConfig := &tls.Config{
 				MinVersion:               tls.VersionTLS11,
 				CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
@@ -47,7 +47,7 @@ func Serve() error {
 
 			log.Printf("Listen on:  %s\n", s.Addr)
 
-			if err := s.ListenAndServeTLS(config.User.TLS.Cert, config.User.TLS.Key); err != nil {
+			if err := s.ListenAndServeTLS(config.Http.TLS.Cert, config.Http.TLS.Key); err != nil {
 				log.Fatalln(err)
 			}
 		} else {

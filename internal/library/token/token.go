@@ -10,11 +10,6 @@ const (
 	AuthField = "Authorization"
 )
 
-var (
-	userSecreteKey  string
-	adminSecreteKey string
-)
-
 type Claims struct {
 	Uid string `json:"uid"`
 	jwt.StandardClaims

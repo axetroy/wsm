@@ -9,20 +9,7 @@ import (
 )
 
 // generate jwt token
-func Generate(userId string, isAdmin bool) (tokenString string, err error) {
-	var (
-		issuer string
-		key    string
-	)
-
-	if isAdmin {
-		issuer = "admin"
-		key = adminSecreteKey
-	} else {
-		issuer = "user"
-		key = userSecreteKey
-	}
-
+func Generate(secret, userId string) (tokenString string, err error) {
 	// 生成token
 	c := ClaimsInternal{
 		util.Base64Encode(userId),
@@ -30,7 +17,7 @@ func Generate(userId string, isAdmin bool) (tokenString string, err error) {
 			Audience:  userId,
 			Id:        userId,
 			ExpiresAt: time.Now().Add(time.Hour * time.Duration(6)).Unix(),
-			Issuer:    issuer,
+			Issuer:    "user",
 			IssuedAt:  time.Now().Unix(),
 			NotBefore: time.Now().Unix(),
 		},
@@ -38,9 +25,13 @@ func Generate(userId string, isAdmin bool) (tokenString string, err error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 
-	tokenString, err = token.SignedString([]byte(key))
+	tokenString, err = token.SignedString([]byte(secret))
 
-	tokenString = Prefix + " " + tokenString
+	if err != nil {
+		return "", err
+	}
+
+	tokenString = JoinPrefixToken(tokenString)
 
 	return
 }
