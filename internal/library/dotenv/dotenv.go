@@ -12,13 +12,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/axetroy/go-fs"
+	"github.com/axetroy/wsm/internal/library/fs"
 	"github.com/fatih/color"
 	"github.com/joho/godotenv"
 )
 
 var (
-	Test    bool   // 当前是否是测试环境
 	RootDir string // 当前运行的二进制所在的目录
 	loaded  bool   // 是否已初始化过
 )
@@ -55,8 +54,6 @@ func Load() (err error) {
 		}
 	}
 
-	Test = isRunInTest
-
 	var pwd string
 
 	pwd, err = os.Getwd()
@@ -68,7 +65,6 @@ func Load() (err error) {
 	switch true {
 	// 如果运行才 travis，则取当前目录
 	case isRunInTravis:
-		Test = true
 		RootDir = os.Getenv("TRAVIS_BUILD_DIR")
 		break
 	// 如果运行在测试用例
@@ -106,8 +102,10 @@ func Load() (err error) {
 
 	dotEnvFilePath := path.Join(RootDir, ".env")
 
-	if !fs.PathExists(dotEnvFilePath) {
-		return
+	if exist, err := fs.PathExists(dotEnvFilePath); err != nil {
+		return err
+	} else if !exist {
+		return nil
 	}
 
 	fmt.Println(fmt.Sprintf("加载环境变量文件 `%s`", color.GreenString(dotEnvFilePath)))

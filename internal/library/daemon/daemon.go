@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -9,7 +10,7 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/axetroy/go-fs"
+	"github.com/axetroy/wsm/internal/library/fs"
 )
 
 type Action func() error
@@ -42,7 +43,7 @@ func Start(action Action, shouldRunInDaemon bool) error {
 			return err
 		}
 
-		if err := fs.WriteFile(pidFilePath, []byte(fmt.Sprintf("%d", os.Getpid()))); err != nil {
+		if err := ioutil.WriteFile(pidFilePath, []byte(fmt.Sprintf("%d", os.Getpid())), os.ModePerm); err != nil {
 			return err
 		}
 
@@ -57,11 +58,13 @@ func Stop() error {
 		return err
 	}
 
-	if !fs.PathExists(pidFilePath) {
+	if exist, err := fs.PathExists(pidFilePath); err != nil {
+		return err
+	} else if !exist {
 		return nil
 	}
 
-	b, err := fs.ReadFile(pidFilePath)
+	b, err := ioutil.ReadFile(pidFilePath)
 
 	if err != nil {
 		return nil
@@ -96,7 +99,7 @@ func Stop() error {
 	if haveBeenKill {
 		log.Printf("进程 %d 已结束.\n", psState.Pid())
 
-		_ = fs.Remove(pidFilePath)
+		_ = os.RemoveAll(pidFilePath)
 	} else {
 		log.Printf("进程 %d 结束失败.\n", psState.Pid())
 	}
