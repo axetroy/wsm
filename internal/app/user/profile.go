@@ -2,7 +2,6 @@ package user
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -11,7 +10,6 @@ import (
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
 	"github.com/axetroy/wsm/internal/library/validator"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
@@ -22,34 +20,7 @@ type UpdateProfileParams struct {
 	Avatar   *string    `json:"avatar"`
 }
 
-func (u *Service) GetProfileRouter(c *gin.Context) {
-	c.JSON(http.StatusOK, u.GetProfile(controller.NewContextFromGinContext(c)))
-}
-
-func (u *Service) UpdateProfileRouter(c *gin.Context) {
-	var (
-		err   error
-		res   = schema.Response{}
-		input UpdateProfileParams
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = u.UpdateProfile(controller.NewContextFromGinContext(c), input)
-}
-
-func (u *Service) GetProfile(c controller.Context) (res schema.Response) {
+func GetProfile(c *controller.Context) (res schema.Response) {
 	var (
 		err  error
 		data schema.Profile
@@ -89,9 +60,10 @@ func (u *Service) GetProfile(c controller.Context) (res schema.Response) {
 	return
 }
 
-func (u *Service) UpdateProfile(c controller.Context, input UpdateProfileParams) (res schema.Response) {
+func UpdateProfile(c *controller.Context) (res schema.Response) {
 	var (
 		err          error
+		input        UpdateProfileParams
 		data         schema.Profile
 		tx           *gorm.DB
 		shouldUpdate bool

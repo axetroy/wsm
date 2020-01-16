@@ -2,17 +2,14 @@ package user
 
 import (
 	"errors"
-	"net/http"
 
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
-	"github.com/axetroy/wsm/internal/app/middleware"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
 	"github.com/axetroy/wsm/internal/library/util"
 	"github.com/axetroy/wsm/internal/library/validator"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
@@ -21,35 +18,11 @@ type UpdatePasswordParams struct {
 	NewPassword string `json:"new_password" valid:"required~请输入新密码"`
 }
 
-func (u *Service) UpdatePasswordRouter(c *gin.Context) {
+func UpdatePassword(c *controller.Context) (res schema.Response) {
 	var (
 		err   error
-		res   = schema.Response{}
 		input UpdatePasswordParams
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = u.UpdatePassword(controller.Context{
-		Uid: c.GetString(middleware.ContextUidField),
-	}, input)
-}
-
-func (u *Service) UpdatePassword(c controller.Context, input UpdatePasswordParams) (res schema.Response) {
-	var (
-		err error
-		tx  *gorm.DB
+		tx    *gorm.DB
 	)
 
 	defer func() {

@@ -9,11 +9,11 @@ import (
 	"github.com/axetroy/wsm/internal/app/config"
 	"github.com/axetroy/wsm/internal/app/host"
 	"github.com/axetroy/wsm/internal/app/middleware"
-	"github.com/axetroy/wsm/internal/app/oauth2"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/app/shell"
 	"github.com/axetroy/wsm/internal/app/team"
 	"github.com/axetroy/wsm/internal/app/user"
+	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/dotenv"
 	"github.com/gin-gonic/gin"
 )
@@ -50,17 +50,18 @@ func init() {
 		v1 := router.Group("/v1")
 		v1.Use(middleware.Common)
 
-		v1.GET("", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{"ping": "pong"})
-		})
+		v1.GET("", controller.Router(func(c *controller.Context) (res schema.Response) {
+			res.Data = "pong"
+			return
+		}))
 
-		userAuthMiddleware := middleware.Authenticate(false) // 用户Token的中间件
+		userAuthMiddleware := middleware.Authenticate(false) // 用户 Token 的中间件
 
 		// 认证类
 		{
 			authRouter := v1.Group("/auth")
-			authRouter.POST("/signup", user.Core.SignUpWithUsernameRouter) // 注册账号, 通过用户名+密码
-			authRouter.POST("/signin", user.Core.LoginWithUsernameRouter)  // 登陆账号
+			authRouter.POST("/signup", controller.Router(user.SignUpWithUsername)) // 注册账号, 通过用户名+密码
+			authRouter.POST("/signin", controller.Router(user.LoginWithUsername))  // 登陆账号
 		}
 
 		// 服务器管理
@@ -89,21 +90,14 @@ func init() {
 			shellRouter.POST("/test", shell.Core.TestPublicServerRouter)         // 测试服务器是否可连接，给定服务器的相关信息即可，无需登陆验证
 		}
 
-		// oAuth2 认证
-		{
-			oAuthRouter := v1.Group("/oauth2")
-			oAuthRouter.GET("/:provider", oauth2.Core.AuthRouter)              // 前去进行 oAuth 认证
-			oAuthRouter.GET("/:provider/callback", oauth2.Core.CallbackRouter) // 认证成功后，跳转回来的回调地址
-		}
-
 		// 用户类
 		{
 			userRouter := v1.Group("/user")
 			userRouter.Use(userAuthMiddleware)
-			userRouter.GET("/profile", user.Core.GetProfileRouter)      // 获取用户详细信息
-			userRouter.PUT("/profile", user.Core.UpdateProfileRouter)   // 更新用户资料
-			userRouter.PUT("/password", user.Core.UpdatePasswordRouter) // 更新登陆密码
-			userRouter.GET("/search", user.Core.SearchUserRouter)       // 搜索用户
+			userRouter.GET("/profile", controller.Router(user.GetProfile))      // 获取用户详细信息
+			userRouter.PUT("/profile", controller.Router(user.UpdateProfile))   // 更新用户资料
+			userRouter.PUT("/password", controller.Router(user.UpdatePassword)) // 更新登陆密码
+			userRouter.GET("/search", controller.Router(user.SearchUser))       // 搜索用户
 		}
 
 		// 团队相关

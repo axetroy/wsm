@@ -2,7 +2,6 @@ package user
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
@@ -13,7 +12,6 @@ import (
 	"github.com/axetroy/wsm/internal/library/token"
 	"github.com/axetroy/wsm/internal/library/util"
 	"github.com/axetroy/wsm/internal/library/validator"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
@@ -23,34 +21,12 @@ type SignInParams struct {
 	Password string `json:"password" valid:"required~请输入密码"`
 }
 
-func (u *Service) LoginWithUsernameRouter(c *gin.Context) {
+func LoginWithUsername(c *controller.Context) (res schema.Response) {
 	var (
-		input SignInParams
 		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = u.LoginWithUsername(controller.NewContextFromGinContext(c), input)
-}
-
-func (u *Service) LoginWithUsername(c controller.Context, input SignInParams) (res schema.Response) {
-	var (
-		err  error
-		data = &schema.ProfileWithToken{}
-		tx   *gorm.DB
+		input SignInParams
+		data  = &schema.ProfileWithToken{}
+		tx    *gorm.DB
 	)
 
 	defer func() {

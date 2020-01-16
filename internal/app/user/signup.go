@@ -2,18 +2,17 @@ package user
 
 import (
 	"errors"
-	"github.com/lib/pq"
-	"net/http"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
+	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
 	"github.com/axetroy/wsm/internal/library/util"
 	"github.com/axetroy/wsm/internal/library/validator"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"github.com/lib/pq"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -22,37 +21,12 @@ type SignUpWithUsernameParams struct {
 	Password string `json:"password" valid:"required~请输入密码"`  // 密码
 }
 
-func (u *Service) CreateUserTx(tx *gorm.DB, userInfo *db.User) (err error) {
+func SignUpWithUsername(c *controller.Context) (res schema.Response) {
 	var (
-		newTx bool
-	)
-	if tx == nil {
-		tx = db.Db.Begin()
-		newTx = true
-	}
-
-	defer func() {
-		if newTx {
-			if err != nil {
-				_ = tx.Rollback().Error
-			} else {
-				err = tx.Commit().Error
-			}
-		}
-	}()
-
-	if err = tx.Create(userInfo).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (u *Service) SignUpWithUsername(input SignUpWithUsernameParams) (res schema.Response) {
-	var (
-		err  error
-		data schema.Profile
-		tx   *gorm.DB
+		input SignUpWithUsernameParams
+		err   error
+		data  schema.Profile
+		tx    *gorm.DB
 	)
 
 	defer func() {
@@ -78,8 +52,7 @@ func (u *Service) SignUpWithUsername(input SignUpWithUsernameParams) (res schema
 		helper.Response(&res, data, nil, err)
 	}()
 
-	// 参数校验
-	if err = validator.ValidateStruct(input); err != nil {
+	if err = c.Validator(&input); err != nil {
 		return
 	}
 
@@ -89,15 +62,13 @@ func (u *Service) SignUpWithUsername(input SignUpWithUsernameParams) (res schema
 
 	tx = db.Db.Begin()
 
-	u1 := db.User{Username: input.Username}
+	userNum := 0
 
-	if err = tx.Where("username = ?", input.Username).Find(&u1).Error; err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return
-		}
+	if err = tx.Model(db.User{}).Where("username = ?", input.Username).Count(&userNum).Error; err != nil {
+		return
 	}
 
-	if u1.Id != "" {
+	if userNum != 0 {
 		err = exception.UserExist
 		return
 	}
@@ -113,7 +84,7 @@ func (u *Service) SignUpWithUsername(input SignUpWithUsernameParams) (res schema
 		Role:     pq.StringArray{},
 	}
 
-	if err = u.CreateUserTx(tx, &userInfo); err != nil {
+	if err = tx.Create(userInfo).Error; err != nil {
 		return
 	}
 
@@ -125,27 +96,4 @@ func (u *Service) SignUpWithUsername(input SignUpWithUsernameParams) (res schema
 	data.UpdatedAt = userInfo.UpdatedAt.Format(time.RFC3339Nano)
 
 	return
-}
-
-func (u *Service) SignUpWithUsernameRouter(c *gin.Context) {
-	var (
-		input SignUpWithUsernameParams
-		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = u.SignUpWithUsername(input)
 }

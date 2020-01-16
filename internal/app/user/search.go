@@ -2,14 +2,12 @@ package user
 
 import (
 	"errors"
-	"net/http"
 
 	"github.com/axetroy/wsm/internal/app/db"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
@@ -18,35 +16,13 @@ type SearchUserParams struct {
 	Account string `json:"account" form:"account" valid:"required~请输入搜索字段"` // 按用户名来搜索
 }
 
-func (u *Service) SearchUserRouter(c *gin.Context) {
+func SearchUser(c *controller.Context) (res schema.Response) {
 	var (
-		input SearchUserParams
 		err   error
-		res   = schema.Response{}
-	)
-
-	defer func() {
-		if err != nil {
-			res.Data = nil
-			res.Message = err.Error()
-		}
-		c.JSON(http.StatusOK, res)
-	}()
-
-	if err = c.ShouldBindQuery(&input); err != nil {
-		err = exception.InvalidParams
-		return
-	}
-
-	res = u.SearchUser(controller.NewContextFromGinContext(c), input)
-}
-
-func (u *Service) SearchUser(c controller.Context, input SearchUserParams) (res schema.Response) {
-	var (
-		err  error
-		data = make([]schema.ProfilePublic, 0) // 输出到外部的结果
-		list = make([]db.User, 0)              // 数据库查询出来的原始结果
-		tx   *gorm.DB
+		input SearchUserParams
+		data  = make([]schema.ProfilePublic, 0) // 输出到外部的结果
+		list  = make([]db.User, 0)              // 数据库查询出来的原始结果
+		tx    *gorm.DB
 	)
 
 	defer func() {
