@@ -5,16 +5,16 @@
 
 import os
 
+exclude = {"node_modules", "vendor", ".nuxt", "scripts"}
+
 
 def walk(root_dir):
-    for root, dirs, files in os.walk(root_dir, topdown=False):
+    for root, dirs, files in os.walk(root_dir, topdown=True):
+        dirs[:] = [d for d in dirs if d not in exclude]
         for filename in files:
-            if filename == "node_modules" or filename == "vendor":
-                continue
+            filepath = os.path.join(root, filename)
 
             if os.path.splitext(filename)[-1] == ".go":
-                filepath = os.path.join(root, filename)
-
                 with open(filepath, "r") as reader:
                     originContent = reader.read()
                     reader.close()
@@ -24,8 +24,6 @@ def walk(root_dir):
                             writer.write(originContent)
 
             elif os.path.splitext(filename)[-1] == ".js":
-                filepath = os.path.join(root, filename)
-
                 with open(filepath, "r") as reader:
                     originContent = reader.read()
                     reader.close()
@@ -35,8 +33,6 @@ def walk(root_dir):
                             writer.write(originContent)
 
             elif os.path.splitext(filename)[-1] == ".vue":
-                filepath = os.path.join(root, filename)
-
                 with open(filepath, "r") as reader:
                     originContent = reader.read()
                     reader.close()
@@ -47,6 +43,4 @@ def walk(root_dir):
                             writer.write(originContent)
 
 
-walk("./internal")
-walk("./cmd")
-walk("./frontend")
+walk(".")
