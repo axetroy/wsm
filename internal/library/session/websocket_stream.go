@@ -25,12 +25,13 @@ type Meta struct {
 
 type WebsocketStream struct {
 	sync.RWMutex
-	conn        *websocket.Conn
-	messageType int
-	recorder    []*timeline
-	CreatedAt   time.Time // 创建时间
-	UpdatedAt   time.Time // 最新的更新时间
-	Meta        Meta
+	conn        *websocket.Conn // socket 连接
+	messageType int             // 发送的数据类型
+	recorder    []*timeline     // 记录的时间轴
+	CreatedAt   time.Time       // 创建时间
+	UpdatedAt   time.Time       // 最新的更新时间
+	Meta        Meta            // 元信息
+	written     bool            // 是否已写入记录, 一个流只允许写入一次
 }
 
 func NewWebSocketSteam(connection *websocket.Conn, meta Meta) *WebsocketStream {
@@ -90,6 +91,10 @@ func (r *WebsocketStream) Write2Log() error {
 
 	defer r.Unlock()
 
+	if r.written {
+		return nil
+	}
+
 	recorders := r.recorder
 
 	if len(recorders) != 0 {
@@ -112,6 +117,8 @@ func (r *WebsocketStream) Write2Log() error {
 		if err := db.Db.Create(&record).Error; err != nil {
 			return err
 		}
+
+		r.written = true
 	}
 
 	return nil

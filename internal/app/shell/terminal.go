@@ -2,7 +2,6 @@
 package shell
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"sync"
@@ -189,16 +188,7 @@ func Connect(c *gin.Context) {
 		HostID: hostID,
 	})
 
-	addingRecord := false
-
 	terminal.SetCloseHandler(func() error {
-		fmt.Println("SSH 关闭，开始记录")
-		if addingRecord == true {
-			return nil
-		}
-
-		addingRecord = true
-
 		// 记录用户的操作
 		if err := stream.Write2Log(); err != nil {
 			return err

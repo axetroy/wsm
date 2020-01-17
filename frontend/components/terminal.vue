@@ -99,15 +99,19 @@ export default {
 
       // Attach the socket to the terminal
       socket.onopen = ev => {
-        // term.writeln('----------CONNECT SUCCESS----------')
+        // term.writeln('----------Websocket Open----------')
+        this.$emit('open', ev)
       }
 
       socket.onerror = ev => {
-        term.writeln('----------ERROR----------')
+        term.writeln('----------Websocket Error----------')
+        this.$emit('error', ev)
       }
 
       socket.onclose = ev => {
-        term.writeln('----------CLOSE----------')
+        term.writeln('')
+        term.writeln('----------Websocket Close----------')
+        this.$emit('close', ev)
       }
     },
     dispose() {
