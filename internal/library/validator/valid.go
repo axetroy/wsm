@@ -2,10 +2,11 @@
 package validator
 
 import (
+	"regexp"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/axetroy/wsm/internal/app/exception"
 	"github.com/axetroy/wsm/internal/library/util"
-	"regexp"
 )
 
 var (

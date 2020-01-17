@@ -10,7 +10,7 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/axetroy/wsm/internal/library/util"
+	"github.com/axetroy/wsm/internal/library/password"
 	"github.com/axetroy/wsm/internal/library/validator"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"
@@ -74,10 +74,16 @@ func SignUpWithUsername(c *controller.Context) (res schema.Response) {
 		return
 	}
 
+	passwordHash, err := password.Generate(input.Password)
+
+	if err != nil {
+		return
+	}
+
 	userInfo := db.User{
 		Username: input.Username,
 		Nickname: &input.Username,
-		Password: util.GeneratePassword(input.Password),
+		Password: passwordHash,
 		Status:   db.UserStatusInit,
 		Phone:    nil,
 		Email:    nil,
@@ -85,7 +91,7 @@ func SignUpWithUsername(c *controller.Context) (res schema.Response) {
 		Role:     pq.StringArray{},
 	}
 
-	if err = tx.Create(userInfo).Error; err != nil {
+	if err = tx.Create(&userInfo).Error; err != nil {
 		return
 	}
 

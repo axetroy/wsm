@@ -45,7 +45,7 @@ func init() {
 type User struct {
 	Id       string         `gorm:"primary_key;not null;unique;index;type:varchar(32)" json:"id"` // 用户ID
 	Username string         `gorm:"not null;type:varchar(36)unique;index" json:"username"`        // 用户名
-	Password string         `gorm:"not null;type:varchar(36);index" json:"password"`              // 登陆密码
+	Password string         `gorm:"not null;type:varchar(64);index" json:"password"`              // 登陆密码
 	Nickname *string        `gorm:"null;type:varchar(36)" json:"nickname"`                        // 昵称
 	Phone    *string        `gorm:"null;unique;type:varchar(16);index" json:"phone"`              // 手机号
 	Email    *string        `gorm:"null;unique;type:varchar(36);index" json:"email"`              // 邮箱

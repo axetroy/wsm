@@ -39,11 +39,11 @@ func (c *Context) ShouldBindJSON(inputPointer interface{}) error {
 // 校验 url 中的 query
 func (c *Context) ShouldBindQuery(inputPointer interface{}) error {
 	if err := c.ctx.ShouldBindQuery(inputPointer); err != nil {
-		return err
+		return exception.InvalidParams.New(err.Error())
 	}
 
 	if isValid, err := govalidator.ValidateStruct(inputPointer); err != nil {
-		return exception.New(err.Error(), exception.InvalidParams.Code())
+		return exception.InvalidParams.New(err.Error())
 	} else if !isValid {
 		return exception.InvalidParams
 	}

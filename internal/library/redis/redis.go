@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	ClientConnection *redis.Client // 存储 对应的 SSH 连接∏
+	ClientConnection *redis.Client // 存储 对应的 SSH 连接
 	ClientOAuthCode  *redis.Client // 存储 oAuth2 对应的激活码
 	Config           = config.Redis
 )

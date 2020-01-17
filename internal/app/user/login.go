@@ -11,8 +11,8 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
+	"github.com/axetroy/wsm/internal/library/password"
 	"github.com/axetroy/wsm/internal/library/token"
-	"github.com/axetroy/wsm/internal/library/util"
 	"github.com/axetroy/wsm/internal/library/validator"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
@@ -58,9 +58,7 @@ func LoginWithUsername(c *controller.Context) (res schema.Response) {
 		return
 	}
 
-	userInfo := db.User{
-		Password: util.GeneratePassword(input.Password),
-	}
+	userInfo := db.User{}
 
 	if validator.IsPhone(input.Account) {
 		// 用手机号登陆
@@ -79,6 +77,11 @@ func LoginWithUsername(c *controller.Context) (res schema.Response) {
 		if err == gorm.ErrRecordNotFound {
 			err = exception.InvalidAccountOrPassword
 		}
+		return
+	}
+
+	if password.Verify(input.Password, userInfo.Password) == false {
+		err = exception.InvalidAccountOrPassword
 		return
 	}
 

@@ -9,8 +9,7 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/axetroy/wsm/internal/library/util"
-	"github.com/axetroy/wsm/internal/library/validator"
+	"github.com/axetroy/wsm/internal/library/password"
 	"github.com/jinzhu/gorm"
 )
 
@@ -50,7 +49,7 @@ func UpdatePassword(c *controller.Context) (res schema.Response) {
 	}()
 
 	// 参数校验
-	if err = validator.ValidateStruct(input); err != nil {
+	if err = c.ShouldBindJSON(&input); err != nil {
 		return
 	}
 
@@ -71,14 +70,18 @@ func UpdatePassword(c *controller.Context) (res schema.Response) {
 	}
 
 	// 验证密码是否正确
-	if userInfo.Password != util.GeneratePassword(input.OldPassword) {
+	if password.Verify(input.OldPassword, userInfo.Password) == false {
 		err = exception.InvalidPassword
 		return
 	}
 
-	newPassword := util.GeneratePassword(input.NewPassword)
+	newPasswordHash, err := password.Generate(input.NewPassword)
 
-	if err = tx.Model(&userInfo).Update(db.User{Password: newPassword}).Error; err != nil {
+	if err != nil {
+		return
+	}
+
+	if err = tx.Model(&userInfo).Update(db.User{Password: newPasswordHash}).Error; err != nil {
 		return
 	}
 

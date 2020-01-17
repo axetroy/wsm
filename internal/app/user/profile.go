@@ -10,7 +10,6 @@ import (
 	"github.com/axetroy/wsm/internal/app/schema"
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/helper"
-	"github.com/axetroy/wsm/internal/library/validator"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 )
@@ -94,7 +93,7 @@ func UpdateProfile(c *controller.Context) (res schema.Response) {
 	}()
 
 	// 参数校验
-	if err = validator.ValidateStruct(input); err != nil {
+	if err = c.ShouldBindJSON(&input); err != nil {
 		return
 	}
 
