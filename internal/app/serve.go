@@ -21,75 +21,70 @@ func Serve() error {
 	s := &http.Server{
 		Addr:           ":" + port,
 		Handler:        UserRouter,
-		ReadTimeout:    60 * time.Second,
-		WriteTimeout:   60 * time.Second,
+		ReadTimeout:    15 * time.Second,
+		WriteTimeout:   15 * time.Second,
+		IdleTimeout:    60 * time.Second,
 		MaxHeaderBytes: 1 << 20, // 10M
 	}
 
-	go func() {
-		if config.Http.TLS != nil {
-			TLSConfig := &tls.Config{
-				MinVersion:               tls.VersionTLS11,
-				CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
-				PreferServerCipherSuites: true,
-				CipherSuites: []uint16{
-					tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-					tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-					tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
-					tls.TLS_RSA_WITH_AES_256_CBC_SHA,
-				},
-			}
-
-			TLSProto := make(map[string]func(*http.Server, *tls.Conn, http.Handler))
-
-			s.TLSConfig = TLSConfig
-			s.TLSNextProto = TLSProto
-
-			log.Printf("Listen on:  %s\n", s.Addr)
-
-			if err := s.ListenAndServeTLS(config.Http.TLS.Cert, config.Http.TLS.Key); err != nil {
-				log.Fatalln(err)
-			}
-		} else {
-			log.Printf("Listen on:  %s\n", s.Addr)
-
-			if err := s.ListenAndServe(); err != nil {
-				log.Fatalln(err)
-			}
-		}
-	}()
-
-	// Wait for interrupt signal to gracefully shutdown the server with
-	// a timeout of 5 seconds.
+	done := make(chan bool, 1)
 	quit := make(chan os.Signal, 1)
-	// kill (no param) default send syscall.SIGTERM
-	// kill -2 is syscall.SIGINT
-	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
 
-	signal.Notify(quit, syscall.SIGTERM, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-	<-quit
+	signal.Notify(quit, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
-	config.Common.Exiting = true
+	go gracefullShutdown(s, quit, done)
 
-	log.Println("Shutdown Server...")
+	if config.Http.TLS != nil {
+		TLSConfig := &tls.Config{
+			MinVersion:               tls.VersionTLS11,
+			CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+			PreferServerCipherSuites: true,
+			CipherSuites: []uint16{
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+				tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+			},
+		}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		TLSProto := make(map[string]func(*http.Server, *tls.Conn, http.Handler))
 
-	defer cancel()
+		s.TLSConfig = TLSConfig
+		s.TLSNextProto = TLSProto
 
-	if err := s.Shutdown(ctx); err != nil {
-		log.Fatal("Server Shutdown:", err)
+		log.Printf("Listen on:  %s\n", s.Addr)
+
+		if err := s.ListenAndServeTLS(config.Http.TLS.Cert, config.Http.TLS.Key); err != nil {
+			log.Fatalln(err)
+		}
+	} else {
+		log.Printf("Listen on port:  %s\n", s.Addr)
+
+		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalln(err)
+		}
 	}
 
-	// catching ctx.Done(). timeout of 5 seconds.
-	select {
-	case <-ctx.Done():
-		log.Println("Timeout of 1 seconds.")
-	}
+	<-done
+	log.Println("Server stopped")
 
 	_ = db.Db.Close()
 
-	log.Println("Server exiting")
+	os.Exit(0)
 
 	return nil
+}
+
+func gracefullShutdown(server *http.Server, quit <-chan os.Signal, done chan<- bool) {
+	<-quit
+	log.Println("Server is shutting down...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	server.SetKeepAlivesEnabled(false)
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("Could not gracefully shutdown the server: %v\n", err)
+	}
+	close(done)
 }
