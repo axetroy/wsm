@@ -29,6 +29,8 @@ COPY static ./static
 COPY --from=builder /app/.nuxt ./.nuxt
 
 ENV PORT=80
+ENV HOST=0.0.0.0
+ENV NODE_ENV=production
 
 EXPOSE 80
 

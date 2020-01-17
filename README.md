@@ -153,27 +153,21 @@ services:
     links:
       - backend
     environment:
-      - NODE_ENV=production
-      - PORT=80
-      - HOST=0.0.0.0
       - API_HOST=http://192.168.1.29:9000 # 请求接口的域名, 请自行更改
 
   # 后端接口
   backend:
     image: axetroy/wsm-backend:latest
     restart: always
-    volumes:
-      - "./.env:/app/bin/.env"
     ports:
-      - 9000:9000
+      - 9000:80
     environment:
-      - PORT=9000
+      # 更多环境变量配置请查看 .env 文件
       - DB_HOST=192.168.1.29 # 要连接的数据库 IP，请自行更改
       - DB_PORT=54321 # 要连接的数据库端口
 ```
 
 后端接口部分全部由环境变量进行配置，可用的配置选项参考 [.env](.env)
-
 
 <h2 align="center">许可协议</h2>
 
