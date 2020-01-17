@@ -8,7 +8,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        node: ['v12.4.1']
+        node: ['v12.13.0']
         os: [ubuntu-latest]
     name: Node.js ${{ matrix.node }} test in ${{ matrix.os }}
 
