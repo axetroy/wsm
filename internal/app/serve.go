@@ -4,6 +4,7 @@ package app
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -13,6 +14,8 @@ import (
 
 	"github.com/axetroy/wsm/internal/app/config"
 	"github.com/axetroy/wsm/internal/app/db"
+	"github.com/axetroy/wsm/internal/app/shell"
+	"github.com/axetroy/wsm/internal/library/session"
 )
 
 func Serve() error {
@@ -67,6 +70,16 @@ func Serve() error {
 
 	<-done
 	log.Println("Server stopped")
+
+	shell.SteamMap.ForEach(func(key string, stream *session.WebsocketStream) {
+		if stream == nil {
+			return
+		}
+
+		if err := stream.Write2Log(); err != nil {
+			fmt.Println(err)
+		}
+	})
 
 	_ = db.Db.Close()
 

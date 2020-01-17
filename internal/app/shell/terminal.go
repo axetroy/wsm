@@ -2,10 +2,10 @@
 package shell
 
 import (
-	"encoding/base64"
 	"fmt"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/axetroy/wsm/internal/app/config"
@@ -14,6 +14,7 @@ import (
 	"github.com/axetroy/wsm/internal/library/controller"
 	"github.com/axetroy/wsm/internal/library/crypto"
 	"github.com/axetroy/wsm/internal/library/session"
+	"github.com/axetroy/wsm/internal/library/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/jinzhu/gorm"
@@ -23,6 +24,51 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
+}
+
+var (
+	SteamMap = NewStreamMap() // websocket 连接流的 map
+)
+
+type streamMap struct {
+	sync.RWMutex
+	innerMap map[string]*session.WebsocketStream
+}
+
+func NewStreamMap() *streamMap {
+	sm := new(streamMap)
+	sm.innerMap = make(map[string]*session.WebsocketStream)
+	return sm
+}
+
+func (sm *streamMap) Set(key string, value *session.WebsocketStream) {
+	sm.Lock()
+	sm.innerMap[key] = value
+	sm.Unlock()
+}
+
+func (sm *streamMap) Get(key string) *session.WebsocketStream {
+	sm.RLock()
+	value := sm.innerMap[key]
+	sm.RUnlock()
+	return value
+}
+
+func (sm *streamMap) Remove(key string) {
+	sm.RLock()
+	delete(sm.innerMap, key)
+	sm.RUnlock()
+	return
+}
+
+func (sm *streamMap) ForEach(cb func(key string, value *session.WebsocketStream)) {
+	sm.RLock()
+
+	defer sm.RUnlock()
+
+	for k, v := range sm.innerMap {
+		cb(k, v)
+	}
 }
 
 // 连接 WebSocket
@@ -134,51 +180,35 @@ func Connect(c *gin.Context) {
 		return
 	}
 
-	connectedAt := time.Now()
+	// 随机生成一个 ID
+	connectionID := util.RandomString(64)
 
-	stream := session.NewWebSocketSteam(conn)
+	stream := session.NewWebSocketSteam(conn, session.Meta{
+		Uid:    ctx.Uid,
+		Ip:     ctx.Ip,
+		HostID: hostID,
+	})
 
 	addingRecord := false
 
 	terminal.SetCloseHandler(func() error {
+		fmt.Println("SSH 关闭，开始记录")
 		if addingRecord == true {
 			return nil
 		}
 
 		addingRecord = true
+
 		// 记录用户的操作
-		recorders := stream.GetRecorder()
-
-		if len(recorders) != 0 {
-			recorderStr := make([]string, 0)
-
-			for _, r := range recorders {
-				t := r.Time.Format("2006-01-02 15:04:05.000")
-				str := base64.StdEncoding.EncodeToString(r.Data)
-				recorderStr = append(recorderStr, fmt.Sprintf("(%s) %s", t, str))
-			}
-
-			record := db.HostConnectionRecord{
-				UserID:    ctx.Uid,
-				Ip:        ctx.Ip,
-				HostID:    hostID,
-				Records:   recorderStr,
-				CreatedAt: connectedAt,
-			}
-
-			// TODO: 如果服务器进程退出，则来不及写入数据
-			if err := db.Db.Create(&record).Error; err != nil {
-				fmt.Println(err)
-				fmt.Println("写入操作日志失败")
-			} else {
-				fmt.Println("写入记录成功...")
-			}
+		if err := stream.Write2Log(); err != nil {
+			return err
 		}
 
 		return conn.Close()
 	})
 
 	conn.SetCloseHandler(func(code int, text string) error {
+		SteamMap.Remove(connectionID)
 		return terminal.Close()
 	})
 
@@ -189,6 +219,8 @@ func Connect(c *gin.Context) {
 		_ = conn.Close()
 		return
 	}
+
+	SteamMap.Set(connectionID, stream)
 
 	go func() {
 		for {
