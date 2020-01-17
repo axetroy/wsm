@@ -1,6 +1,6 @@
 # Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0.
 # builder for backend
-FROM golang:1.13.5-alpine AS builder
+FROM golang:1.13.6-alpine AS builder
 
 WORKDIR /app
 
