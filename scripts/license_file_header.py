@@ -5,7 +5,7 @@
 
 import os
 
-exclude = {"node_modules", "vendor", ".nuxt", "scripts"}
+exclude = {"node_modules", "vendor", ".nuxt", "scripts", "logs", "docker"}
 
 
 def walk(root_dir):
