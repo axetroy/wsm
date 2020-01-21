@@ -18,27 +18,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var UserRouter *gin.Engine
+var Router *gin.Engine
 
 func init() {
 	if config.Common.Mode == config.ModeProduction {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	router := gin.Default()
+	Router = gin.Default()
 
-	router.Use(middleware.GracefulExit())
+	Router.Use(middleware.GracefulExit())
 
-	router.Use(middleware.CORS())
+	Router.Use(middleware.CORS())
 
-	router.Static("/public", path.Join(dotenv.RootDir, "public"))
+	Router.Static("/public", path.Join(dotenv.RootDir, "public"))
 
 	if config.Common.Mode != config.ModeProduction {
-		router.Use(gin.Logger())
+		Router.Use(gin.Logger())
 	}
 
-	router.Use(gin.Recovery())
+	Router.Use(gin.Recovery())
 
-	router.NoRoute(func(c *gin.Context) {
+	Router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, schema.Response{
 			Status:  schema.StatusFail,
 			Message: fmt.Sprintf("%v ", http.StatusNotFound) + http.StatusText(http.StatusNotFound),
@@ -47,7 +47,7 @@ func init() {
 	})
 
 	{
-		v1 := router.Group("/v1")
+		v1 := Router.Group("/v1")
 		v1.Use(middleware.Common)
 
 		v1.GET("", controller.Router(func(c *controller.Context) (res schema.Response) {
@@ -131,6 +131,4 @@ func init() {
 			teamRouter.PUT("/_/:team_id/host/_/:host_id", controller.Router(host.UpdateHostForTeam))              // 更新服务器，只有拥有者和管理员可以操作
 		}
 	}
-
-	UserRouter = router
 }
