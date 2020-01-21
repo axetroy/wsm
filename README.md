@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/github/license/axetroy/wsm.svg)
 ![Repo Size](https://img.shields.io/github/repo-size/axetroy/wsm.svg)
 
-[![Build Status](https://github.com/axetroy/wsm/workflows/backen/badge.svg)](https://github.com/axetroy/wsm/actions)
+[![Build Status](https://github.com/axetroy/wsm/workflows/backend/badge.svg)](https://github.com/axetroy/wsm/actions)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/axetroy/wsm-backend)](https://hub.docker.com/r/axetroy/wsm-backend/builds)
 [![Docker Pulls](https://img.shields.io/docker/pulls/axetroy/wsm-backend)](https://hub.docker.com/r/axetroy/wsm-backend/builds)
 [![Coverage Status](https://coveralls.io/repos/github/axetroy/wsm/badge.svg?branch=master)](https://coveralls.io/github/axetroy/wsm?branch=master)
