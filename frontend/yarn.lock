@@ -7727,10 +7727,10 @@ xtend@^4.0.0, xtend@~4.0.1:
   resolved "https://registry.npmjs.org/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
 
-xterm-addon-attach@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/xterm-addon-attach/-/xterm-addon-attach-0.4.0.tgz#afe67a89cab370c5d454198c9a98e0943c672888"
-  integrity sha512-va1dagNs9ao1aj06cRCbyTXe4POBhOa0y7Qc6q9Z2Z9bgHt9zCANeP5tKM8d0SMKSPmRnxfQ2F4P11iwB/Tzsw==
+xterm-addon-attach@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/xterm-addon-attach/-/xterm-addon-attach-0.5.0.tgz#e35cde4ae493ecace7d07e52ff2b9714e3c43068"
+  integrity sha512-L6ThPjF/fVt+gJS2+2h2rEEAXNxIRmCU8/RCM6rYR08K9GtPiHmYcnpRT7WNJf31yFLpWVA8dKcItfP3C0ZKlA==
 
 xterm-addon-fit@0.3.0:
   version "0.3.0"
