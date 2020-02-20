@@ -20,7 +20,7 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/onsi/ginkgo v1.11.0 // indirect
 	github.com/onsi/gomega v1.8.1 // indirect
-	github.com/stretchr/testify v1.5.0
+	github.com/stretchr/testify v1.5.1
 	github.com/urfave/cli/v2 v2.1.1
 	golang.org/x/crypto v0.0.0-20200219234226-1ad67e1f0ef4
 )
