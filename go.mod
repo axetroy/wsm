@@ -12,7 +12,7 @@ require (
 	github.com/go-redis/redis v6.15.7+incompatible
 	github.com/go-redis/redis/v7 v7.0.0 // indirect
 	github.com/gorilla/mux v1.7.3 // indirect
-	github.com/gorilla/websocket v1.4.1
+	github.com/gorilla/websocket v1.4.2
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.3.0
