@@ -36,7 +36,7 @@ github.com/go-redis/redis/internal/proto
 github.com/go-redis/redis/internal/util
 # github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
-# github.com/gorilla/websocket v1.4.1
+# github.com/gorilla/websocket v1.4.2
 github.com/gorilla/websocket
 # github.com/jinzhu/gorm v1.9.12
 github.com/jinzhu/gorm
