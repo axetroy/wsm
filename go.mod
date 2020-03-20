@@ -17,7 +17,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.3.0
 	github.com/markbates/goth v1.62.0
-	github.com/mitchellh/mapstructure v1.2.1
+	github.com/mitchellh/mapstructure v1.2.2
 	github.com/onsi/ginkgo v1.11.0 // indirect
 	github.com/onsi/gomega v1.8.1 // indirect
 	github.com/stretchr/testify v1.5.1
