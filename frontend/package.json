@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "7.9.0",
-    "@zeit/ncc": "0.21.1",
+    "@zeit/ncc": "0.22.0",
     "cookie": "0.4.0",
     "date-fns": "2.11.0",
     "element-ui": "2.13.0",
