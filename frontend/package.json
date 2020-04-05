@@ -28,7 +28,7 @@
     "less": "3.11.1",
     "less-loader": "5.0.0",
     "nuxt": "2.12.2",
-    "prettier": "2.0.2",
+    "prettier": "2.0.3",
     "xterm": "4.4.0",
     "xterm-addon-attach": "0.5.0",
     "xterm-addon-fit": "0.3.0",
