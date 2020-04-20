@@ -22,5 +22,5 @@ require (
 	github.com/onsi/gomega v1.8.1 // indirect
 	github.com/stretchr/testify v1.5.1
 	github.com/urfave/cli/v2 v2.2.0
-	golang.org/x/crypto v0.0.0-20200414173820-0848c9571904
+	golang.org/x/crypto v0.0.0-20200420104511-884d27f42877
 )
