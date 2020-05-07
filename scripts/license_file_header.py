@@ -39,7 +39,7 @@ def walk(root_dir):
                     if not originContent.startswith("<!-- Copyright"):
                         with open(filepath, "w") as writer:
                             writer.write("<!-- Copyright 2019-2020 Axetroy. All rights reserved. Apache License 2.0. "
-                                         "-->\n")
+                                        "-->\n")
                             writer.write(originContent)
 
 
