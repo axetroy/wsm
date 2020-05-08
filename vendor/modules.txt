@@ -1,22 +1,28 @@
 # cloud.google.com/go v0.30.0
 cloud.google.com/go/compute/metadata
 # github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
+## explicit
 github.com/asaskevich/govalidator
 # github.com/axetroy/mocker v1.1.0
+## explicit
 github.com/axetroy/mocker
 # github.com/bwmarrin/snowflake v0.3.0
+## explicit
 github.com/bwmarrin/snowflake
 # github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d
 github.com/cpuguy83/go-md2man/v2/md2man
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
+## explicit
 github.com/dgrijalva/jwt-go
 # github.com/fatih/color v1.9.0
+## explicit
 github.com/fatih/color
 # github.com/gin-contrib/sse v0.1.0
 github.com/gin-contrib/sse
 # github.com/gin-gonic/gin v1.6.3
+## explicit
 github.com/gin-gonic/gin
 github.com/gin-gonic/gin/binding
 github.com/gin-gonic/gin/internal/bytesconv
@@ -30,6 +36,7 @@ github.com/go-playground/universal-translator
 # github.com/go-playground/validator/v10 v10.2.0
 github.com/go-playground/validator/v10
 # github.com/go-redis/redis v6.15.7+incompatible
+## explicit
 github.com/go-redis/redis
 github.com/go-redis/redis/internal
 github.com/go-redis/redis/internal/consistenthash
@@ -37,25 +44,34 @@ github.com/go-redis/redis/internal/hashtag
 github.com/go-redis/redis/internal/pool
 github.com/go-redis/redis/internal/proto
 github.com/go-redis/redis/internal/util
+# github.com/go-redis/redis/v7 v7.0.0
+## explicit
 # github.com/golang/protobuf v1.3.3
 github.com/golang/protobuf/proto
+# github.com/gorilla/mux v1.7.3
+## explicit
 # github.com/gorilla/websocket v1.4.2
+## explicit
 github.com/gorilla/websocket
 # github.com/jinzhu/gorm v1.9.12
+## explicit
 github.com/jinzhu/gorm
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
 # github.com/joho/godotenv v1.3.0
+## explicit
 github.com/joho/godotenv
 # github.com/json-iterator/go v1.1.9
 github.com/json-iterator/go
 # github.com/leodido/go-urn v1.2.0
 github.com/leodido/go-urn
-# github.com/lib/pq v1.5.2
+# github.com/lib/pq v1.5.1
+## explicit
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
 # github.com/markbates/goth v1.64.0
+## explicit
 github.com/markbates/goth
 github.com/markbates/goth/providers/facebook
 github.com/markbates/goth/providers/github
@@ -67,6 +83,7 @@ github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
 # github.com/mitchellh/mapstructure v1.3.0
+## explicit
 github.com/mitchellh/mapstructure
 # github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421
 github.com/modern-go/concurrent
@@ -74,6 +91,10 @@ github.com/modern-go/concurrent
 github.com/modern-go/reflect2
 # github.com/mrjones/oauth v0.0.0-20180629183705-f4e24b6d100c
 github.com/mrjones/oauth
+# github.com/onsi/ginkgo v1.11.0
+## explicit
+# github.com/onsi/gomega v1.8.1
+## explicit
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
 # github.com/russross/blackfriday/v2 v2.0.1
@@ -81,12 +102,15 @@ github.com/russross/blackfriday/v2
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
 github.com/shurcooL/sanitized_anchor_name
 # github.com/stretchr/testify v1.5.1
+## explicit
 github.com/stretchr/testify/assert
 # github.com/ugorji/go/codec v1.1.7
 github.com/ugorji/go/codec
 # github.com/urfave/cli/v2 v2.2.0
+## explicit
 github.com/urfave/cli/v2
 # golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
+## explicit
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/chacha20
