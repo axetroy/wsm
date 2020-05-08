@@ -10,7 +10,7 @@ require (
 	github.com/fatih/color v1.9.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-redis/redis v6.15.7+incompatible
-	github.com/go-redis/redis/v7 v7.0.0 // indirect
+	github.com/go-redis/redis/v7 v7.2.0 // indirect
 	github.com/gorilla/mux v1.7.3 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/jinzhu/gorm v1.9.12
