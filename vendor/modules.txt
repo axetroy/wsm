@@ -44,7 +44,7 @@ github.com/go-redis/redis/internal/hashtag
 github.com/go-redis/redis/internal/pool
 github.com/go-redis/redis/internal/proto
 github.com/go-redis/redis/internal/util
-# github.com/go-redis/redis/v7 v7.0.0
+# github.com/go-redis/redis/v7 v7.2.0
 ## explicit
 # github.com/golang/protobuf v1.3.3
 github.com/golang/protobuf/proto
@@ -65,7 +65,7 @@ github.com/joho/godotenv
 github.com/json-iterator/go
 # github.com/leodido/go-urn v1.2.0
 github.com/leodido/go-urn
-# github.com/lib/pq v1.5.1
+# github.com/lib/pq v1.5.2
 ## explicit
 github.com/lib/pq
 github.com/lib/pq/oid
@@ -109,7 +109,7 @@ github.com/ugorji/go/codec
 # github.com/urfave/cli/v2 v2.2.0
 ## explicit
 github.com/urfave/cli/v2
-# golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
+# golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
 ## explicit
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
