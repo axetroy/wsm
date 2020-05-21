@@ -9,7 +9,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fatih/color v1.9.0
 	github.com/gin-gonic/gin v1.6.3
-	github.com/go-redis/redis v6.15.7+incompatible
+	github.com/go-redis/redis v6.15.8+incompatible
 	github.com/go-redis/redis/v7 v7.2.0 // indirect
 	github.com/gorilla/mux v1.7.3 // indirect
 	github.com/gorilla/websocket v1.4.2

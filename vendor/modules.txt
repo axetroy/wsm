@@ -35,7 +35,7 @@ github.com/go-playground/locales/currency
 github.com/go-playground/universal-translator
 # github.com/go-playground/validator/v10 v10.2.0
 github.com/go-playground/validator/v10
-# github.com/go-redis/redis v6.15.7+incompatible
+# github.com/go-redis/redis v6.15.8+incompatible
 ## explicit
 github.com/go-redis/redis
 github.com/go-redis/redis/internal
