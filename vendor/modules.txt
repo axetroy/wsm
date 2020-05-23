@@ -3,7 +3,7 @@ cloud.google.com/go/compute/metadata
 # github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 ## explicit
 github.com/asaskevich/govalidator
-# github.com/axetroy/mocker v1.1.0
+# github.com/axetroy/mocker v1.2.0
 ## explicit
 github.com/axetroy/mocker
 # github.com/bwmarrin/snowflake v0.3.0

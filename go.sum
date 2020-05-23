@@ -7,6 +7,8 @@ github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535 h1:4daAzAu0
 github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535/go.mod h1:oGkLhpf+kjZl6xBf758TQhh5XrAeiJv/7FRz/2spLIg=
 github.com/axetroy/mocker v1.1.0 h1:RF0u9igoWMHRns2wbboAcm7Vu9ncczco2w7Jxy6AxOE=
 github.com/axetroy/mocker v1.1.0/go.mod h1:uYztBX5hnXFF0nr0KzypTTZiDQDNbOGvCL+B/J014+Q=
+github.com/axetroy/mocker v1.2.0 h1:2n2Af9lyN7TCNrPt2NT9nd2z5KXGXia9ROJA6qBBxsw=
+github.com/axetroy/mocker v1.2.0/go.mod h1:uYztBX5hnXFF0nr0KzypTTZiDQDNbOGvCL+B/J014+Q=
 github.com/bwmarrin/snowflake v0.3.0 h1:xm67bEhkKh6ij1790JB83OujPR5CzNe8QuQqAgISZN0=
 github.com/bwmarrin/snowflake v0.3.0/go.mod h1:NdZxfVWX+oR6y2K0o6qAYv6gIOP9rjG0/E9WsDpxqwE=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d h1:U+s90UTSYgptZMwQh2aRr3LuazLJIa+Pg3Kc1ylSYVY=
