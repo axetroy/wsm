@@ -15,7 +15,7 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
-	github.com/lib/pq v1.5.2
+	github.com/lib/pq v1.6.0
 	github.com/markbates/goth v1.64.1
 	github.com/mitchellh/mapstructure v1.3.1
 	github.com/onsi/ginkgo v1.11.0 // indirect
