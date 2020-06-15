@@ -3,6 +3,7 @@ module github.com/axetroy/wsm
 go 1.14
 
 require (
+	cloud.google.com/go v0.58.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/axetroy/mocker v1.2.0
 	github.com/bwmarrin/snowflake v0.3.0
@@ -16,7 +17,7 @@ require (
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.7.0
-	github.com/markbates/goth v1.64.1
+	github.com/markbates/goth v1.64.2
 	github.com/mitchellh/mapstructure v1.3.2
 	github.com/onsi/ginkgo v1.11.0 // indirect
 	github.com/onsi/gomega v1.8.1 // indirect
