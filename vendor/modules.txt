@@ -54,7 +54,7 @@ github.com/golang/protobuf/proto
 # github.com/gorilla/websocket v1.4.2
 ## explicit
 github.com/gorilla/websocket
-# github.com/jinzhu/gorm v1.9.15
+# github.com/jinzhu/gorm v1.9.16
 ## explicit
 github.com/jinzhu/gorm
 # github.com/jinzhu/inflection v1.0.0
