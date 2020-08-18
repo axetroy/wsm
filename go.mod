@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	cloud.google.com/go v0.58.0 // indirect
-	github.com/asaskevich/govalidator v0.0.0-20200817114649-df4adffc9d8c
+	github.com/asaskevich/govalidator v0.0.0-20200818142706-50839af6027e
 	github.com/axetroy/mocker v1.2.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
