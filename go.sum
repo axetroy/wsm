@@ -46,6 +46,8 @@ github.com/asaskevich/govalidator v0.0.0-20200817095201-f6e0ae861144 h1:zpjZGDay
 github.com/asaskevich/govalidator v0.0.0-20200817095201-f6e0ae861144/go.mod h1:oGkLhpf+kjZl6xBf758TQhh5XrAeiJv/7FRz/2spLIg=
 github.com/asaskevich/govalidator v0.0.0-20200817114649-df4adffc9d8c h1:W9P/cRMhwMMfrtInPTAn5rcNu/+vb3zKdGeAd+87tFs=
 github.com/asaskevich/govalidator v0.0.0-20200817114649-df4adffc9d8c/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
+github.com/asaskevich/govalidator v0.0.0-20200818142706-50839af6027e h1:6P0tOQaAiB0G+etsknZvSDjNpdYshZ7wFXTqJpl41h0=
+github.com/asaskevich/govalidator v0.0.0-20200818142706-50839af6027e/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
 github.com/axetroy/mocker v1.1.0 h1:RF0u9igoWMHRns2wbboAcm7Vu9ncczco2w7Jxy6AxOE=
 github.com/axetroy/mocker v1.1.0/go.mod h1:uYztBX5hnXFF0nr0KzypTTZiDQDNbOGvCL+B/J014+Q=
 github.com/axetroy/mocker v1.2.0 h1:2n2Af9lyN7TCNrPt2NT9nd2z5KXGXia9ROJA6qBBxsw=
