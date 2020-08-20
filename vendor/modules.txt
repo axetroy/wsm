@@ -1,7 +1,7 @@
 # cloud.google.com/go v0.58.0
 ## explicit
 cloud.google.com/go/compute/metadata
-# github.com/asaskevich/govalidator v0.0.0-20200818142706-50839af6027e
+# github.com/asaskevich/govalidator v0.0.0-20200819183940-29e1ff8eb0bb
 ## explicit
 github.com/asaskevich/govalidator
 # github.com/axetroy/mocker v1.2.0

@@ -854,6 +854,11 @@ func prependPathToErrors(err error, path string) error {
 	return err
 }
 
+// ValidateArray performs validation according to condition iterator that validates every element of the array
+func ValidateArray(array []interface{}, iterator ConditionIterator) bool {
+	return Every(array, iterator)
+}
+
 // ValidateMap use validation map for fields.
 // result will be equal to `false` if there are any errors.
 // s is the map containing the data to be validated.
@@ -1027,6 +1032,42 @@ func ValidateStruct(s interface{}) (bool, error) {
 		err = errs
 	}
 	return result, err
+}
+
+// ValidateStructAsync performs async validation of the struct and returns results through the channels
+func ValidateStructAsync(s interface{}) (<-chan bool, <-chan error) {
+	res := make(chan bool)
+	errors := make(chan error)
+
+	go func() {
+		defer close(res)
+		defer close(errors)
+
+		isValid, isFailed := ValidateStruct(s)
+
+		res <- isValid
+		errors <- isFailed
+	}()
+
+	return res, errors
+}
+
+// ValidateMapAsync performs async validation of the map and returns results through the channels
+func ValidateMapAsync(s map[string]interface{}, m map[string]interface{}) (<-chan bool, <-chan error) {
+	res := make(chan bool)
+	errors := make(chan error)
+
+	go func() {
+		defer close(res)
+		defer close(errors)
+
+		isValid, isFailed := ValidateMap(s, m)
+
+		res <- isValid
+		errors <- isFailed
+	}()
+
+	return res, errors
 }
 
 // parseTagIntoMap parses a struct tag `valid:required~Some error message,length(2|3)` into map[string]string{"required": "Some error message", "length(2|3)": ""}
