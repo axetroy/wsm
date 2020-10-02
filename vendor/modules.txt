@@ -108,7 +108,7 @@ github.com/ugorji/go/codec
 # github.com/urfave/cli/v2 v2.2.0
 ## explicit
 github.com/urfave/cli/v2
-# golang.org/x/crypto v0.0.0-20200930160638-afb6bcd081ae
+# golang.org/x/crypto v0.0.0-20201001193750-eb9a90e9f9cb
 ## explicit
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
