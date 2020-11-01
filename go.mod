@@ -20,6 +20,6 @@ require (
 	github.com/markbates/goth v1.65.0
 	github.com/mitchellh/mapstructure v1.3.3
 	github.com/stretchr/testify v1.6.1
-	github.com/urfave/cli/v2 v2.2.0
+	github.com/urfave/cli/v2 v2.3.0
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 )
