@@ -104,7 +104,7 @@ github.com/shurcooL/sanitized_anchor_name
 github.com/stretchr/testify/assert
 # github.com/ugorji/go/codec v1.1.7
 github.com/ugorji/go/codec
-# github.com/urfave/cli/v2 v2.2.0
+# github.com/urfave/cli/v2 v2.3.0
 ## explicit
 github.com/urfave/cli/v2
 # golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
