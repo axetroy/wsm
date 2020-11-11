@@ -26,7 +26,7 @@
     "eslint-plugin-prettier": "3.1.4",
     "js-cookie": "2.2.1",
     "less": "3.12.2",
-    "less-loader": "7.0.2",
+    "less-loader": "7.1.0",
     "nuxt": "2.14.7",
     "prettier": "2.1.2",
     "xterm": "4.9.0",
