@@ -17,7 +17,7 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.9.0
-	github.com/markbates/goth v1.66.0
+	github.com/markbates/goth v1.66.1
 	github.com/mitchellh/mapstructure v1.4.0
 	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli/v2 v2.3.0
