@@ -21,5 +21,5 @@ require (
 	github.com/mitchellh/mapstructure v1.4.0
 	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli/v2 v2.3.0
-	golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9
+	golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f
 )
