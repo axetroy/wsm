@@ -13,7 +13,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxtjs/axios": "5.12.4",
+    "@nuxtjs/axios": "5.12.5",
     "nuxt-start": "2.14.12"
   },
   "devDependencies": {
