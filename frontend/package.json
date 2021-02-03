@@ -17,7 +17,7 @@
     "nuxt-start": "2.14.12"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-optional-chaining": "7.12.7",
+    "@babel/plugin-proposal-optional-chaining": "7.12.13",
     "@zeit/ncc": "0.22.3",
     "cookie": "0.4.1",
     "date-fns": "2.16.1",
