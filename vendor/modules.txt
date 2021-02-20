@@ -46,7 +46,7 @@ github.com/go-redis/redis/internal/proto
 github.com/go-redis/redis/internal/util
 # github.com/go-redis/redis/v7 v7.2.0
 ## explicit
-# github.com/go-redis/redis/v8 v8.5.0
+# github.com/go-redis/redis/v8 v8.6.0
 ## explicit
 # github.com/golang/protobuf v1.4.2
 github.com/golang/protobuf/proto
