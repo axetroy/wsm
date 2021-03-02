@@ -15,7 +15,7 @@ services:
 
   # 缓存
   redis:
-    image: redis:5.0.11-alpine
+    image: redis:5.0.12-alpine
     restart: always
     ports:
       - 6379:6379
