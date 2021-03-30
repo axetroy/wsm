@@ -1,5 +1,5 @@
 # builder for frontend
-FROM node:12.21.0-alpine AS builder
+FROM node:12.22.0-alpine AS builder
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN rm -rf ./.nuxt && \
   npm run build
 
 # target
-FROM node:12.21.0-alpine
+FROM node:12.22.0-alpine
 
 WORKDIR /app
 
