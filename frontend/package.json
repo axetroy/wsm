@@ -22,7 +22,7 @@
     "cookie": "0.4.1",
     "date-fns": "2.21.1",
     "element-ui": "2.15.1",
-    "eslint-config-prettier": "8.2.0",
+    "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.0",
     "js-cookie": "2.2.1",
     "less": "4.1.1",
