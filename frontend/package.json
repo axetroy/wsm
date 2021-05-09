@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "5.13.1",
-    "nuxt-start": "2.15.4"
+    "nuxt-start": "2.15.5"
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "7.13.12",
@@ -27,7 +27,7 @@
     "js-cookie": "2.2.1",
     "less": "4.1.1",
     "less-loader": "7.3.0",
-    "nuxt": "2.15.4",
+    "nuxt": "2.15.5",
     "prettier": "2.2.1",
     "xterm": "4.11.0",
     "xterm-addon-attach": "0.6.0",
