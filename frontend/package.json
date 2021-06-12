@@ -29,7 +29,7 @@
     "less-loader": "7.3.0",
     "nuxt": "2.15.6",
     "prettier": "2.3.1",
-    "xterm": "4.12.0",
+    "xterm": "4.13.0",
     "xterm-addon-attach": "0.6.0",
     "xterm-addon-fit": "0.5.0",
     "xterm-addon-search": "0.8.0",
