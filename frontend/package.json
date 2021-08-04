@@ -21,7 +21,7 @@
     "@zeit/ncc": "0.22.3",
     "cookie": "0.4.1",
     "date-fns": "2.23.0",
-    "element-ui": "2.15.4",
+    "element-ui": "2.15.5",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.0",
     "js-cookie": "3.0.0",
