@@ -15,7 +15,7 @@ require (
 	github.com/gorilla/mux v1.7.3 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/jinzhu/gorm v1.9.16
-	github.com/joho/godotenv v1.3.0
+	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.2
 	github.com/markbates/goth v1.68.0
 	github.com/mitchellh/mapstructure v1.4.2
